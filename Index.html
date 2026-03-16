@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --primary: #e63946;
+    --primary-light: #fde8ea;
+    --blue: #457b9d;
+    --blue-light: #e8f0f5;
+    --green: #2a9d8f;
+    --green-light: #e6f5f3;
+    --orange: #e76f51;
+    --orange-light: #fdf0ec;
+    --purple: #6c5ce7;
+    --purple-light: #f0eeff;
+    --text: #1d3557;
+    --text-light: #6b7280;
+    --border: #e5e7eb;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ═══ NAV ═══ */
+  .topbar {
+    background: linear-gradient(135deg, var(--primary) 0%, #c1121f 100%);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+  }
+  .topbar-title { font-size: 1.3em; font-weight: 700; letter-spacing: -0.3px; }
+  .topbar-subtitle { font-size: 0.82em; opacity: 0.85; }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 12px 24px 0;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .nav-tab:hover { color: var(--primary); background: var(--primary-light); border-radius: 8px 8px 0 0; }
+  .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* ═══ LAYOUT ═══ */
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ═══ CARDS ═══ */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ═══ STAT CARDS ═══ */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .stat-card.red { border-left: 4px solid var(--primary); }
+  .stat-card.blue { border-left: 4px solid var(--blue); }
+  .stat-card.green { border-left: 4px solid var(--green); }
+  .stat-card.orange { border-left: 4px solid var(--orange); }
+  .stat-card.purple { border-left: 4px solid var(--purple); }
+  .stat-value { font-size: 2em; font-weight: 800; line-height: 1.1; }
+  .stat-label { font-size: 0.82em; color: var(--text-light); margin-top: 4px; }
+  .stat-card.red .stat-value { color: var(--primary); }
+  .stat-card.blue .stat-value { color: var(--blue); }
+  .stat-card.green .stat-value { color: var(--green); }
+  .stat-card.orange .stat-value { color: var(--orange); }
+  .stat-card.purple .stat-value { color: var(--purple); }
+
+  /* ═══ CHART CONTAINER ═══ */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .chart-wrap {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+  }
+  .chart-title { font-size: 0.95em; font-weight: 700; margin-bottom: 12px; }
+  canvas { width: 100% !important; max-height: 320px; }
+
+  /* ═══ TABLE ═══ */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+  }
+  th {
+    background: var(--bg);
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover { background: #e0e2e5; }
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tr:hover td { background: #f8f9fb; }
+
+  /* ═══ BAR CHART (pure CSS) ═══ */
+  .bar-chart { display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; }
+  .bar-label { width: 140px; font-size: 0.82em; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 22px; background: var(--bg); border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width .5s ease; min-width: 2px; }
+  .bar-fill.red { background: var(--primary); }
+  .bar-fill.blue { background: var(--blue); }
+  .bar-fill.green { background: var(--green); }
+  .bar-fill.orange { background: var(--orange); }
+  .bar-fill.purple { background: var(--purple); }
+  .bar-val { font-size: 0.78em; font-weight: 600; color: var(--text-light); width: 50px; }
+
+  /* ═══ BADGE ═══ */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.78em; font-weight: 600; }
+  .badge-red { background: var(--primary-light); color: var(--primary); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+
+  /* ═══ LOADING ═══ */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    gap: 16px;
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ═══ SEARCH ═══ */
+  .search-box {
+    width: 100%;
+    padding: 10px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+    transition: border-color .2s;
+  }
+  .search-box:focus { outline: none; border-color: var(--primary); }
+
+  /* ═══ STACKED BAR ═══ */
+  .stacked-bar { display: flex; height: 26px; border-radius: 4px; overflow: hidden; }
+  .stacked-seg { transition: width .5s ease; min-width: 1px; }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 768px) {
+    .chart-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .bar-label { width: 100px; }
+    .container { padding: 12px; }
+  }
+
+  @media print {
+    .topbar, .nav-tabs { display: none; }
+    .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div>
+    <div class="topbar-title">🏥 Patatoïde — Dimensionnement ISP</div>
+    <div class="topbar-subtitle">SDIS 66 — Aide à la décision pour le recrutement ISP</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" onclick="showPage('dashboard')">📊 Dashboard</button>
+  <button class="nav-tab" onclick="showPage('interventions')">🚒 Interventions</button>
+  <button class="nav-tab" onclick="showPage('interISP')">🏥 Inter. ISP</button>
+  <button class="nav-tab" onclick="showPage('tempsISP')">⏱️ Temps travail</button>
+  <button class="nav-tab" onclick="showPage('effectif')">👥 Effectif ISP</button>
+  <button class="nav-tab" onclick="showPage('delais')">⏰ Délais ISP</button>
+</div>
+
+<!-- LOADING -->
+<div class="loading" id="loadingScreen">
+  <div class="spinner"></div>
+  <div style="font-weight:600;font-size:1.1em;">Chargement des données…</div>
+  <div style="color:var(--text-light);font-size:0.9em;">Lecture des 4 onglets du spreadsheet</div>
+</div>
+
+<!-- CONTENT -->
+<div id="mainContent" style="display:none;">
+
+  <!-- ═══ PAGE DASHBOARD ═══ -->
+  <div class="page active" id="page-dashboard">
+    <div class="container">
+      <div class="stat-row" id="dashStatRow"></div>
+      <div class="chart-grid">
+        <div class="chart-wrap">
+          <div class="chart-title">📅 Interventions par mois (toutes)</div>
+          <canvas id="dashMonthChart"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">🕐 Interventions par heure (toutes)</div>
+          <canvas id="dashHourChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-wrap">
+          <div class="chart-title">📅 Sorties ISP par mois</div>
+          <canvas id="dashIspMonthChart"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">📊 Répartition temps ISP (Garde / Astreinte / Dispo)</div>
+          <canvas id="dashTypePie"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE INTERVENTIONS GLOBALES ═══ -->
+  <div class="page" id="page-interventions">
+    <div class="container">
+      <div class="stat-row" id="interStatRow"></div>
+      <div class="chart-grid">
+        <div class="chart-wrap">
+          <div class="chart-title">🕐 Interventions par tranche horaire</div>
+          <canvas id="interHourChart"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">📅 Interventions par jour de la semaine</div>
+          <canvas id="interDayChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏘️ Top 30 communes par volume d'interventions</div>
+        <div id="interCommuneBar"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔥 Top 15 types de sinistres</div>
+        <div id="interSinistreBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE INTER ISP ═══ -->
+  <div class="page" id="page-interISP">
+    <div class="container">
+      <div class="stat-row" id="ispInterStatRow"></div>
+      <div class="chart-grid">
+        <div class="chart-wrap">
+          <div class="chart-title">🕐 Sorties ISP par tranche horaire</div>
+          <canvas id="ispHourChart"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">📅 Sorties ISP par mois</div>
+          <canvas id="ispMonthChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏥 Sorties ISP par centre</div>
+        <div id="ispCentreBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE TEMPS TRAVAIL ═══ -->
+  <div class="page" id="page-tempsISP">
+    <div class="container">
+      <div class="stat-row" id="tempsStatRow"></div>
+      <div class="chart-grid">
+        <div class="chart-wrap">
+          <div class="chart-title">🕐 Créneaux ISP par tranche horaire</div>
+          <canvas id="tempsHourChart"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">📅 Créneaux ISP par mois</div>
+          <canvas id="tempsMonthChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏥 Répartition par centre (Garde / Astreinte / Dispo)</div>
+        <div class="table-wrap">
+          <table id="tempsCentreTable"></table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">👤 Détail par ISP</div>
+        <input type="text" class="search-box" id="ispSearch" placeholder="Rechercher un ISP…" oninput="filterIspTable()">
+        <div class="table-wrap">
+          <table id="tempsIspTable"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE EFFECTIF ═══ -->
+  <div class="page" id="page-effectif">
+    <div class="container">
+      <div class="stat-row" id="effectifStatRow"></div>
+      <div class="card">
+        <div class="card-title">🏥 Effectif ISP par centre</div>
+        <div id="effectifCentreBar"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Listing complet ISP</div>
+        <input type="text" class="search-box" id="listingSearch" placeholder="Rechercher un ISP…" oninput="filterListingTable()">
+        <div class="table-wrap">
+          <table id="listingTable"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE DELAIS ═══ -->
+  <div class="page" id="page-delais">
+    <div class="container">
+      <div class="stat-row" id="delaiStatRow"></div>
+      <div class="card">
+        <div class="card-title">⏰ Délais médians par centre ISP</div>
+        <div class="table-wrap">
+          <table id="delaiTable"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ═══════════════════════════════════════
+     GLOBALS
+     ═══════════════════════════════════════ */
+  var DATA = null;
+  var chartInstances = {};
+
+  /* ═══════════════════════════════════════
+     INIT
+     ═══════════════════════════════════════ */
+  google.script.run
+    .withSuccessHandler(function (d) {
+      DATA = d;
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+      renderAll();
+    })
+    .withFailureHandler(function (err) {
+      document.getElementById('loadingScreen').innerHTML =
+        '<div style="color:var(--primary);font-weight:700;font-size:1.2em;">❌ Erreur</div>' +
+        '<div>' + esc(err.message || err) + '</div>';
+    })
+    .getPageData();
+
+  /* ═══════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════ */
+  function showPage(id) {
+    var pages = document.querySelectorAll('.page');
+    for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+    document.getElementById('page-' + id).classList.add('active');
+    var tabs = document.querySelectorAll('.nav-tab');
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  /* ═══════════════════════════════════════
+     RENDER ALL
+     ═══════════════════════════════════════ */
+  function renderAll() {
+    if (!DATA) return;
+    var s = DATA.stats;
+    renderDashboard(s);
+    renderInterventions(s.interGlobal);
+    renderInterISP(s.interISP);
+    renderTemps(s.tempsISP);
+    renderEffectif(s.effectif, DATA.listing);
+    renderDelais(s.delais);
+  }
+
+  /* ═══════════════════════════════════════
+     DASHBOARD
+     ═══════════════════════════════════════ */
+  function renderDashboard(s) {
+    var ig = s.interGlobal;
+    var ii = s.interISP;
+    var t = s.tempsISP;
+    var ef = s.effectif;
+
+    document.getElementById('dashStatRow').innerHTML =
+      statCard(ig.total, 'Interventions totales', 'red') +
+      statCard(ii.total, 'Sorties ISP', 'blue') +
+      statCard(ef.total, 'ISP au listing', 'green') +
+      statCard(t.totalCreneaux, 'Créneaux temps travail', 'orange') +
+      statCard(ig.delaiMedian + ' min', 'Délai SLL médian (global)', 'purple');
+
+    // Mois inter global
+    makeChart('dashMonthChart', 'bar', ig.byMonth.map(function(x){return x.key;}), ig.byMonth.map(function(x){return x.val;}), 'Interventions', '#e63946');
+    // Heure inter global
+    makeChart('dashHourChart', 'bar', ig.byHour.map(function(x){return x.key+'h';}), ig.byHour.map(function(x){return x.val;}), 'Interventions', '#457b9d');
+    // Mois ISP
+    makeChart('dashIspMonthChart', 'bar', ii.byMonth.map(function(x){return x.key;}), ii.byMonth.map(function(x){return x.val;}), 'Sorties ISP', '#2a9d8f');
+    // Pie types
+    makePieChart('dashTypePie', ['Garde', 'Astreinte', 'Disponible'], [t.byType.garde, t.byType.astreinte, t.byType.disponible], ['#e63946', '#e76f51', '#457b9d']);
+  }
+
+  /* ═══════════════════════════════════════
+     INTERVENTIONS GLOBALES
+     ═══════════════════════════════════════ */
+  function renderInterventions(ig) {
+    document.getElementById('interStatRow').innerHTML =
+      statCard(ig.total, 'Interventions', 'red') +
+      statCard(ig.delaiMedian + ' min', 'Délai SLL médian', 'blue') +
+      statCard(ig.delaiP90 + ' min', 'Délai SLL P90', 'orange') +
+      statCard(ig.nbDelais, 'Délais exploitables', 'green');
+
+    makeChart('interHourChart', 'bar', ig.byHour.map(function(x){return x.key+'h';}), ig.byHour.map(function(x){return x.val;}), 'Interventions', '#e63946');
+    makeChart('interDayChart', 'bar', ig.byDay.map(function(x){return x.key;}), ig.byDay.map(function(x){return x.val;}), 'Interventions', '#457b9d');
+
+    document.getElementById('interCommuneBar').innerHTML = buildBarChart(ig.byCommune, 'red');
+    document.getElementById('interSinistreBar').innerHTML = buildBarChart(ig.bySinistre, 'orange');
+  }
+
+  /* ═══════════════════════════════════════
+     INTER ISP
+     ═══════════════════════════════════════ */
+  function renderInterISP(ii) {
+    document.getElementById('ispInterStatRow').innerHTML =
+      statCard(ii.total, 'Sorties ISP', 'blue') +
+      statCard(ii.delaiRouteMedian + ' min', 'Délai route médian', 'green') +
+      statCard(ii.delaiSllMedian + ' min', 'Délai SLL médian', 'orange') +
+      statCard(ii.delaiSllP90 + ' min', 'Délai SLL P90', 'red');
+
+    makeChart('ispHourChart', 'bar', ii.byHour.map(function(x){return x.key+'h';}), ii.byHour.map(function(x){return x.val;}), 'Sorties ISP', '#2a9d8f');
+    makeChart('ispMonthChart', 'bar', ii.byMonth.map(function(x){return x.key;}), ii.byMonth.map(function(x){return x.val;}), 'Sorties ISP', '#457b9d');
+
+    document.getElementById('ispCentreBar').innerHTML = buildBarChart(ii.byCentre, 'blue');
+  }
+
+  /* ═══════════════════════════════════════
+     TEMPS TRAVAIL ISP
+     ═══════════════════════════════════════ */
+  function renderTemps(t) {
+    document.getElementById('tempsStatRow').innerHTML =
+      statCard(t.totalCreneaux, 'Créneaux total', 'blue') +
+      statCard(t.byType.garde, 'Gardes', 'red') +
+      statCard(t.byType.astreinte, 'Astreintes', 'orange') +
+      statCard(t.byType.disponible, 'Disponibles', 'green') +
+      statCard(t.byISP.length, 'ISP distincts', 'purple');
+
+    makeChart('tempsHourChart', 'bar', t.byHour.map(function(x){return x.key+'h';}), t.byHour.map(function(x){return x.val;}), 'Créneaux', '#6c5ce7');
+    makeChart('tempsMonthChart', 'bar', t.byMonth.map(function(x){return x.key;}), t.byMonth.map(function(x){return x.val;}), 'Créneaux', '#e76f51');
+
+    // Table par centre
+    var h = '<thead><tr><th>Centre</th><th>Garde</th><th>Astreinte</th><th>Dispo</th><th>Total</th><th>Répartition</th></tr></thead><tbody>';
+    for (var i = 0; i < t.byCentre.length; i++) {
+      var c = t.byCentre[i];
+      var tot = c.total || 1;
+      h += '<tr>';
+      h += '<td><strong>' + esc(c.centre) + '</strong></td>';
+      h += '<td>' + c.garde + '</td>';
+      h += '<td>' + c.astreinte + '</td>';
+      h += '<td>' + c.disponible + '</td>';
+      h += '<td><strong>' + c.total + '</strong></td>';
+      h += '<td style="min-width:200px;">' + stackedBar(c.garde, c.astreinte, c.disponible, tot) + '</td>';
+      h += '</tr>';
+    }
+    h += '</tbody>';
+    document.getElementById('tempsCentreTable').innerHTML = h;
+
+    // Table par ISP
+    h = '<thead><tr><th>Matricule</th><th>Nom</th><th>Prénom</th><th>Centre</th><th>Garde</th><th>Astreinte</th><th>Dispo</th><th>Total</th></tr></thead><tbody>';
+    for (var i = 0; i < t.byISP.length; i++) {
+      var p = t.byISP[i];
+      h += '<tr class="isp-row" data-search="' + esc((p.nom + ' ' + p.prenom + ' ' + p.centre + ' ' + p.matricule).toLowerCase()) + '">';
+      h += '<td>' + esc(p.matricule) + '</td>';
+      h += '<td><strong>' + esc(p.nom) + '</strong></td>';
+      h += '<td>' + esc(p.prenom) + '</td>';
+      h += '<td>' + esc(p.centre) + '</td>';
+      h += '<td>' + p.garde + '</td>';
+      h += '<td>' + p.astreinte + '</td>';
+      h += '<td>' + p.disponible + '</td>';
+      h += '<td><strong>' + p.total + '</strong></td>';
+      h += '</tr>';
+    }
+    h += '</tbody>';
+    document.getElementById('tempsIspTable').innerHTML = h;
+  }
+
+  function filterIspTable() {
+    var q = (document.getElementById('ispSearch').value || '').toLowerCase();
+    var rows = document.querySelectorAll('#tempsIspTable .isp-row');
+    for (var i = 0; i < rows.length; i++) {
+      rows[i].style.display = rows[i].getAttribute('data-search').indexOf(q) !== -1 ? '' : 'none';
+    }
+  }
+
+  /* ═══════════════════════════════════════
+     EFFECTIF
+     ═══════════════════════════════════════ */
+  function renderEffectif(ef, listing) {
+    document.getElementById('effectifStatRow').innerHTML =
+      statCard(ef.total, 'ISP total', 'green') +
+      statCard(ef.byCentre.length, 'Centres distincts', 'blue');
+
+    document.getElementById('effectifCentreBar').innerHTML = buildBarChart(
+      ef.byCentre.map(function(x) { return { key: x.centre, val: x.count }; }), 'green'
+    );
+
+    // Listing
+    var h = '<thead><tr><th>Nom Prénom</th><th>Centre Principal</th><th>Centre Secondaire</th><th>Email</th></tr></thead><tbody>';
+    for (var i = 0; i < listing.length; i++) {
+      var p = listing[i];
+      h += '<tr class="listing-row" data-search="' + esc((p.nomPrenom + ' ' + p.centrePrincipal + ' ' + p.centreSecondaire).toLowerCase()) + '">';
+      h += '<td><strong>' + esc(p.nomPrenom) + '</strong></td>';
+      h += '<td>' + esc(p.centrePrincipal) + '</td>';
+      h += '<td>' + esc(p.centreSecondaire) + '</td>';
+      h += '<td>' + esc(p.email) + '</td>';
+      h += '</tr>';
+    }
+    h += '</tbody>';
+    document.getElementById('listingTable').innerHTML = h;
+  }
+
+  function filterListingTable() {
+    var q = (document.getElementById('listingSearch').value || '').toLowerCase();
+    var rows = document.querySelectorAll('#listingTable .listing-row');
+    for (var i = 0; i < rows.length; i++) {
+      rows[i].style.display = rows[i].getAttribute('data-search').indexOf(q) !== -1 ? '' : 'none';
+    }
+  }
+
+  /* ═══════════════════════════════════════
+     DELAIS
+     ═══════════════════════════════════════ */
+  function renderDelais(delais) {
+    if (!delais.length) {
+      document.getElementById('delaiStatRow').innerHTML = statCard(0, 'Aucune donnée', 'red');
+      return;
+    }
+    // Global stats
+    var totalInter = 0;
+    for (var i = 0; i < delais.length; i++) totalInter += delais[i].count;
+    document.getElementById('delaiStatRow').innerHTML =
+      statCard(totalInter, 'Sorties ISP avec délai', 'blue') +
+      statCard(delais.length, 'Centres distincts', 'green');
+
+    var h = '<thead><tr><th>Centre</th><th>Nb sorties</th><th>Route médian (min)</th><th>Route P90 (min)</th><th>SLL médian (min)</th><th>SLL P90 (min)</th></tr></thead><tbody>';
+    for (var i = 0; i < delais.length; i++) {
+      var d = delais[i];
+      h += '<tr>';
+      h += '<td><strong>' + esc(d.centre) + '</strong></td>';
+      h += '<td>' + d.count + '</td>';
+      h += '<td>' + fmtNum(d.routeMedian) + '</td>';
+      h += '<td>' + fmtNum(d.routeP90) + '</td>';
+      h += '<td>' + fmtNum(d.sllMedian) + '</td>';
+      h += '<td class="' + (d.sllP90 > 30 ? 'badge-red' : '') + '">' + fmtNum(d.sllP90) + '</td>';
+      h += '</tr>';
+    }
+    h += '</tbody>';
+    document.getElementById('delaiTable').innerHTML = h;
+  }
+
+  /* ═══════════════════════════════════════
+     CHART HELPERS
+     ═══════════════════════════════════════ */
+  function makeChart(canvasId, type, labels, data, label, color) {
+    if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+    var ctx = document.getElementById(canvasId).getContext('2d');
+    chartInstances[canvasId] = new Chart(ctx, {
+      type: type,
+      data: {
+        labels: labels,
+        datasets: [{
+          label: label,
+          data: data,
+          backgroundColor: color + 'CC',
+          borderColor: color,
+          borderWidth: 1,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  function makePieChart(canvasId, labels, data, colors) {
+    if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+    var ctx = document.getElementById(canvasId).getContext('2d');
+    chartInstances[canvasId] = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: colors,
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════
+     HTML HELPERS
+     ═══════════════════════════════════════ */
+  function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+  function statCard(val, label, color) {
+    return '<div class="stat-card ' + color + '"><div class="stat-value">' + val + '</div><div class="stat-label">' + esc(label) + '</div></div>';
+  }
+
+  function fmtNum(n) {
+    if (n === null || n === undefined || n === 0) return '—';
+    return n.toFixed ? n.toFixed(1) : n;
+  }
+
+  function buildBarChart(arr, color) {
+    if (!arr || !arr.length) return '<div style="color:var(--text-light);">Aucune donnée</div>';
+    var max = arr[0].val;
+    var h = '<div class="bar-chart">';
+    for (var i = 0; i < arr.length; i++) {
+      var pct = max > 0 ? (arr[i].val / max * 100) : 0;
+      h += '<div class="bar-row">';
+      h += '<div class="bar-label" title="' + esc(arr[i].key) + '">' + esc(arr[i].key) + '</div>';
+      h += '<div class="bar-track"><div class="bar-fill ' + color + '" style="width:' + pct + '%"></div></div>';
+      h += '<div class="bar-val">' + arr[i].val + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function stackedBar(garde, astreinte, dispo, total) {
+    if (!total) return '';
+    var gp = (garde / total * 100).toFixed(1);
+    var ap = (astreinte / total * 100).toFixed(1);
+    var dp = (dispo / total * 100).toFixed(1);
+    return '<div class="stacked-bar">' +
+      '<div class="stacked-seg" style="width:' + gp + '%;background:var(--primary);" title="Garde: ' + garde + '"></div>' +
+      '<div class="stacked-seg" style="width:' + ap + '%;background:var(--orange);" title="Astreinte: ' + astreinte + '"></div>' +
+      '<div class="stacked-seg" style="width:' + dp + '%;background:var(--blue);" title="Dispo: ' + dispo + '"></div>' +
+      '</div>';
+  }
+</script>
+
+</body>
+</html>
