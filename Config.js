@@ -39,8 +39,8 @@ var Config = {
   PERPIGNAN_RINGS: [
     { name: 'Perpignan', keywords: ['PERPIGNAN'] },
     { name: '+ ~10 min', keywords: ['CANET','RIVESALTES','RIBERAL'] },
-    { name: '+ ~20 min', keywords: ['ELNE','SALANQUE','MILLAS','SAINT CYPRIEN','ASPRES','BAIXAS','PALAU','VINGRAU'] },
-    { name: '+ ~30 min', keywords: ['ARGELES','BOULOU','ILLE SUR','CERET','COTE VERMEILLE','AGLY','VINCA','BANYULS'] },
+    { name: '+ ~20 min', keywords: ['ELNE','SALANQUE','MILLAS','SAINT CYPRIEN','ASPRES','BAIXAS','PALAU'] },
+    { name: '+ ~30 min', keywords: ['ARGELES','BOULOU','ILLE SUR','CERET','COTE VERMEILLE','AGLY','VINCA','BANYULS','VINGRAU'] },
     { name: '+ ~45 min+', keywords: ['VALLESPIR','PRATS','SAINT PAUL','PRADES','OLETTE','SAILLAGOUSE','PORTE'] }
   ],
 

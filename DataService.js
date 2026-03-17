@@ -178,7 +178,7 @@ function deduplicateTemps_(rows) {
    ═══════════════════════════════════════════════════════ */
 function buildInterStats_(rows) {
   var total = rows.length;
-  var byCommune = {}, byHour = {}, byGroup = {};
+  var byCommune = {}, byHour = {}, byGroup = {}, distinctMonths = {};
 
   for (var i=0; i<rows.length; i++) {
     var r = rows[i];
@@ -186,18 +186,26 @@ function buildInterStats_(rows) {
     byCommune[com] = (byCommune[com]||0) + 1;
 
     var dp = parseDateParts_(r.debut);
-    if (dp) byHour[dp.hour] = (byHour[dp.hour]||0) + 1;
+    if (dp) {
+      byHour[dp.hour] = (byHour[dp.hour]||0) + 1;
+      distinctMonths[dp.date.getFullYear() + '-' + dp.month] = true;
+    }
 
     // Groupe géographique
     var gName = findCommuneGroup_(com);
     byGroup[gName] = (byGroup[gName]||0) + 1;
   }
 
+  var nbMois = 0;
+  for (var k in distinctMonths) nbMois++;
+  if (nbMois < 1) nbMois = 1;
+
   var hourArr = [];
   for (var h=0;h<24;h++) hourArr.push({key:h, val:byHour[h]||0});
 
   return {
     total: total,
+    nbMois: nbMois,
     byCommune: objToSorted_(byCommune).slice(0,30),
     byGroup: objToSorted_(byGroup),
     byHour: hourArr

@@ -83,7 +83,7 @@
   .carte-layout{display:flex;height:calc(100vh - 100px);}
   #map{flex:1;z-index:1;}
   #carteSidebar{width:400px;overflow-y:auto;background:var(--card);padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,.1);z-index:2;}
-  .sidebar-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--primary);}
+  .sidebar-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--primary);position:sticky;top:0;z-index:10;background:var(--card);}
   .sidebar-header h3{font-size:1.1em;color:var(--primary);margin-bottom:6px;}
   .coverage-control{margin-top:8px;}
   .coverage-control label{font-size:0.85em;color:var(--text);}
@@ -246,9 +246,10 @@
           <input type="range" id="travelSlider" min="0" max="60" step="5" value="0" oninput="updateTravel(this.value)">
           <div style="font-size:0.72em;color:var(--text-light);margin-top:2px;">↑ Augmenter pour inclure les casernes voisines dans chaque zone</div>
         </div>
+        <div id="zoneFilters" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px 8px;"></div>
       </div>
-      <div id="zoneCards"></div>
       <div id="zoneTotals"></div>
+      <div id="zoneCards"></div>
     </div>
   </div>
 </div>
@@ -632,12 +633,26 @@ function cisDistMin(c1,c2){return Math.round(cisDistKm(c1,c2)/50*60);} // ~50 km
 function populateCisIsp(){
   if(!DATA||!DATA.centres)return;
   var norm=function(s){return(s||'').toLowerCase().replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u').replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c').replace(/\bst\b/g,'saint').trim();};
+  // Reset
+  for(var i=0;i<CIS.length;i++) CIS[i].actualIsp=0;
+  var used={}; // track centres already assigned to prevent double-counting
+  // Pass 1: exact match
   for(var i=0;i<CIS.length;i++){
-    CIS[i].actualIsp=0;
     var cn=norm(CIS[i].nom);
     for(var j=0;j<DATA.centres.length;j++){
+      if(used[j])continue;
       var dn=norm(DATA.centres[j].centre);
-      if(cn===dn||cn.indexOf(dn)!==-1||dn.indexOf(cn)!==-1){CIS[i].actualIsp=DATA.centres[j].nbIsp;break;}
+      if(cn===dn){CIS[i].actualIsp=DATA.centres[j].nbIsp;used[j]=true;break;}
+    }
+  }
+  // Pass 2: fuzzy (contains, min 4 chars) for unmatched
+  for(var i=0;i<CIS.length;i++){
+    if(CIS[i].actualIsp>0)continue;
+    var cn=norm(CIS[i].nom);
+    for(var j=0;j<DATA.centres.length;j++){
+      if(used[j])continue;
+      var dn=norm(DATA.centres[j].centre);
+      if((cn.length>=4&&dn.indexOf(cn)!==-1)||(dn.length>=4&&cn.indexOf(dn)!==-1)){CIS[i].actualIsp=DATA.centres[j].nbIsp;used[j]=true;break;}
     }
   }
 }
@@ -660,9 +675,9 @@ function getContributingCis(zone,travelMax){
 /* ═══ ZONE → INTERVENTIONS/MOIS (données réelles) ═══ */
 function zIntMois(zo){
   if(DATA&&DATA.interStats&&DATA.interStats.byGroup){
-    var me=Math.max(1,new Date().getMonth()+1);
+    var nb=DATA.interStats.nbMois||12;
     for(var i=0;i<DATA.interStats.byGroup.length;i++){
-      if(DATA.interStats.byGroup[i].key===zo.name)return Math.round(DATA.interStats.byGroup[i].val/me);
+      if(DATA.interStats.byGroup[i].key===zo.name)return Math.round(DATA.interStats.byGroup[i].val/nb);
     }
   }
   return 0;
@@ -760,15 +775,34 @@ function renderZones(){
   var cp=parseInt(document.getElementById('coverSlider').value)||75;
   var travelMax=parseInt(document.getElementById('travelSlider').value)||0;
 
+  // Build zone filter checkboxes (once)
+  var filDiv=document.getElementById('zoneFilters');
+  if(!filDiv._built){
+    var fh='';
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zo=CARTE_ZONES[z];
+      fh+='<label style="font-size:0.75em;cursor:pointer;display:flex;align-items:center;gap:2px;"><input type="checkbox" checked data-zone="'+zo.name+'" onchange="renderZones()" style="accent-color:'+zo.color+';"><span style="color:'+zo.color+';font-weight:600;">'+zo.name+'</span></label>';
+    }
+    filDiv.innerHTML=fh;
+    filDiv._built=true;
+  }
+
+  // Read checked zones
+  var checkedZones={};
+  var checks=filDiv.querySelectorAll('input[type=checkbox]');
+  for(var i=0;i<checks.length;i++){if(checks[i].checked)checkedZones[checks[i].getAttribute('data-zone')]=true;}
+
   // Nettoyer anciens polygones et labels
   for(var i=0;i<window._zonePolys.length;i++)map.removeLayer(window._zonePolys[i]);
   for(var i=0;i<window._zoneLabels.length;i++)map.removeLayer(window._zoneLabels[i]);
   window._zonePolys=[];window._zoneLabels=[];
 
   var h='',tcIsp=0,tnIsp=0,tInter=0;
+  var nbMois=DATA&&DATA.interStats?DATA.interStats.nbMois||12:12;
 
   for(var z=0;z<CARTE_ZONES.length;z++){
     var zo=CARTE_ZONES[z];
+    var visible=!!checkedZones[zo.name];
     var im=zIntMois(zo);
 
     // CIS contribuant (core + temps trajet)
@@ -797,16 +831,18 @@ function renderZones(){
 
     tcIsp+=totalIsp;tnIsp+=nd;tInter+=im;
 
-    // Polygone zone (élargi si temps trajet)
-    var poly=mkZonePoly(contribIds);
-    if(poly.length>0){
-      var lyr=L.polygon(poly,{color:zo.color,weight:2,fillColor:zo.color,fillOpacity:.15,dashArray:'6,4'}).addTo(map);
-      lyr._zoneName=zo.name;
-      window._zonePolys.push(lyr);
-      var ct=centroid(poly);
-      var lbl=L.marker(ct,{icon:L.divIcon({className:'',html:'<div style="background:'+zo.color+';color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3);pointer-events:none;">'+zo.name+'</div>',iconSize:null,iconAnchor:[40,10]})}).addTo(map);
-      window._zoneLabels.push(lbl);
-      (function(zz,ll){ll.on('click',function(){hlZone(zz.name);});})(zo,lyr);
+    // Polygone zone (seulement si visible)
+    if(visible){
+      var poly=mkZonePoly(contribIds);
+      if(poly.length>0){
+        var lyr=L.polygon(poly,{color:zo.color,weight:2,fillColor:zo.color,fillOpacity:.15,dashArray:'6,4'}).addTo(map);
+        lyr._zoneName=zo.name;
+        window._zonePolys.push(lyr);
+        var ct=centroid(poly);
+        var lbl=L.marker(ct,{icon:L.divIcon({className:'',html:'<div style="background:'+zo.color+';color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3);pointer-events:none;">'+zo.name+'</div>',iconSize:null,iconAnchor:[40,10]})}).addTo(map);
+        window._zoneLabels.push(lbl);
+        (function(zz,ll){ll.on('click',function(){hlZone(zz.name);});})(zo,lyr);
+      }
     }
 
     // Carte sidebar
@@ -815,10 +851,10 @@ function renderZones(){
       extraHtml='<div style="font-size:.75em;color:var(--blue);margin-top:3px;">+ '+extraCis.map(function(c){return c.nom+(c.actualIsp?' ('+c.actualIsp+')':'');}).join(', ')+'</div>';
     }
 
-    h+='<div class="zone-card" data-z="'+zo.name+'" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')" style="border-left-color:'+zo.color+';">';
+    h+='<div class="zone-card" data-z="'+zo.name+'" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')" style="border-left-color:'+zo.color+';'+(visible?'':'opacity:0.4;')+'">';
     h+='<div class="zn" style="color:'+zo.color+';">'+zo.name+' <span style="font-weight:400;font-size:.78em;color:var(--text-light);">('+coreNames.join(', ')+')</span></div>';
-    h+='<div class="zr"><span>Inter/mois (réel)</span><strong>~'+im+'</strong></div>';
-    h+='<div class="zr"><span>ISP actuels</span><strong>'+totalIsp+'</strong></div>';
+    h+='<div class="zr"><span>Inter/mois (sur '+nbMois+' mois)</span><strong>~'+im+'</strong></div>';
+    h+='<div class="zr"><span>ISP actuels (listing)</span><strong>'+totalIsp+'</strong></div>';
     h+='<div class="zr"><span>ISP requis ('+cp+'%)</span><strong>'+nd+'</strong></div>';
     h+='<div class="zr"><span>Couverture</span><strong>'+cv+'%</strong></div>';
     h+=extraHtml;
@@ -828,13 +864,15 @@ function renderZones(){
   document.getElementById('zoneCards').innerHTML=h;
 
   var tcv=covPct(tcIsp,tInter),td=tcIsp-tnIsp;
+  var listingTotal=DATA&&DATA.effectifStats?DATA.effectifStats.total:'?';
   document.getElementById('zoneTotals').innerHTML=
-    '<div class="zone-totals">'+
+    '<div class="zone-totals" style="margin-bottom:12px;">'+
     '<div class="tr" style="font-weight:700;margin-bottom:6px;font-size:1em;"><span>📊 Synthèse département</span></div>'+
-    '<div class="tr"><span>Interventions/mois</span><strong>~'+tInter+'</strong></div>'+
-    '<div class="tr"><span>ISP actuels total</span><strong>'+tcIsp+'</strong></div>'+
+    '<div class="tr"><span>Interventions/mois (sur '+nbMois+' mois de données)</span><strong>~'+tInter+'</strong></div>'+
+    '<div class="tr"><span>ISP au listing (total réel)</span><strong>'+listingTotal+'</strong></div>'+
+    '<div class="tr"><span>ISP rattachés aux zones</span><strong>'+tcIsp+'</strong></div>'+
     '<div class="tr"><span>ISP requis ('+cp+'%)</span><strong>'+tnIsp+'</strong></div>'+
-    '<div class="tr"><span>Couverture actuelle</span><strong>'+tcv+'%</strong></div>'+
+    '<div class="tr"><span>Couverture globale</span><strong>'+tcv+'%</strong></div>'+
     '<div class="tr"><span>Écart global</span><strong style="color:'+(td>=0?'var(--green)':'var(--primary)')+';">'+(td>=0?'+':'')+td+' ISP</strong></div>'+
     '</div>';
 }
