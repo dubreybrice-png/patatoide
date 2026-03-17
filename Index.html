@@ -676,9 +676,9 @@ function cisDistKm(c1,c2){
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 function cisDistMin(c1,c2){
-  // Route P-O : facteur sinuosité 1.4 (vol oiseau → route), vitesse moyenne 50 km/h
+  // Route P-O : facteur sinuosité 1.2, vitesse moy 65 km/h (véhicule perso)
   var km=cisDistKm(c1,c2);
-  return Math.round(km*1.4/50*60);
+  return Math.round(km*1.2/65*60);
 }
 
 /* ═══ POPULATION ISP RÉELS DEPUIS LE LISTING ═══ */
@@ -871,8 +871,9 @@ function renderZones(){
   for(var i=0;i<window._zoneLabels.length;i++)map.removeLayer(window._zoneLabels[i]);
   window._zonePolys=[];window._zoneLabels=[];
 
+  if(!window._ispAdjust)window._ispAdjust={};
   var h='';
-  var totOwnIsp=0,totNeeded=0,totInter=0,zonesOk=0;
+  var totOwnIsp=0,totAdjIsp=0,totNeeded=0,totInter=0,zonesOk=0,globalNum=0,globalDen=0;
 
   for(var z=0;z<CARTE_ZONES.length;z++){
     var zo=CARTE_ZONES[z];
@@ -909,18 +910,24 @@ function renderZones(){
     var nearbyIsp=0;
     for(var i=0;i<nearbyCis.length;i++) nearbyIsp+=nearbyCis[i].isp;
 
+    /* ── ISP simulés (slider ou listing par défaut) ── */
+    var adjIsp=(window._ispAdjust[zo.name]!==undefined)?window._ispAdjust[zo.name]:Math.round(ownIsp);
+
     /* ── Couverture ── */
-    var ownCov=covPct(ownIsp,im,gh);
-    var totalCov=(nearbyIsp>0)?covPct(ownIsp+nearbyIsp,im,gh):ownCov;
+    var adjCov=covPct(adjIsp,im,gh);
+    var totalCov=(nearbyIsp>0)?covPct(adjIsp+nearbyIsp,im,gh):adjCov;
     var nd=needISP(cp,im,gh);
-    var df=ownIsp-nd;
+    var df=adjIsp-nd;
+    var demand=H_MOIS+im*DUREE_INTER;
+    globalNum+=Math.min(demand,ispH(adjIsp)+gh);
+    globalDen+=demand;
 
     var st,scl;
     if(df>=0){st='✅ OK (+'+df+')';scl='ok';zonesOk++;}
     else if(df>=-3){st='⚠️ −'+Math.abs(df)+' ISP';scl='warn';}
     else{st='🚨 −'+Math.abs(df)+' ISP';scl='crit';}
 
-    totOwnIsp+=ownIsp; totNeeded+=nd; totInter+=im;
+    totOwnIsp+=ownIsp; totAdjIsp+=adjIsp; totNeeded+=nd; totInter+=im;
 
     /* ── Polygone zone sur la carte ── */
     if(visible){
@@ -948,9 +955,14 @@ function renderZones(){
       var gl=gardeLabel(zo.name);
       if(gl) h+='<div style="font-size:.7em;color:var(--text-light);margin:-2px 0 2px;padding-left:4px;">'+gl+'</div>';
     }
-    h+='<div class="zr" style="font-weight:700;"><span>ISP nécessaires pour '+cp+'% couverture</span><strong style="font-size:1.1em;">'+nd+'</strong></div>';
-    h+='<div class="zr"><span>ISP actuels au listing</span><strong>'+ownIsp+'</strong></div>';
-    h+='<div class="zr"><span>Couverture actuelle ('+ownIsp+' ISP × 36h'+(gh>0?' + garde':'')+' / 730h+inter)</span><strong>'+ownCov+'%</strong></div>';
+    h+='<div class="zr" style="font-weight:700;"><span>ISP nécessaires pour '+cp+'%</span><strong style="font-size:1.1em;">'+nd+'</strong></div>';
+    h+='<div class="zr"><span>ISP actuels (listing)</span><strong>'+ownIsp+'</strong></div>';
+    h+='<div class="zr" style="display:flex;align-items:center;gap:4px;"><span style="flex:1;">🎚️ ISP simulés</span>';
+    h+='<input type="range" min="0" max="50" value="'+adjIsp+'" style="width:70px;margin:0;cursor:pointer;" ';
+    h+='oninput="this.parentNode.querySelector(\'.adj-val\').textContent=this.value;" ';
+    h+='onchange="if(!window._ispAdjust)window._ispAdjust={};window._ispAdjust[CARTE_ZONES['+z+'].name]=+this.value;renderZones();">';
+    h+='<strong class="adj-val" style="min-width:18px;text-align:right;">'+adjIsp+'</strong></div>';
+    h+='<div class="zr"><span>Couverture ('+adjIsp+' ISP × 36h'+(gh>0?' + garde':'')+' / 730h+inter)</span><strong>'+adjCov+'%</strong></div>';
 
     /* ── Détail renfort (CIS par CIS, pas zone par zone) ── */
     if(nearbyCis.length>0){
@@ -960,7 +972,7 @@ function renderZones(){
         var nc=nearbyCis[i];
         h+='<div style="font-size:.75em;color:var(--text-light);padding:1px 0 1px 8px;">'+nc.cis.nom+' — <strong>'+nc.isp+' ISP</strong> — '+nc.dist+' min</div>';
       }
-      h+='<div class="zr" style="color:var(--blue);"><span>Couverture avec renfort ('+(ownIsp+nearbyIsp)+' ISP)</span><strong>'+totalCov+'%</strong></div>';
+      h+='<div class="zr" style="color:var(--blue);"><span>Couverture avec renfort ('+(adjIsp+nearbyIsp)+' ISP)</span><strong>'+totalCov+'%</strong></div>';
       h+='</div>';
     }
 
@@ -969,21 +981,24 @@ function renderZones(){
 
   document.getElementById('zoneCards').innerHTML=h;
 
-  /* ── Synthèse département (sans double comptage) ── */
+  /* ── Synthèse département ── */
   var listingTotal=DATA&&DATA.effectifStats?DATA.effectifStats.total:'?';
-  var totDf=totOwnIsp-totNeeded;
+  var totDf=totAdjIsp-totNeeded;
   var tGarde=0;for(var z=0;z<CARTE_ZONES.length;z++)tGarde+=gardeHMois(CARTE_ZONES[z].name);
+  var globalCov=globalDen>0?Math.round(globalNum/globalDen*1000)/10:0;
 
   var synthHtml=
     '<div class="zone-totals" style="margin-bottom:12px;">'+
     '<div class="tr" style="font-weight:700;margin-bottom:6px;font-size:1em;"><span>📊 Synthèse département</span></div>'+
     '<div class="tr"><span>Inter/mois total ('+nbMois+' mois)</span><strong>~'+totInter+'</strong></div>'+
     '<div class="tr"><span>ISP au listing</span><strong>'+listingTotal+'</strong></div>'+
-    '<div class="tr"><span>ISP affectés aux casernes</span><strong>'+totOwnIsp+'</strong></div>'+
+    '<div class="tr"><span>ISP simulés total</span><strong>'+totAdjIsp+'</strong></div>'+
     (tGarde>0?'<div class="tr" style="color:var(--blue);"><span>🛡️ Gardes (+'+tGarde+'h/mois ≈ +'+Math.round(tGarde/BASE_H)+' ISP éq.)</span><strong></strong></div>':'')+
     '<div class="tr"><span>ISP requis total ('+cp+'%)</span><strong>'+totNeeded+'</strong></div>'+
-    '<div class="tr"><span>Écart</span><strong style="color:'+(totDf>=0?'var(--green)':'var(--primary)')+';">'+(totDf>=0?'+':'')+totDf+' ISP</strong></div>'+
+    '<div class="tr"><span>Écart simulé</span><strong style="color:'+(totDf>=0?'var(--green)':'var(--primary)')+';">'+(totDf>=0?'+':'')+totDf+' ISP</strong></div>'+
+    '<div class="tr" style="font-weight:700;font-size:1.05em;"><span>📈 Couverture globale</span><strong style="color:'+(globalCov>=cp?'var(--green)':'var(--primary)')+';">'+globalCov+'%</strong></div>'+
     '<div class="tr"><span>Zones à l\'objectif ('+cp+'%)</span><strong style="color:'+(zonesOk===CARTE_ZONES.length?'var(--green)':'var(--primary)')+';">'+zonesOk+' / '+CARTE_ZONES.length+'</strong></div>'+
+    '<div style="text-align:center;margin-top:6px;"><a href="#" onclick="window._ispAdjust={};renderZones();return false;" style="font-size:.75em;color:var(--blue);text-decoration:none;">🔄 Réinitialiser simulations</a></div>'+
     '</div>';
 
   document.getElementById('zoneTotals').innerHTML=synthHtml;
