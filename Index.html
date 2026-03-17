@@ -615,11 +615,41 @@ var CARTE_ZONES=[
 {name:'Fenouillèdes',cis:['st-paul-fenouillet','sournia','caudies'],color:'#636e72'},
 {name:'Cerdagne-Capcir',cis:['cerdagne','saillagouse','mont-louis','font-romeu','capcir','porte'],color:'#d63031'}];
 
+/* ═══ GARDE (couverture garantie) ═══ */
+var GARDE=[
+  { zone:'Agglo Perpignan', cis:'psud', label:'Garde Perpignan Sud',
+    jour:{startH:8,endH:20,mois:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    nuit:{startH:20,endH:8,mois:[7,8,9]} }
+];
+function gardeHMois(zoneName){
+  var total=0;
+  for(var g=0;g<GARDE.length;g++){
+    if(GARDE[g].zone!==zoneName)continue;
+    // Jour: 12h/jour × nb mois/12 × 30.4j
+    if(GARDE[g].jour) total+=(GARDE[g].jour.endH-GARDE[g].jour.startH)*30.4*GARDE[g].jour.mois.length/12;
+    // Nuit: 12h/jour × nb mois/12 × 30.4j
+    if(GARDE[g].nuit) total+=((24-GARDE[g].nuit.startH)+GARDE[g].nuit.endH)*30.4*GARDE[g].nuit.mois.length/12;
+  }
+  return Math.round(total);
+}
+function gardeLabel(zoneName){
+  for(var g=0;g<GARDE.length;g++){
+    if(GARDE[g].zone!==zoneName)continue;
+    var parts=[];
+    if(GARDE[g].jour) parts.push('Jour '+GARDE[g].jour.startH+'h-'+GARDE[g].jour.endH+'h toute l\'année');
+    if(GARDE[g].nuit){
+      var mn=['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+      parts.push('Nuit '+GARDE[g].nuit.startH+'h-'+GARDE[g].nuit.endH+'h ('+GARDE[g].nuit.mois.map(function(m){return mn[m];}).join('/')+')');}
+    return GARDE[g].label+' : '+parts.join(' + ');
+  }
+  return null;
+}
+
 /* ═══ MODÈLE ISP ═══ */
 var H_MOIS=730,BASE_H=36,DUREE_INTER=2;
 function ispH(n){return n*BASE_H+Math.floor(n/5)*BASE_H;}
-function needISP(cp,im){for(var n=0;n<=500;n++){if(ispH(n)>=(cp/100)*(H_MOIS+im*DUREE_INTER))return n;}return 500;}
-function covPct(n,im){var d=H_MOIS+im*DUREE_INTER;return d>0?Math.min(100,Math.round(ispH(n)/d*1000)/10):100;}
+function needISP(cp,im,gh){gh=gh||0;for(var n=0;n<=500;n++){if(ispH(n)+gh>=(cp/100)*(H_MOIS+im*DUREE_INTER))return n;}return 500;}
+function covPct(n,im,gh){gh=gh||0;var d=H_MOIS+im*DUREE_INTER;return d>0?Math.min(100,Math.round((ispH(n)+gh)/d*1000)/10):100;}
 
 /* ═══ DISTANCE / TEMPS TRAJET ENTRE CASERNES ═══ */
 function cisDistKm(c1,c2){
@@ -820,8 +850,9 @@ function renderZones(){
     // CIS supplémentaires (hors zone core)
     var extraCis=contrib.filter(function(c){return zo.cis.indexOf(c.id)===-1;});
 
-    var nd=needISP(cp,im);
-    var cv=covPct(totalIsp,im);
+    var gh=gardeHMois(zo.name);
+    var nd=needISP(cp,im,gh);
+    var cv=covPct(totalIsp,im,gh);
     var df=totalIsp-nd;
 
     var st,scl;
@@ -855,6 +886,11 @@ function renderZones(){
     h+='<div class="zn" style="color:'+zo.color+';">'+zo.name+' <span style="font-weight:400;font-size:.78em;color:var(--text-light);">('+coreNames.join(', ')+')</span></div>';
     h+='<div class="zr"><span>Inter/mois (sur '+nbMois+' mois)</span><strong>~'+im+'</strong></div>';
     h+='<div class="zr"><span>ISP actuels (listing)</span><strong>'+totalIsp+'</strong></div>';
+    if(gh>0){
+      h+='<div class="zr" style="color:var(--blue);"><span>🛡️ Garde (+'+gh+'h/mois)</span><strong>≈ +'+Math.round(gh/BASE_H)+' ISP éq.</strong></div>';
+      var gl=gardeLabel(zo.name);
+      if(gl) h+='<div style="font-size:.7em;color:var(--text-light);margin:-2px 0 2px;padding-left:4px;">'+gl+'</div>';
+    }
     h+='<div class="zr"><span>ISP requis ('+cp+'%)</span><strong>'+nd+'</strong></div>';
     h+='<div class="zr"><span>Couverture</span><strong>'+cv+'%</strong></div>';
     h+=extraHtml;
@@ -863,17 +899,22 @@ function renderZones(){
 
   document.getElementById('zoneCards').innerHTML=h;
 
-  var tcv=covPct(tcIsp,tInter),td=tcIsp-tnIsp;
+  // Total guard hours across all zones
+  var tGarde=0;for(var z=0;z<CARTE_ZONES.length;z++)tGarde+=gardeHMois(CARTE_ZONES[z].name);
+  var tcv=covPct(tcIsp,tInter,tGarde),td=tcIsp-tnIsp;
   var listingTotal=DATA&&DATA.effectifStats?DATA.effectifStats.total:'?';
+  var tnIspG=needISP(cp,tInter,tGarde);
+  var tdG=tcIsp-tnIspG;
   document.getElementById('zoneTotals').innerHTML=
     '<div class="zone-totals" style="margin-bottom:12px;">'+
     '<div class="tr" style="font-weight:700;margin-bottom:6px;font-size:1em;"><span>📊 Synthèse département</span></div>'+
     '<div class="tr"><span>Interventions/mois (sur '+nbMois+' mois de données)</span><strong>~'+tInter+'</strong></div>'+
     '<div class="tr"><span>ISP au listing (total réel)</span><strong>'+listingTotal+'</strong></div>'+
     '<div class="tr"><span>ISP rattachés aux zones</span><strong>'+tcIsp+'</strong></div>'+
-    '<div class="tr"><span>ISP requis ('+cp+'%)</span><strong>'+tnIsp+'</strong></div>'+
+    (tGarde>0?'<div class="tr" style="color:var(--blue);"><span>🛡️ Gardes (+'+tGarde+'h/mois ≈ +'+Math.round(tGarde/BASE_H)+' ISP éq.)</span><strong></strong></div>':'')+
+    '<div class="tr"><span>ISP requis ('+cp+'%)</span><strong>'+tnIspG+'</strong></div>'+
     '<div class="tr"><span>Couverture globale</span><strong>'+tcv+'%</strong></div>'+
-    '<div class="tr"><span>Écart global</span><strong style="color:'+(td>=0?'var(--green)':'var(--primary)')+';">'+(td>=0?'+':'')+td+' ISP</strong></div>'+
+    '<div class="tr"><span>Écart global</span><strong style="color:'+(tdG>=0?'var(--green)':'var(--primary)')+';">'+(tdG>=0?'+':'')+tdG+' ISP</strong></div>'+
     '</div>';
 }
 
