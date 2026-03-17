@@ -657,7 +657,11 @@ function cisDistKm(c1,c2){
   var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(c1.lat*Math.PI/180)*Math.cos(c2.lat*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-function cisDistMin(c1,c2){return Math.round(cisDistKm(c1,c2)/50*60);} // ~50 km/h moyen routes P-O
+function cisDistMin(c1,c2){
+  // Route P-O : facteur sinuosité 1.4 (vol oiseau → route), vitesse moyenne 50 km/h
+  var km=cisDistKm(c1,c2);
+  return Math.round(km*1.4/50*60);
+}
 
 /* ═══ POPULATION ISP RÉELS DEPUIS LE LISTING ═══ */
 function populateCisIsp(){
@@ -759,6 +763,10 @@ function initCarte(){
   window._zonePolys=[];
   window._zoneLabels=[];
 
+  // Créer un pane pour les marqueurs CIS au-dessus des polygones
+  map.createPane('cisMarkers');
+  map.getPane('cisMarkers').style.zIndex=650;
+
   populateCisIsp();
 
   // Marqueurs CIS avec tooltips réels
@@ -768,7 +776,7 @@ function initCarte(){
     var zoneName='—';
     for(var z=0;z<CARTE_ZONES.length;z++){if(CARTE_ZONES[z].cis.indexOf(c.id)!==-1){zoneName=CARTE_ZONES[z].name;break;}}
     var tip='<strong>'+c.nom+'</strong><br>Groupement '+c.grp+'<br>Zone : '+zoneName+'<br>ISP actuels : <strong>'+isp+'</strong>';
-    L.circleMarker([c.lat,c.lng],{radius:Math.max(4,Math.min(12,isp*1.5+3)),fillColor:gc[c.grp]||'#333',color:'#fff',weight:2,fillOpacity:.9})
+    L.circleMarker([c.lat,c.lng],{pane:'cisMarkers',radius:Math.max(4,Math.min(12,isp*1.5+3)),fillColor:gc[c.grp]||'#333',color:'#fff',weight:2,fillOpacity:.9})
      .addTo(map).bindTooltip(tip,{direction:'top',offset:[0,-8]});
   }
 
