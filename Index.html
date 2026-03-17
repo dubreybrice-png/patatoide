@@ -665,30 +665,90 @@ function cisDistMin(c1,c2){
 
 /* ═══ POPULATION ISP RÉELS DEPUIS LE LISTING ═══ */
 function populateCisIsp(){
-  if(!DATA||!DATA.centres)return;
-  var norm=function(s){return(s||'').toLowerCase().replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u').replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c').replace(/\bst\b/g,'saint').trim();};
+  if(!DATA)return;
+
+  /* Sources de données : DATA.centres (listing) ET DATA.effectifStats.byCentre */
+  var src=[];
+  if(DATA.centres&&DATA.centres.length){
+    for(var j=0;j<DATA.centres.length;j++) src.push({name:DATA.centres[j].centre, count:DATA.centres[j].nbIsp});
+  } else if(DATA.effectifStats&&DATA.effectifStats.byCentre){
+    for(var j=0;j<DATA.effectifStats.byCentre.length;j++){
+      var e=DATA.effectifStats.byCentre[j];
+      if(e.key&&e.key!=='Non affecté') src.push({name:e.key, count:e.val});
+    }
+  }
+
+  var norm=function(s){
+    return(s||'').toLowerCase()
+      .replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u')
+      .replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c')
+      .replace(/[-_']/g,' ').replace(/\s+/g,' ')
+      .replace(/\b(cis|csp|cs|ci)\b/gi,'')  // strip CIS/CSP prefixes
+      .replace(/\s+/g,' ')
+      .replace(/\bst\b/g,'saint')
+      .replace(/^(le|la|les|l)\s+/,'')  // strip leading article
+      .trim();
+  };
+
   // Reset
   for(var i=0;i<CIS.length;i++) CIS[i].actualIsp=0;
-  var used={}; // track centres already assigned to prevent double-counting
-  // Pass 1: exact match
+  var used={};
+
+  // Pre-compute normalized names
+  var srcNorms=[];
+  for(var j=0;j<src.length;j++) srcNorms.push(norm(src[j].name));
+  var cisNorms=[];
+  for(var i=0;i<CIS.length;i++) cisNorms.push(norm(CIS[i].nom));
+
+  // Pass 1: exact match after normalization
   for(var i=0;i<CIS.length;i++){
-    var cn=norm(CIS[i].nom);
-    for(var j=0;j<DATA.centres.length;j++){
+    for(var j=0;j<src.length;j++){
       if(used[j])continue;
-      var dn=norm(DATA.centres[j].centre);
-      if(cn===dn){CIS[i].actualIsp=DATA.centres[j].nbIsp;used[j]=true;break;}
+      if(cisNorms[i]===srcNorms[j]){CIS[i].actualIsp=src[j].count;used[j]=true;break;}
     }
   }
-  // Pass 2: fuzzy (contains, min 4 chars) for unmatched
+
+  // Pass 2: fuzzy substring (≥3 chars)
   for(var i=0;i<CIS.length;i++){
     if(CIS[i].actualIsp>0)continue;
-    var cn=norm(CIS[i].nom);
-    for(var j=0;j<DATA.centres.length;j++){
+    var cn=cisNorms[i];
+    for(var j=0;j<src.length;j++){
       if(used[j])continue;
-      var dn=norm(DATA.centres[j].centre);
-      if((cn.length>=4&&dn.indexOf(cn)!==-1)||(dn.length>=4&&cn.indexOf(dn)!==-1)){CIS[i].actualIsp=DATA.centres[j].nbIsp;used[j]=true;break;}
+      var dn=srcNorms[j];
+      if((cn.length>=3&&dn.indexOf(cn)!==-1)||(dn.length>=3&&cn.indexOf(dn)!==-1)){CIS[i].actualIsp=src[j].count;used[j]=true;break;}
     }
   }
+
+  // Pass 3: any word ≥3 chars in common (best score)
+  for(var i=0;i<CIS.length;i++){
+    if(CIS[i].actualIsp>0)continue;
+    var cw=cisNorms[i].split(' ').filter(function(w){return w.length>=3;});
+    if(!cw.length)continue;
+    var bestJ=-1,bestScore=0;
+    for(var j=0;j<src.length;j++){
+      if(used[j])continue;
+      var dw=srcNorms[j].split(' ').filter(function(w){return w.length>=3;});
+      var score=0;
+      for(var a=0;a<cw.length;a++){for(var b=0;b<dw.length;b++){if(cw[a]===dw[b])score++;}}
+      if(score>bestScore){bestScore=score;bestJ=j;}
+    }
+    if(bestScore>=1&&bestJ>=0){CIS[i].actualIsp=src[bestJ].count;used[bestJ]=true;}
+  }
+
+  // Debug info stored globally for sidebar display
+  window._ispDebug={src:src.length,matched:0,unmatched:[],unusedSrc:[]};
+  for(var i=0;i<CIS.length;i++){
+    if(CIS[i].actualIsp>0) window._ispDebug.matched++;
+    else window._ispDebug.unmatched.push(CIS[i].nom);
+  }
+  for(var j=0;j<src.length;j++){
+    if(!used[j]) window._ispDebug.unusedSrc.push(src[j].name+' ('+src[j].count+')');
+  }
+  console.log('ISP MATCHING: '+window._ispDebug.matched+'/'+CIS.length+' CIS matchés, '+src.length+' centres dans le listing');
+  if(window._ispDebug.unmatched.length) console.log('NON MATCHÉS:', window._ispDebug.unmatched.join(', '));
+  if(window._ispDebug.unusedSrc.length) console.log('CENTRES NON AFFECTÉS:', window._ispDebug.unusedSrc.join(', '));
+  // Log all src names for debugging
+  console.log('CENTRES LISTING BRUTS:', src.map(function(s){return '"'+s.name+'"';}).join(', '));
 }
 
 /* ═══ CASERNES CONTRIBUANT À UNE ZONE (avec temps trajet) ═══ */
@@ -768,6 +828,12 @@ function initCarte(){
   map.getPane('cisMarkers').style.zIndex=650;
 
   populateCisIsp();
+
+  // DEBUG: appeler le serveur pour voir les vrais noms de centres
+  google.script.run.withSuccessHandler(function(names){
+    console.log('=== NOMS CENTRES BRUTS DU SPREADSHEET ===');
+    for(var k in names) console.log('  "'+k+'" : '+names[k]+' ISP');
+  }).debugCentreNames();
 
   // Marqueurs CIS avec tooltips réels
   var gc={Nord:'#3498db',Ouest:'#9b59b6',Sud:'#e67e22'};
@@ -907,15 +973,15 @@ function renderZones(){
     h+='<div class="zone-card" data-z="'+zo.name+'" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')" style="border-left-color:'+zo.color+';'+(visible?'':'opacity:0.4;')+'">';
     h+='<div class="zn" style="color:'+zo.color+';">'+zo.name+'</div>';
     h+='<div style="font-size:.78em;color:var(--text-light);margin-bottom:4px;">'+coreDetail.join(', ')+'</div>';
-    h+='<div class="zr"><span>Inter/mois ('+nbMois+' mois)</span><strong>~'+im+'</strong></div>';
-    h+='<div class="zr"><span>ISP propres</span><strong>'+ownIsp+'</strong></div>';
+    h+='<div class="zr"><span>Inter/mois ('+nbMois+' mois de données)</span><strong>~'+im+'</strong></div>';
     if(gh>0){
       h+='<div class="zr" style="color:var(--blue);"><span>🛡️ Garde (+'+gh+'h/mois)</span><strong>≈ +'+Math.round(gh/BASE_H)+' ISP éq.</strong></div>';
       var gl=gardeLabel(zo.name);
       if(gl) h+='<div style="font-size:.7em;color:var(--text-light);margin:-2px 0 2px;padding-left:4px;">'+gl+'</div>';
     }
-    h+='<div class="zr"><span>Couverture propre</span><strong>'+ownCov+'%</strong></div>';
-    h+='<div class="zr"><span>ISP requis ('+cp+'%)</span><strong>'+nd+'</strong></div>';
+    h+='<div class="zr" style="font-weight:700;"><span>ISP nécessaires pour '+cp+'% couverture</span><strong style="font-size:1.1em;">'+nd+'</strong></div>';
+    h+='<div class="zr"><span>ISP actuels au listing</span><strong>'+ownIsp+'</strong></div>';
+    h+='<div class="zr"><span>Couverture actuelle ('+ownIsp+' ISP × 36h'+(gh>0?' + garde':'')+' / 730h+inter)</span><strong>'+ownCov+'%</strong></div>';
 
     /* ── Détail renfort (CIS par CIS, pas zone par zone) ── */
     if(nearbyCis.length>0){
@@ -925,7 +991,7 @@ function renderZones(){
         var nc=nearbyCis[i];
         h+='<div style="font-size:.75em;color:var(--text-light);padding:1px 0 1px 8px;">'+nc.cis.nom+' — <strong>'+nc.isp+' ISP</strong> — '+nc.dist+' min</div>';
       }
-      h+='<div class="zr" style="color:var(--blue);"><span>Couverture avec renfort</span><strong>'+totalCov+'%</strong></div>';
+      h+='<div class="zr" style="color:var(--blue);"><span>Couverture avec renfort ('+(ownIsp+nearbyIsp)+' ISP)</span><strong>'+totalCov+'%</strong></div>';
       h+='</div>';
     }
 
@@ -939,7 +1005,7 @@ function renderZones(){
   var totDf=totOwnIsp-totNeeded;
   var tGarde=0;for(var z=0;z<CARTE_ZONES.length;z++)tGarde+=gardeHMois(CARTE_ZONES[z].name);
 
-  document.getElementById('zoneTotals').innerHTML=
+  var synthHtml=
     '<div class="zone-totals" style="margin-bottom:12px;">'+
     '<div class="tr" style="font-weight:700;margin-bottom:6px;font-size:1em;"><span>📊 Synthèse département</span></div>'+
     '<div class="tr"><span>Inter/mois total ('+nbMois+' mois)</span><strong>~'+totInter+'</strong></div>'+
@@ -950,6 +1016,18 @@ function renderZones(){
     '<div class="tr"><span>Écart</span><strong style="color:'+(totDf>=0?'var(--green)':'var(--primary)')+';">'+(totDf>=0?'+':'')+totDf+' ISP</strong></div>'+
     '<div class="tr"><span>Zones à l\'objectif ('+cp+'%)</span><strong style="color:'+(zonesOk===CARTE_ZONES.length?'var(--green)':'var(--primary)')+';">'+zonesOk+' / '+CARTE_ZONES.length+'</strong></div>'+
     '</div>';
+
+  /* ── Debug matching (visible temporairement) ── */
+  var dbg=window._ispDebug;
+  if(dbg){
+    synthHtml+='<div style="background:#fff3cd;border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:.72em;line-height:1.5;color:#664d03;">';
+    synthHtml+='<strong>🔍 Debug matching ISP</strong> — '+dbg.matched+'/'+CIS.length+' CIS matchés sur '+dbg.src+' centres listing<br>';
+    if(dbg.unmatched.length) synthHtml+='<strong>CIS sans ISP :</strong> '+dbg.unmatched.join(', ')+'<br>';
+    if(dbg.unusedSrc.length) synthHtml+='<strong>Centres listing non affectés :</strong> '+dbg.unusedSrc.join(', ')+'<br>';
+    synthHtml+='</div>';
+  }
+
+  document.getElementById('zoneTotals').innerHTML=synthHtml;
 }
 
 function updateCoverage(v){document.getElementById('coverTarget').textContent=v;renderZones();}
