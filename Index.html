@@ -645,6 +645,24 @@ function gardeLabel(zoneName){
   return null;
 }
 
+/* ═══ MAPPING LISTING → CIS (noms exacts du spreadsheet) ═══ */
+var CENTRE_TO_CIS={
+'perpignan sud':'psud','perpignan nord':'pnord','perpignan ouest':'pouest',
+'canet':'canet','boulou':'boulou','saint cyprien':'saint-cyprien',
+'ceret':'ceret','argeles':'argeles','vingrau':'vingrau','maury':'maury',
+'cote vermeille':'cote-vermeille','vinca':'vinca','ille sur tet':'ille-sur-tet',
+'millas':'millas','les aspres':'les-aspres','baixas':'baixas',
+'saillagouse':'saillagouse','elne':'elne','palau':'palau','prats':'prats',
+'olette':'olette','agly':'agly','salanque':'salanque','rivesaltes':'rivesaltes',
+'saint paul de fenouillet':'st-paul-fenouillet','st paul de fenouillet':'st-paul-fenouillet',
+'banyuls':'banyuls','riberal':'riberal','vallespir':'vallespir',
+'porte':'porte','cerdagne':'cerdagne',
+'font romeu':'font-romeu','mont louis':'mont-louis','le barcares':'le-barcares',
+'salses':'salses','caudies':'caudies','capcir':'capcir','sournia':'sournia',
+'vernet':'vernet','prades':'prades','cerbere':'cerbere',
+'st laurent de cerdans':'st-laurent-cerdans','saint laurent de cerdans':'st-laurent-cerdans'
+};
+
 /* ═══ MODÈLE ISP ═══ */
 var H_MOIS=730,BASE_H=36,DUREE_INTER=2;
 function ispH(n){return n*BASE_H+Math.floor(n/5)*BASE_H;}
@@ -667,88 +685,45 @@ function cisDistMin(c1,c2){
 function populateCisIsp(){
   if(!DATA)return;
 
-  /* Sources de données : DATA.centres (listing) ET DATA.effectifStats.byCentre */
-  var src=[];
-  if(DATA.centres&&DATA.centres.length){
-    for(var j=0;j<DATA.centres.length;j++) src.push({name:DATA.centres[j].centre, count:DATA.centres[j].nbIsp});
-  } else if(DATA.effectifStats&&DATA.effectifStats.byCentre){
-    for(var j=0;j<DATA.effectifStats.byCentre.length;j++){
-      var e=DATA.effectifStats.byCentre[j];
-      if(e.key&&e.key!=='Non affecté') src.push({name:e.key, count:e.val});
-    }
-  }
-
-  var norm=function(s){
-    return(s||'').toLowerCase()
-      .replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u')
-      .replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c')
-      .replace(/[-_']/g,' ').replace(/\s+/g,' ')
-      .replace(/\b(cis|csp|cs|ci)\b/gi,'')  // strip CIS/CSP prefixes
-      .replace(/\s+/g,' ')
-      .replace(/\bst\b/g,'saint')
-      .replace(/^(le|la|les|l)\s+/,'')  // strip leading article
-      .trim();
-  };
-
   // Reset
   for(var i=0;i<CIS.length;i++) CIS[i].actualIsp=0;
-  var used={};
 
-  // Pre-compute normalized names
-  var srcNorms=[];
-  for(var j=0;j<src.length;j++) srcNorms.push(norm(src[j].name));
-  var cisNorms=[];
-  for(var i=0;i<CIS.length;i++) cisNorms.push(norm(CIS[i].nom));
-
-  // Pass 1: exact match after normalization
-  for(var i=0;i<CIS.length;i++){
-    for(var j=0;j<src.length;j++){
-      if(used[j])continue;
-      if(cisNorms[i]===srcNorms[j]){CIS[i].actualIsp=src[j].count;used[j]=true;break;}
+  // Source : DATA.centres (buildCentresList_ côté serveur, gère le 50/50)
+  var src=DATA.centres||[];
+  if(!src.length&&DATA.effectifStats&&DATA.effectifStats.byCentre){
+    for(var j=0;j<DATA.effectifStats.byCentre.length;j++){
+      var e=DATA.effectifStats.byCentre[j];
+      if(e.key&&e.key!=='Non affecté') src.push({centre:e.key, nbIsp:e.val});
     }
   }
 
-  // Pass 2: fuzzy substring (≥3 chars)
-  for(var i=0;i<CIS.length;i++){
-    if(CIS[i].actualIsp>0)continue;
-    var cn=cisNorms[i];
-    for(var j=0;j<src.length;j++){
-      if(used[j])continue;
-      var dn=srcNorms[j];
-      if((cn.length>=3&&dn.indexOf(cn)!==-1)||(dn.length>=3&&cn.indexOf(dn)!==-1)){CIS[i].actualIsp=src[j].count;used[j]=true;break;}
-    }
-  }
+  // Normalise : minuscules, accents retirés, tirets → espaces
+  var norm=function(s){
+    try{s=s.normalize('NFC');}catch(e){}
+    return(s||'').toLowerCase()
+      .replace(/[\u0300-\u036f]/g,'')  // combining diacritics
+      .replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u')
+      .replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c')
+      .replace(/[-_']/g,' ').replace(/\s+/g,' ').trim();
+  };
 
-  // Pass 3: any word ≥3 chars in common (best score)
-  for(var i=0;i<CIS.length;i++){
-    if(CIS[i].actualIsp>0)continue;
-    var cw=cisNorms[i].split(' ').filter(function(w){return w.length>=3;});
-    if(!cw.length)continue;
-    var bestJ=-1,bestScore=0;
-    for(var j=0;j<src.length;j++){
-      if(used[j])continue;
-      var dw=srcNorms[j].split(' ').filter(function(w){return w.length>=3;});
-      var score=0;
-      for(var a=0;a<cw.length;a++){for(var b=0;b<dw.length;b++){if(cw[a]===dw[b])score++;}}
-      if(score>bestScore){bestScore=score;bestJ=j;}
-    }
-    if(bestScore>=1&&bestJ>=0){CIS[i].actualIsp=src[bestJ].count;used[bestJ]=true;}
-  }
+  // Index CIS par id
+  var cisById={};
+  for(var i=0;i<CIS.length;i++) cisById[CIS[i].id]=i;
 
-  // Debug info stored globally for sidebar display
-  window._ispDebug={src:src.length,matched:0,unmatched:[],unusedSrc:[]};
-  for(var i=0;i<CIS.length;i++){
-    if(CIS[i].actualIsp>0) window._ispDebug.matched++;
-    else window._ispDebug.unmatched.push(CIS[i].nom);
-  }
+  var matched=0,unmatched=[];
   for(var j=0;j<src.length;j++){
-    if(!used[j]) window._ispDebug.unusedSrc.push(src[j].name+' ('+src[j].count+')');
+    var n=norm(src[j].centre);
+    var cisId=CENTRE_TO_CIS[n];
+    if(cisId&&cisById[cisId]!==undefined){
+      CIS[cisById[cisId]].actualIsp+=src[j].nbIsp;
+      matched++;
+    } else {
+      unmatched.push(src[j].centre);
+    }
   }
-  console.log('ISP MATCHING: '+window._ispDebug.matched+'/'+CIS.length+' CIS matchés, '+src.length+' centres dans le listing');
-  if(window._ispDebug.unmatched.length) console.log('NON MATCHÉS:', window._ispDebug.unmatched.join(', '));
-  if(window._ispDebug.unusedSrc.length) console.log('CENTRES NON AFFECTÉS:', window._ispDebug.unusedSrc.join(', '));
-  // Log all src names for debugging
-  console.log('CENTRES LISTING BRUTS:', src.map(function(s){return '"'+s.name+'"';}).join(', '));
+  console.log('ISP MATCHING: '+matched+'/'+src.length+' centres matchés');
+  if(unmatched.length) console.log('NON MATCHÉS:', unmatched.join(', '));
 }
 
 /* ═══ CASERNES CONTRIBUANT À UNE ZONE (avec temps trajet) ═══ */
@@ -828,12 +803,6 @@ function initCarte(){
   map.getPane('cisMarkers').style.zIndex=650;
 
   populateCisIsp();
-
-  // DEBUG: appeler le serveur pour voir les vrais noms de centres
-  google.script.run.withSuccessHandler(function(names){
-    console.log('=== NOMS CENTRES BRUTS DU SPREADSHEET ===');
-    for(var k in names) console.log('  "'+k+'" : '+names[k]+' ISP');
-  }).debugCentreNames();
 
   // Marqueurs CIS avec tooltips réels
   var gc={Nord:'#3498db',Ouest:'#9b59b6',Sud:'#e67e22'};
@@ -1016,16 +985,6 @@ function renderZones(){
     '<div class="tr"><span>Écart</span><strong style="color:'+(totDf>=0?'var(--green)':'var(--primary)')+';">'+(totDf>=0?'+':'')+totDf+' ISP</strong></div>'+
     '<div class="tr"><span>Zones à l\'objectif ('+cp+'%)</span><strong style="color:'+(zonesOk===CARTE_ZONES.length?'var(--green)':'var(--primary)')+';">'+zonesOk+' / '+CARTE_ZONES.length+'</strong></div>'+
     '</div>';
-
-  /* ── Debug matching (visible temporairement) ── */
-  var dbg=window._ispDebug;
-  if(dbg){
-    synthHtml+='<div style="background:#fff3cd;border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:.72em;line-height:1.5;color:#664d03;">';
-    synthHtml+='<strong>🔍 Debug matching ISP</strong> — '+dbg.matched+'/'+CIS.length+' CIS matchés sur '+dbg.src+' centres listing<br>';
-    if(dbg.unmatched.length) synthHtml+='<strong>CIS sans ISP :</strong> '+dbg.unmatched.join(', ')+'<br>';
-    if(dbg.unusedSrc.length) synthHtml+='<strong>Centres listing non affectés :</strong> '+dbg.unusedSrc.join(', ')+'<br>';
-    synthHtml+='</div>';
-  }
 
   document.getElementById('zoneTotals').innerHTML=synthHtml;
 }

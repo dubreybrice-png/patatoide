@@ -142,8 +142,20 @@ function getPageData() {
     availRings:       buildRingAvailability_(deduped),
     availByGroup:     buildAvailByGroup_(deduped),
     zeroCoverageByHour: buildZeroCoverageByHour_(deduped),
-    centres:          buildCentresList_(listing)
+    centres:          buildCentresList_(listing),
+    rawCentreNames:   buildRawCentreNames_(listing)
   };
+}
+
+function buildRawCentreNames_(listing) {
+  var names = {};
+  for (var i = 0; i < listing.length; i++) {
+    var cp = (listing[i].centrePrincipal || '').trim();
+    var cs = (listing[i].centreSecondaire || '').trim();
+    if (cp) names[cp] = (names[cp] || 0) + 1;
+    if (cs) names['[S] ' + cs] = (names['[S] ' + cs] || 0) + 1;
+  }
+  return names;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -312,11 +324,18 @@ function buildEffectifStats_(listing) {
 function buildCentresList_(listing) {
   var set = {};
   for (var i=0;i<listing.length;i++) {
-    var c = listing[i].centrePrincipal;
-    if (c) set[c] = (set[c]||0) + 1;
+    var cp = (listing[i].centrePrincipal || '').trim();
+    var cs = (listing[i].centreSecondaire || '').trim();
+    if (cp && cs) {
+      // ISP réparti 50/50 entre ses 2 centres
+      set[cp] = (set[cp]||0) + 0.5;
+      set[cs] = (set[cs]||0) + 0.5;
+    } else if (cp) {
+      set[cp] = (set[cp]||0) + 1;
+    }
   }
   var r = [];
-  for (var k in set) r.push({centre:k,nbIsp:set[k]});
+  for (var k in set) r.push({centre:k, nbIsp:Math.round(set[k]*10)/10});
   r.sort(function(a,b){return b.nbIsp-a.nbIsp;});
   return r;
 }
