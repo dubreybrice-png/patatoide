@@ -1,416 +1,283 @@
 /**
  * Patatoïde — DataService.js
- * Toute la logique de lecture / agrégation des données
+ * Lecture + agrégation de toutes les données
  */
 
 /* ═══════════════════════════════════════════════════════
-   1. LECTURE BRUTE DES ONGLETS
+   HELPERS
    ═══════════════════════════════════════════════════════ */
-
-/** Lit toutes les interventions (onglet donnnées inter 2025) */
-function getInterventions_() {
-  var sh = getSheet_(Config.SHEETS.INTER);
-  var data = sh.getDataRange().getValues();
-  var c = Config.COL_INTER;
-  var rows = [];
-  for (var i = 1; i < data.length; i++) {
-    var r = data[i];
-    var num = (r[c.NUM - 1] || '').toString().trim();
-    if (!num) continue;
-    rows.push({
-      num:        num,
-      codeSin:    (r[c.CODE_SIN - 1] || '').toString().trim(),
-      sinistre:   (r[c.SINISTRE - 1] || '').toString().trim(),
-      codeZec:    (r[c.CODE_ZEC - 1] || '').toString().trim(),
-      zec:        (r[c.ZEC - 1] || '').toString().trim(),
-      debut:      r[c.DEBUT - 1],
-      premierSll: r[c.PREMIER_SLL - 1],
-      fin:        r[c.FIN - 1],
-      delaiSll:   (r[c.DELAI_SLL - 1] || '').toString().trim(),
-      duree:      (r[c.DUREE - 1] || '').toString().trim(),
-      commune:    (r[c.COMMUNE - 1] || '').toString().trim()
-    });
-  }
-  return rows;
+function getSpreadsheet_() { return SpreadsheetApp.openById(Config.SPREADSHEET_ID); }
+function getSheet_(name) {
+  var sh = getSpreadsheet_().getSheetByName(name);
+  if (!sh) throw new Error('Onglet introuvable : ' + name);
+  return sh;
 }
 
-/** Lit les temps de travail ISP */
-function getTempsISP_() {
-  var sh = getSheet_(Config.SHEETS.TEMPS);
-  var data = sh.getDataRange().getValues();
-  var c = Config.COL_TEMPS;
-  var rows = [];
-  for (var i = 1; i < data.length; i++) {
-    var r = data[i];
-    var mat = (r[c.MATRICULE - 1] || '').toString().trim();
-    if (!mat) continue;
-    rows.push({
-      libelle:   (r[c.LIBELLE - 1] || '').toString().trim(),
-      matricule: mat,
-      nom:       (r[c.NOM - 1] || '').toString().trim(),
-      prenom:    (r[c.PRENOM - 1] || '').toString().trim(),
-      centre:    (r[c.CENTRE - 1] || '').toString().trim(),
-      dateHeure: r[c.DATE_HEURE - 1]
-    });
-  }
-  return rows;
-}
-
-/** Lit le listing ISP */
-function getListingISP_() {
-  var sh = getSheet_(Config.SHEETS.LISTING_ISP);
-  var data = sh.getDataRange().getValues();
-  var c = Config.COL_LISTING;
-  var rows = [];
-  // La première ligne peut être vide (header row 1 vide puis row 2 = headers)
-  var startRow = 1;
-  // Trouver la ligne d'en-tête
-  for (var i = 0; i < Math.min(3, data.length); i++) {
-    var firstCell = (data[i][0] || '').toString().trim().toLowerCase();
-    if (firstCell === 'nom prénom' || firstCell === 'nom prenom') {
-      startRow = i + 1;
-      break;
-    }
-  }
-  for (var i = startRow; i < data.length; i++) {
-    var r = data[i];
-    var np = (r[c.NOM_PRENOM - 1] || '').toString().trim();
-    if (!np) continue;
-    rows.push({
-      nomPrenom:        np,
-      centrePrincipal:  (r[c.CENTRE_PRINCIPAL - 1] || '').toString().trim(),
-      centreSecondaire: (r[c.CENTRE_SECONDAIRE - 1] || '').toString().trim(),
-      email:            (r[c.EMAIL - 1] || '').toString().trim()
-    });
-  }
-  return rows;
-}
-
-/** Lit les délais SLL ISP */
-function getDelaisISP_() {
-  var sh = getSheet_(Config.SHEETS.DELAI_ISP);
-  var data = sh.getDataRange().getValues();
-  var c = Config.COL_DELAI;
-  var rows = [];
-  for (var i = 1; i < data.length; i++) {
-    var r = data[i];
-    var num = (r[c.NUM - 1] || '').toString().trim();
-    if (!num) continue;
-    rows.push({
-      num:          num,
-      typeEngin:    (r[c.TYPE_ENGIN - 1] || '').toString().trim(),
-      centre:       (r[c.CENTRE - 1] || '').toString().trim(),
-      codeZec:      (r[c.CODE_ZEC - 1] || '').toString().trim(),
-      zec:          (r[c.ZEC - 1] || '').toString().trim(),
-      sortieValide: (r[c.SORTIE_VALIDE - 1] || '').toString().trim(),
-      equipage:     (r[c.EQUIPAGE - 1] || '').toString().trim(),
-      secteur:      (r[c.SECTEUR - 1] || '').toString().trim(),
-      dhDebut:      r[c.DH_DEBUT - 1],
-      dhAlerte:     r[c.DH_ALERTE - 1],
-      dhDepart:     r[c.DH_DEPART - 1],
-      dhSll:        r[c.DH_SLL - 1],
-      dhFin:        r[c.DH_FIN - 1],
-      nbAgents:     r[c.NB_AGENTS - 1],
-      delaiMobil:   (r[c.DELAI_MOBIL - 1] || '').toString().trim(),
-      delaiRoute:   (r[c.DELAI_ROUTE - 1] || '').toString().trim(),
-      delaiSll:     (r[c.DELAI_SLL - 1] || '').toString().trim(),
-      dureeEngage:  (r[c.DUREE_ENGAGE - 1] || '').toString().trim()
-    });
-  }
-  return rows;
-}
-
-/* ═══════════════════════════════════════════════════════
-   2. AGRÉGATION & STATS — INTERVENTIONS
-   ═══════════════════════════════════════════════════════ */
-
-/** Parse "HH:MM:SS" → minutes (float) */
 function parseHMS_(str) {
   if (!str) return null;
   str = str.toString().trim();
-  var m = str.match(/^(\d+):(\d+):(\d+)$/);
+  if (str === '-' || str === '') return null;
+  var m = str.match(/(\d+):(\d+):(\d+)/);
   if (!m) return null;
-  return parseInt(m[1], 10) * 60 + parseInt(m[2], 10) + parseInt(m[3], 10) / 60;
+  return parseInt(m[1],10)*60 + parseInt(m[2],10) + parseInt(m[3],10)/60;
 }
 
-/** Parse une date (Date obj ou string) → { month, hour, dayOfWeek } */
 function parseDateParts_(v) {
   var d;
-  if (v instanceof Date) {
-    d = v;
-  } else {
-    var s = (v || '').toString().trim();
-    // format JJ/MM/AAAA HH:MM
-    var m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
-    if (m) {
-      d = new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]), parseInt(m[4]), parseInt(m[5]));
-    } else {
-      d = new Date(s);
-    }
+  if (v instanceof Date) { d = v; }
+  else {
+    var s = (v||'').toString().trim();
+    var m = s.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+    if (m) d = new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5]);
+    else d = new Date(s);
   }
-  if (isNaN(d.getTime())) return null;
+  if (!d || isNaN(d.getTime())) return null;
+  return { date:d, month:d.getMonth()+1, hour:d.getHours(), dayOfWeek:d.getDay() };
+}
+
+function slotKey_(v) {
+  var d;
+  if (v instanceof Date) { d = v; }
+  else {
+    var s = (v||'').toString().trim();
+    var m = s.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/);
+    if (m) d = new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5], +m[6]);
+    else d = new Date(s);
+  }
+  if (!d || isNaN(d.getTime())) return null;
+  return d.getTime();
+}
+
+function objToSorted_(o) {
+  var a=[]; for (var k in o) a.push({key:k,val:o[k]});
+  a.sort(function(a,b){return b.val-a.val;}); return a;
+}
+function median_(arr) { if(!arr.length)return 0; arr.sort(function(a,b){return a-b;}); return Math.round(arr[Math.floor(arr.length*0.5)]*10)/10; }
+function mean_(arr) { if(!arr.length)return 0; var s=0; for(var i=0;i<arr.length;i++) s+=arr[i]; return Math.round(s/arr.length*10)/10; }
+
+function matchKeywords_(text, keywords) {
+  var t = (text||'').toUpperCase().replace(/,/g,' ').replace(/\s+/g,' ').trim();
+  for (var i=0; i<keywords.length; i++) {
+    if (t.indexOf(keywords[i].toUpperCase()) !== -1) return true;
+  }
+  return false;
+}
+
+/* ═══════════════════════════════════════════════════════
+   LECTURE BRUTE
+   ═══════════════════════════════════════════════════════ */
+function readInter_() {
+  var sh=getSheet_(Config.SHEETS.INTER), data=sh.getDataRange().getValues(), c=Config.COL_INTER, rows=[];
+  for (var i=1;i<data.length;i++) {
+    var r=data[i], num=(r[c.NUM-1]||'').toString().trim();
+    if(!num)continue;
+    rows.push({ num:num, commune:(r[c.COMMUNE-1]||'').toString().trim(), debut:r[c.DEBUT-1], delaiSll:(r[c.DELAI_SLL-1]||'').toString().trim() });
+  }
+  return rows;
+}
+
+function readTemps_() {
+  var sh=getSheet_(Config.SHEETS.TEMPS), data=sh.getDataRange().getValues(), c=Config.COL_TEMPS, rows=[];
+  for (var i=1;i<data.length;i++) {
+    var r=data[i], mat=(r[c.MATRICULE-1]||'').toString().trim();
+    if(!mat)continue;
+    rows.push({
+      libelle:(r[c.LIBELLE-1]||'').toString().trim(),
+      matricule:mat,
+      nom:(r[c.NOM-1]||'').toString().trim(),
+      prenom:(r[c.PRENOM-1]||'').toString().trim(),
+      centre:(r[c.CENTRE-1]||'').toString().trim(),
+      dateHeure:r[c.DATE_HEURE-1]
+    });
+  }
+  return rows;
+}
+
+function readListing_() {
+  var sh=getSheet_(Config.SHEETS.LISTING_ISP), data=sh.getDataRange().getValues(), c=Config.COL_LISTING, rows=[];
+  var start=1;
+  for (var i=0;i<Math.min(3,data.length);i++) {
+    var f=(data[i][0]||'').toString().trim().toLowerCase();
+    if(f==='nom prénom'||f==='nom prenom'){start=i+1;break;}
+  }
+  for (var i=start;i<data.length;i++) {
+    var r=data[i], np=(r[c.NOM_PRENOM-1]||'').toString().trim();
+    if(!np)continue;
+    rows.push({ nomPrenom:np, centrePrincipal:(r[c.CENTRE_PRINCIPAL-1]||'').toString().trim(), centreSecondaire:(r[c.CENTRE_SECONDAIRE-1]||'').toString().trim() });
+  }
+  return rows;
+}
+
+function readDelais_() {
+  var sh=getSheet_(Config.SHEETS.DELAI_ISP), data=sh.getDataRange().getValues(), c=Config.COL_DELAI, rows=[];
+  for (var i=1;i<data.length;i++) {
+    var r=data[i], num=(r[c.NUM-1]||'').toString().trim();
+    if(!num)continue;
+    rows.push({
+      num:num, centre:(r[c.CENTRE-1]||'').toString().trim(),
+      delaiRoute:(r[c.DELAI_ROUTE-1]||'').toString().trim(),
+      delaiSll:(r[c.DELAI_SLL-1]||'').toString().trim()
+    });
+  }
+  return rows;
+}
+
+/* ═══════════════════════════════════════════════════════
+   API PRINCIPALE
+   ═══════════════════════════════════════════════════════ */
+function getPageData() {
+  var inter   = readInter_();
+  var temps   = readTemps_();
+  var listing = readListing_();
+  var delais  = readDelais_();
+
+  var deduped = deduplicateTemps_(temps);
+
   return {
-    date: d,
-    month: d.getMonth() + 1,
-    hour: d.getHours(),
-    dayOfWeek: d.getDay() // 0=dim
+    interStats:       buildInterStats_(inter),
+    tempsStats:       buildTempsStats_(deduped),
+    effectifStats:    buildEffectifStats_(listing),
+    delaiStats:       buildDelaiAvg_(delais),
+    availDept:        buildAvailability_(deduped, null),
+    availRings:       buildRingAvailability_(deduped),
+    availByGroup:     buildAvailByGroup_(deduped),
+    zeroCoverageByHour: buildZeroCoverageByHour_(deduped),
+    centres:          buildCentresList_(listing)
   };
 }
 
 /* ═══════════════════════════════════════════════════════
-   3. API PRINCIPALE — getPageData()
+   DEDUPLICATION TEMPS
+   Même matricule + même dateHeure → garde > astreinte > dispo
    ═══════════════════════════════════════════════════════ */
-
-function getPageData() {
-  var interventions = getInterventions_();
-  var tempsISP      = getTempsISP_();
-  var listingISP    = getListingISP_();
-  var delaisISP     = getDelaisISP_();
-
-  return {
-    stats:       buildStats_(interventions, tempsISP, listingISP, delaisISP),
-    listing:     listingISP,
-    centres:     buildCentresList_(listingISP)
-  };
-}
-
-function buildCentresList_(listing) {
-  var set = {};
-  for (var i = 0; i < listing.length; i++) {
-    var c = listing[i].centrePrincipal;
-    if (c) set[c] = (set[c] || 0) + 1;
-    var c2 = listing[i].centreSecondaire;
-    if (c2) {
-      if (!set[c2]) set[c2] = 0;
-    }
-  }
-  var result = [];
-  for (var k in set) {
-    result.push({ centre: k, nbIsp: set[k] });
-  }
-  result.sort(function (a, b) { return b.nbIsp - a.nbIsp; });
-  return result;
-}
-
-function buildStats_(interventions, tempsISP, listingISP, delaisISP) {
-  return {
-    interGlobal:    buildInterStats_(interventions),
-    interISP:       buildInterISPStats_(delaisISP),
-    tempsISP:       buildTempsStats_(tempsISP),
-    effectif:       buildEffectifStats_(listingISP),
-    delais:         buildDelaiStats_(delaisISP)
-  };
-}
-
-/* ─── Stats interventions globales ─── */
-function buildInterStats_(rows) {
-  var total = rows.length;
-  var byCommune = {};
-  var byMonth = {};
-  var byHour = {};
-  var byDayOfWeek = {};
-  var bySinistre = {};
-  var delais = [];
-
-  for (var i = 0; i < rows.length; i++) {
-    var r = rows[i];
-    // Par commune
-    var com = r.commune || 'Inconnu';
-    byCommune[com] = (byCommune[com] || 0) + 1;
-
-    // Par sinistre
-    var sin = r.sinistre || 'Inconnu';
-    bySinistre[sin] = (bySinistre[sin] || 0) + 1;
-
-    // Par mois/heure/jour
-    var dp = parseDateParts_(r.debut);
-    if (dp) {
-      var mk = dp.month;
-      byMonth[mk] = (byMonth[mk] || 0) + 1;
-      byHour[dp.hour] = (byHour[dp.hour] || 0) + 1;
-      byDayOfWeek[dp.dayOfWeek] = (byDayOfWeek[dp.dayOfWeek] || 0) + 1;
-    }
-
-    // Délai SLL
-    var d = parseHMS_(r.delaiSll);
-    if (d !== null) delais.push(d);
-  }
-
-  // Top 20 communes
-  var communeArr = objToSorted_(byCommune);
-  // Top sinistres
-  var sinistreArr = objToSorted_(bySinistre);
-  // Heures 0-23
-  var hourArr = [];
-  for (var h = 0; h < 24; h++) hourArr.push({ key: h, val: byHour[h] || 0 });
-  // Mois 1-12
-  var monthArr = [];
-  var moisNoms = ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-  for (var m = 1; m <= 12; m++) monthArr.push({ key: moisNoms[m], val: byMonth[m] || 0 });
-  // Jours
-  var jourNoms = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-  var dayArr = [];
-  for (var d = 0; d < 7; d++) dayArr.push({ key: jourNoms[d], val: byDayOfWeek[d] || 0 });
-
-  // Percentiles délai
-  delais.sort(function (a, b) { return a - b; });
-  var p50 = delais.length ? delais[Math.floor(delais.length * 0.5)] : 0;
-  var p90 = delais.length ? delais[Math.floor(delais.length * 0.9)] : 0;
-
-  return {
-    total: total,
-    byCommune: communeArr.slice(0, 30),
-    bySinistre: sinistreArr.slice(0, 15),
-    byHour: hourArr,
-    byMonth: monthArr,
-    byDay: dayArr,
-    delaiMedian: Math.round(p50 * 10) / 10,
-    delaiP90: Math.round(p90 * 10) / 10,
-    nbDelais: delais.length
-  };
-}
-
-/* ─── Stats interventions ISP ─── */
-function buildInterISPStats_(delais) {
-  var total = delais.length;
-  var byCentre = {};
-  var byZec = {};
-  var byHour = {};
-  var byMonth = {};
-  var delaiRouteArr = [];
-  var delaiSllArr = [];
-
-  for (var i = 0; i < delais.length; i++) {
-    var r = delais[i];
-    var c = r.centre || 'Inconnu';
-    byCentre[c] = (byCentre[c] || 0) + 1;
-
-    var z = r.zec || 'Inconnu';
-    byZec[z] = (byZec[z] || 0) + 1;
-
-    var dp = parseDateParts_(r.dhDebut);
-    if (dp) {
-      byHour[dp.hour] = (byHour[dp.hour] || 0) + 1;
-      var mk = dp.month;
-      byMonth[mk] = (byMonth[mk] || 0) + 1;
-    }
-
-    var dr = parseHMS_(r.delaiRoute);
-    if (dr !== null) delaiRouteArr.push(dr);
-    var ds = parseHMS_(r.delaiSll);
-    if (ds !== null) delaiSllArr.push(ds);
-  }
-
-  delaiRouteArr.sort(function (a, b) { return a - b; });
-  delaiSllArr.sort(function (a, b) { return a - b; });
-
-  var hourArr = [];
-  for (var h = 0; h < 24; h++) hourArr.push({ key: h, val: byHour[h] || 0 });
-
-  var moisNoms = ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-  var monthArr = [];
-  for (var m = 1; m <= 12; m++) monthArr.push({ key: moisNoms[m], val: byMonth[m] || 0 });
-
-  return {
-    total: total,
-    byCentre: objToSorted_(byCentre),
-    byZec: objToSorted_(byZec).slice(0, 20),
-    byHour: hourArr,
-    byMonth: monthArr,
-    delaiRouteMedian: median_(delaiRouteArr),
-    delaiRouteP90: percentile_(delaiRouteArr, 0.9),
-    delaiSllMedian: median_(delaiSllArr),
-    delaiSllP90: percentile_(delaiSllArr, 0.9),
-    nbDelaisRoute: delaiRouteArr.length,
-    nbDelaisSll: delaiSllArr.length
-  };
-}
-
-/* ─── Stats temps de travail ISP ─── */
-function buildTempsStats_(rows) {
-  // Dédoublonnage : pour chaque (matricule, dateHeure identique),
-  // on garde Garde > Astreinte > Disponible
-  var priority = { 'garde': 3, 'astreinte': 2, 'disponible': 1 };
+function deduplicateTemps_(rows) {
+  var priority = { 'garde':3, 'astreinte':2, 'disponible':1 };
   var grouped = {};
-  for (var i = 0; i < rows.length; i++) {
+  for (var i=0; i<rows.length; i++) {
     var r = rows[i];
-    var lib = r.libelle.toLowerCase().replace(/[^a-zéèêà]/g, '');
+    var lib = r.libelle.toLowerCase();
     var type = 'disponible';
     if (lib.indexOf('garde') !== -1) type = 'garde';
     else if (lib.indexOf('astreinte') !== -1) type = 'astreinte';
 
-    var dh = '';
-    if (r.dateHeure instanceof Date) {
-      dh = r.dateHeure.getTime().toString();
-    } else {
-      dh = (r.dateHeure || '').toString().trim();
-    }
-    var key = r.matricule + '||' + dh;
+    var sk = slotKey_(r.dateHeure);
+    if (sk === null) continue;
+    var key = r.matricule + '|' + sk;
 
-    if (!grouped[key] || (priority[type] || 0) > (priority[grouped[key].type] || 0)) {
-      grouped[key] = {
-        type: type,
-        matricule: r.matricule,
-        nom: r.nom,
-        prenom: r.prenom,
-        centre: r.centre,
-        dateHeure: r.dateHeure
-      };
+    if (!grouped[key] || (priority[type]||0) > (priority[grouped[key].type]||0)) {
+      grouped[key] = { type:type, matricule:r.matricule, nom:r.nom, prenom:r.prenom, centre:r.centre, slotTs:sk, dateHeure:r.dateHeure };
     }
   }
+  var result = [];
+  for (var k in grouped) result.push(grouped[k]);
+  return result;
+}
 
-  // Convertir en liste
-  var deduped = [];
-  for (var k in grouped) deduped.push(grouped[k]);
+/* ═══════════════════════════════════════════════════════
+   STATS INTERVENTIONS
+   ═══════════════════════════════════════════════════════ */
+function buildInterStats_(rows) {
+  var total = rows.length;
+  var byCommune = {}, byHour = {}, byGroup = {};
 
-  // Stats par ISP
+  for (var i=0; i<rows.length; i++) {
+    var r = rows[i];
+    var com = r.commune || 'Inconnu';
+    byCommune[com] = (byCommune[com]||0) + 1;
+
+    var dp = parseDateParts_(r.debut);
+    if (dp) byHour[dp.hour] = (byHour[dp.hour]||0) + 1;
+
+    // Groupe géographique
+    var gName = findCommuneGroup_(com);
+    byGroup[gName] = (byGroup[gName]||0) + 1;
+  }
+
+  var hourArr = [];
+  for (var h=0;h<24;h++) hourArr.push({key:h, val:byHour[h]||0});
+
+  return {
+    total: total,
+    byCommune: objToSorted_(byCommune).slice(0,30),
+    byGroup: objToSorted_(byGroup),
+    byHour: hourArr
+  };
+}
+
+function findCommuneGroup_(commune) {
+  var groups = Config.COMMUNE_GROUPS;
+  for (var g=0; g<groups.length; g++) {
+    if (matchKeywords_(commune, groups[g].keywords)) return groups[g].name;
+  }
+  return 'Autres';
+}
+
+/* ═══════════════════════════════════════════════════════
+   STATS TEMPS TRAVAIL (après dédup, sans garde)
+   ═══════════════════════════════════════════════════════ */
+function buildTempsStats_(deduped) {
+  var byType = { astreinte:0, disponible:0 };
   var byISP = {};
   var byCentre = {};
-  var byType = { garde: 0, astreinte: 0, disponible: 0 };
   var byHour = {};
   var byMonth = {};
+  var totalSlots = 0;
 
-  for (var i = 0; i < deduped.length; i++) {
+  for (var i=0; i<deduped.length; i++) {
     var r = deduped[i];
-    var t = r.type;
-    byType[t] = (byType[t] || 0) + 1;
+    if (r.type === 'garde') continue; // on ignore la garde
 
-    var ispKey = r.matricule;
-    if (!byISP[ispKey]) byISP[ispKey] = { matricule: r.matricule, nom: r.nom, prenom: r.prenom, centre: r.centre, garde: 0, astreinte: 0, disponible: 0, total: 0 };
-    byISP[ispKey][t]++;
-    byISP[ispKey].total++;
+    totalSlots++;
+    byType[r.type] = (byType[r.type]||0) + 1;
 
-    var ctr = r.centre || 'Inconnu';
-    if (!byCentre[ctr]) byCentre[ctr] = { garde: 0, astreinte: 0, disponible: 0, total: 0 };
-    byCentre[ctr][t]++;
-    byCentre[ctr].total++;
+    // Par ISP
+    var ik = r.matricule;
+    if (!byISP[ik]) byISP[ik] = { matricule:r.matricule, nom:r.nom, prenom:r.prenom, centre:r.centre, astreinte:0, disponible:0, total:0 };
+    byISP[ik][r.type]++;
+    byISP[ik].total++;
+
+    // Par centre
+    var ck = r.centre || 'Inconnu';
+    if (!byCentre[ck]) byCentre[ck] = { astreinte:0, disponible:0, total:0 };
+    byCentre[ck][r.type]++;
+    byCentre[ck].total++;
 
     var dp = parseDateParts_(r.dateHeure);
     if (dp) {
-      byHour[dp.hour] = (byHour[dp.hour] || 0) + 1;
-      byMonth[dp.month] = (byMonth[dp.month] || 0) + 1;
+      byHour[dp.hour] = (byHour[dp.hour]||0) + 1;
+      byMonth[dp.month] = (byMonth[dp.month]||0) + 1;
     }
   }
 
-  // Top ISP
   var ispArr = [];
-  for (var k in byISP) ispArr.push(byISP[k]);
-  ispArr.sort(function (a, b) { return b.total - a.total; });
+  for (var k in byISP) {
+    var p = byISP[k];
+    p.tauxAstreinte = p.total > 0 ? Math.round(p.astreinte / p.total * 1000) / 10 : 0;
+    p.heuresTotal = Math.round(p.total * Config.SLOT_DURATION_MIN / 60 * 10) / 10;
+    ispArr.push(p);
+  }
+  ispArr.sort(function(a,b){ return b.total - a.total; });
 
-  // Par centre
   var centreArr = [];
-  for (var k in byCentre) centreArr.push({ centre: k, garde: byCentre[k].garde, astreinte: byCentre[k].astreinte, disponible: byCentre[k].disponible, total: byCentre[k].total });
-  centreArr.sort(function (a, b) { return b.total - a.total; });
+  for (var k in byCentre) {
+    var c = byCentre[k];
+    c.centre = k;
+    c.pctAstreinte = c.total > 0 ? Math.round(c.astreinte / c.total * 1000) / 10 : 0;
+    c.pctDispo = c.total > 0 ? Math.round(c.disponible / c.total * 1000) / 10 : 0;
+    centreArr.push(c);
+  }
+  centreArr.sort(function(a,b){ return b.total - a.total; });
 
   var hourArr = [];
-  for (var h = 0; h < 24; h++) hourArr.push({ key: h, val: byHour[h] || 0 });
+  for (var h=0;h<24;h++) hourArr.push({key:h, val:byHour[h]||0});
 
-  var moisNoms = ['', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+  var moisNoms = ['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
   var monthArr = [];
-  for (var m = 1; m <= 12; m++) monthArr.push({ key: moisNoms[m], val: byMonth[m] || 0 });
+  for (var m=1;m<=12;m++) monthArr.push({key:moisNoms[m], val:byMonth[m]||0});
 
   return {
-    totalCreneaux: deduped.length,
+    totalSlots: totalSlots,
+    heuresTotal: Math.round(totalSlots * Config.SLOT_DURATION_MIN / 60),
     byType: byType,
     byISP: ispArr,
     byCentre: centreArr,
@@ -419,64 +286,280 @@ function buildTempsStats_(rows) {
   };
 }
 
-/* ─── Stats effectif ISP ─── */
+/* ═══════════════════════════════════════════════════════
+   EFFECTIF
+   ═══════════════════════════════════════════════════════ */
 function buildEffectifStats_(listing) {
   var byCentre = {};
-  for (var i = 0; i < listing.length; i++) {
+  for (var i=0;i<listing.length;i++) {
     var c = listing[i].centrePrincipal || 'Non affecté';
-    byCentre[c] = (byCentre[c] || 0) + 1;
+    byCentre[c] = (byCentre[c]||0) + 1;
   }
   var arr = [];
-  for (var k in byCentre) arr.push({ centre: k, count: byCentre[k] });
-  arr.sort(function (a, b) { return b.count - a.count; });
-  return { total: listing.length, byCentre: arr };
+  for (var k in byCentre) arr.push({key:k, val:byCentre[k]});
+  arr.sort(function(a,b){return b.val-a.val;});
+  return { total:listing.length, byCentre:arr };
 }
 
-/* ─── Stats délais ISP ─── */
-function buildDelaiStats_(delais) {
-  var byCentre = {};
-  for (var i = 0; i < delais.length; i++) {
-    var r = delais[i];
-    var c = r.centre || 'Inconnu';
-    if (!byCentre[c]) byCentre[c] = { routeArr: [], sllArr: [], count: 0 };
-    byCentre[c].count++;
-    var dr = parseHMS_(r.delaiRoute);
-    if (dr !== null) byCentre[c].routeArr.push(dr);
-    var ds = parseHMS_(r.delaiSll);
-    if (ds !== null) byCentre[c].sllArr.push(ds);
+function buildCentresList_(listing) {
+  var set = {};
+  for (var i=0;i<listing.length;i++) {
+    var c = listing[i].centrePrincipal;
+    if (c) set[c] = (set[c]||0) + 1;
   }
-  var arr = [];
-  for (var k in byCentre) {
-    var o = byCentre[k];
-    o.routeArr.sort(function (a, b) { return a - b; });
-    o.sllArr.sort(function (a, b) { return a - b; });
-    arr.push({
-      centre: k,
-      count: o.count,
-      routeMedian: median_(o.routeArr),
-      routeP90: percentile_(o.routeArr, 0.9),
-      sllMedian: median_(o.sllArr),
-      sllP90: percentile_(o.sllArr, 0.9)
+  var r = [];
+  for (var k in set) r.push({centre:k,nbIsp:set[k]});
+  r.sort(function(a,b){return b.nbIsp-a.nbIsp;});
+  return r;
+}
+
+/* ═══════════════════════════════════════════════════════
+   DELAIS ISP — moyennes simples col P et Q
+   ═══════════════════════════════════════════════════════ */
+function buildDelaiAvg_(delais) {
+  var routeArr = [], sllArr = [];
+  for (var i=0;i<delais.length;i++) {
+    var dr = parseHMS_(delais[i].delaiRoute);
+    var ds = parseHMS_(delais[i].delaiSll);
+    if (dr !== null) routeArr.push(dr);
+    if (ds !== null) sllArr.push(ds);
+  }
+  return {
+    totalSorties: delais.length,
+    moyRoute: mean_(routeArr),
+    moySll: mean_(sllArr),
+    medRoute: median_(routeArr),
+    medSll: median_(sllArr),
+    nbRoute: routeArr.length,
+    nbSll: sllArr.length
+  };
+}
+
+/* ═══════════════════════════════════════════════════════
+   DISPONIBILITÉ / COUVERTURE
+   Combien d'ISP dispo (astreinte ou dispo) à chaque instant ?
+   ═══════════════════════════════════════════════════════ */
+function buildAvailability_(deduped, centreFilter) {
+  // centreFilter = null (tout le dept) ou array de keywords
+  var slotCounts = {}; // slotTs → nb ISP
+  var allSlotTs = {};
+
+  for (var i=0; i<deduped.length; i++) {
+    var r = deduped[i];
+    if (r.type === 'garde') continue;
+
+    // Filtre par centre si demandé
+    if (centreFilter && !matchKeywords_(r.centre, centreFilter)) continue;
+
+    allSlotTs[r.slotTs] = true;
+    slotCounts[r.slotTs] = (slotCounts[r.slotTs]||0) + 1;
+  }
+
+  // Trouver la plage temporelle complète
+  var minTs = Infinity, maxTs = -Infinity;
+  for (var i=0; i<deduped.length; i++) {
+    var ts = deduped[i].slotTs;
+    if (ts < minTs) minTs = ts;
+    if (ts > maxTs) maxTs = ts;
+  }
+
+  // Compter tous les créneaux de 30 min dans la plage
+  var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
+  var totalSlots = 0;
+  if (minTs < Infinity && maxTs > -Infinity) {
+    totalSlots = Math.floor((maxTs - minTs) / slotMs) + 1;
+  }
+
+  // Distribution : combien de créneaux ont 0, 1, 2... ISP
+  var dist = {};
+  var slotsWithIsp = 0;
+  var maxIsp = 0;
+  for (var ts in slotCounts) {
+    var n = slotCounts[ts];
+    dist[n] = (dist[n]||0) + 1;
+    slotsWithIsp++;
+    if (n > maxIsp) maxIsp = n;
+  }
+
+  // Créneaux avec 0 ISP
+  var slotsZero = totalSlots - slotsWithIsp;
+  if (slotsZero < 0) slotsZero = 0;
+  dist[0] = slotsZero;
+
+  // Convertir en tableau ordonné avec %
+  var distArr = [];
+  for (var n = 0; n <= maxIsp; n++) {
+    var count = dist[n] || 0;
+    var pct = totalSlots > 0 ? Math.round(count / totalSlots * 1000) / 10 : 0;
+    distArr.push({ ispCount: n, slots: count, pct: pct, heures: Math.round(count * Config.SLOT_DURATION_MIN / 60 * 10) / 10 });
+  }
+
+  var heuresZero = Math.round(slotsZero * Config.SLOT_DURATION_MIN / 60 * 10) / 10;
+  var pctZero = totalSlots > 0 ? Math.round(slotsZero / totalSlots * 1000) / 10 : 0;
+
+  return {
+    totalSlots: totalSlots,
+    totalHeures: Math.round(totalSlots * Config.SLOT_DURATION_MIN / 60),
+    heuresZeroIsp: heuresZero,
+    pctZeroIsp: pctZero,
+    distribution: distArr,
+    maxIsp: maxIsp
+  };
+}
+
+/* ═══════════════════════════════════════════════════════
+   COUVERTURE PAR ANNEAUX CONCENTRIQUES
+   ═══════════════════════════════════════════════════════ */
+function buildRingAvailability_(deduped) {
+  var rings = Config.PERPIGNAN_RINGS;
+  var results = [];
+  var cumulKeywords = [];
+
+  for (var r = 0; r < rings.length; r++) {
+    // Cumuler les keywords (chaque anneau inclut les précédents)
+    for (var k = 0; k < rings[r].keywords.length; k++) {
+      cumulKeywords.push(rings[r].keywords[k]);
+    }
+    var avail = buildAvailability_(deduped, cumulKeywords.slice());
+
+    // Trouver les centres qui matchent cet anneau (non-cumulatif)
+    var ringCentres = {};
+    for (var i = 0; i < deduped.length; i++) {
+      if (deduped[i].type === 'garde') continue;
+      if (matchKeywords_(deduped[i].centre, rings[r].keywords)) {
+        ringCentres[deduped[i].centre] = true;
+      }
+    }
+
+    results.push({
+      ringName: rings[r].name,
+      ringLabel: r === 0 ? rings[r].name : rings.slice(0, r+1).map(function(x){return x.name;}).join(' → '),
+      ringCentres: Object.keys(ringCentres).sort(),
+      heuresZeroIsp: avail.heuresZeroIsp,
+      pctZeroIsp: avail.pctZeroIsp,
+      distribution: avail.distribution,
+      totalHeures: avail.totalHeures
     });
   }
-  arr.sort(function (a, b) { return b.count - a.count; });
-  return arr;
+  return results;
 }
 
-/* ─── Helpers ─── */
-function objToSorted_(obj) {
-  var arr = [];
-  for (var k in obj) arr.push({ key: k, val: obj[k] });
-  arr.sort(function (a, b) { return b.val - a.val; });
-  return arr;
+/* ═══════════════════════════════════════════════════════
+   DISTRIBUTION PAR GROUPE DE CASERNES
+   ═══════════════════════════════════════════════════════ */
+function buildAvailByGroup_(deduped) {
+  var groups = Config.CENTRE_GROUPS;
+  if (!groups || !groups.length) return [];
+
+  // Min/max timestamps globaux
+  var minTs = Infinity, maxTs = -Infinity;
+  for (var i = 0; i < deduped.length; i++) {
+    var ts = deduped[i].slotTs;
+    if (ts < minTs) minTs = ts;
+    if (ts > maxTs) maxTs = ts;
+  }
+  var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
+  var totalSlots = 0;
+  if (minTs < Infinity && maxTs > -Infinity) {
+    totalSlots = Math.floor((maxTs - minTs) / slotMs) + 1;
+  }
+
+  var results = [];
+  for (var g = 0; g < groups.length; g++) {
+    var slotCounts = {};
+    var matchedCentres = {};
+    var slotsWithIsp = 0;
+    var maxIsp = 0;
+
+    for (var i = 0; i < deduped.length; i++) {
+      var r = deduped[i];
+      if (r.type === 'garde') continue;
+      if (!matchKeywords_(r.centre, groups[g].keywords)) continue;
+      matchedCentres[r.centre] = true;
+      slotCounts[r.slotTs] = (slotCounts[r.slotTs] || 0) + 1;
+    }
+
+    for (var ts in slotCounts) {
+      var n = slotCounts[ts];
+      slotsWithIsp++;
+      if (n > maxIsp) maxIsp = n;
+    }
+
+    var dist = {};
+    for (var ts in slotCounts) dist[slotCounts[ts]] = (dist[slotCounts[ts]] || 0) + 1;
+    var slotsZero = totalSlots - slotsWithIsp;
+    if (slotsZero < 0) slotsZero = 0;
+    dist[0] = slotsZero;
+
+    var distArr = [];
+    for (var n = 0; n <= maxIsp; n++) {
+      var count = dist[n] || 0;
+      var pct = totalSlots > 0 ? Math.round(count / totalSlots * 1000) / 10 : 0;
+      distArr.push({ ispCount: n, slots: count, pct: pct, heures: Math.round(count * Config.SLOT_DURATION_MIN / 60 * 10) / 10 });
+    }
+
+    var heuresZero = Math.round(slotsZero * Config.SLOT_DURATION_MIN / 60 * 10) / 10;
+    var pctZero = totalSlots > 0 ? Math.round(slotsZero / totalSlots * 1000) / 10 : 0;
+
+    results.push({
+      groupName: groups[g].name,
+      centres: Object.keys(matchedCentres).sort(),
+      heuresZeroIsp: heuresZero,
+      pctZeroIsp: pctZero,
+      distribution: distArr,
+      totalHeures: Math.round(totalSlots * Config.SLOT_DURATION_MIN / 60),
+      maxIsp: maxIsp
+    });
+  }
+  return results;
 }
 
-function median_(sortedArr) {
-  if (!sortedArr.length) return 0;
-  return Math.round(sortedArr[Math.floor(sortedArr.length * 0.5)] * 10) / 10;
-}
+/* ═══════════════════════════════════════════════════════
+   HEURES SANS COUVERTURE — PAR TRANCHE HORAIRE
+   À quelle heure de la journée se produisent les 0 ISP ?
+   ═══════════════════════════════════════════════════════ */
+function buildZeroCoverageByHour_(deduped) {
+  // 1. Build set of slots with at least one ISP (excluding garde)
+  var coveredSlots = {};
+  for (var i = 0; i < deduped.length; i++) {
+    var r = deduped[i];
+    if (r.type === 'garde') continue;
+    coveredSlots[r.slotTs] = true;
+  }
 
-function percentile_(sortedArr, p) {
-  if (!sortedArr.length) return 0;
-  return Math.round(sortedArr[Math.floor(sortedArr.length * p)] * 10) / 10;
+  // 2. Find min/max timestamps
+  var minTs = Infinity, maxTs = -Infinity;
+  for (var i = 0; i < deduped.length; i++) {
+    var ts = deduped[i].slotTs;
+    if (ts < minTs) minTs = ts;
+    if (ts > maxTs) maxTs = ts;
+  }
+
+  if (minTs >= Infinity) return { byHour: [], totalZeroSlots: 0 };
+
+  // 3. Iterate all 30-min slots and find those with 0 ISP
+  var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
+  var zeroByHour = {};
+  var totalByHour = {};
+  var totalZeroSlots = 0;
+
+  for (var h = 0; h < 24; h++) { zeroByHour[h] = 0; totalByHour[h] = 0; }
+
+  for (var ts = minTs; ts <= maxTs; ts += slotMs) {
+    var d = new Date(ts);
+    var h = d.getHours();
+    totalByHour[h]++;
+    if (!coveredSlots[ts]) {
+      zeroByHour[h]++;
+      totalZeroSlots++;
+    }
+  }
+
+  var byHour = [];
+  for (var h = 0; h < 24; h++) {
+    var pct = totalByHour[h] > 0 ? Math.round(zeroByHour[h] / totalByHour[h] * 1000) / 10 : 0;
+    byHour.push({ hour: h, zeroSlots: zeroByHour[h], totalSlots: totalByHour[h], pct: pct, heures: Math.round(zeroByHour[h] * Config.SLOT_DURATION_MIN / 60 * 10) / 10 });
+  }
+
+  return { byHour: byHour, totalZeroSlots: totalZeroSlots };
 }
