@@ -1157,35 +1157,12 @@ function renderZones(){
     var st=zoneOk?('\u2705 Couverte ('+Math.round(zoneCov)+'%)'):('\ud83d\udea8 '+Math.round(zoneCov)+'% (maillon faible : '+worstCis.nom+')');
     h+='<div class="zs '+scl+'" style="margin-top:6px;">'+st+'</div>';
 
-    /* Recommandation détaillée par caserne */
+    /* Recommandation : sera remplie après l'algo itératif global */
     if(!zoneOk){
-      /* Pour chaque caserne de la zone : combien manque-t-il pour atteindre l'objectif */
-      var recoLines=[];
-      for(var i=0;i<coreCis.length;i++){
-        var rc=coreCis[i], rcp=cisPool[rc.id];
-        var rNeed=needISP(cp,rcp.gh);
-        var rManque=rNeed-Math.round(rcp.pool);
-        if(rManque>0) recoLines.push({nom:rc.nom,manque:rManque,pool:Math.round(rcp.pool),cov:rcp.cov});
-      }
-      recoLines.sort(function(a,b){return b.manque-a.manque;});
-      if(recoLines.length>0){
-        var totalManque=0; for(var i=0;i<recoLines.length;i++) totalManque+=recoLines[i].manque;
-        /* Ligne résumé avec tooltip popup */
-        var tipLines=[];
-        for(var i=0;i<recoLines.length;i++) tipLines.push(recoLines[i].nom+' : +'+recoLines[i].manque+' ISP (pool actuel '+recoLines[i].pool+', couv '+recoLines[i].cov+'%)');
-        h+='<div class="reco-tip" style="font-size:.72em;color:var(--orange);margin-top:3px;position:relative;cursor:pointer;" ';
-        h+='onmouseenter="this.querySelector(\'.reco-popup\').style.display=\'block\'" onmouseleave="this.querySelector(\'.reco-popup\').style.display=\'none\'">';
-        h+='\ud83d\udca1 Recruter <strong>'+totalManque+' ISP</strong> pour atteindre '+cp+'%';
-        /* Popup au survol */
-        h+='<div class="reco-popup" style="display:none;position:absolute;left:0;bottom:100%;margin-bottom:4px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:10px 14px;z-index:999;min-width:260px;font-size:.95em;color:var(--text);">';
-        h+='<div style="font-weight:700;margin-bottom:6px;color:var(--orange);">\ud83d\udcdd Plan de recrutement — '+zo.name+'</div>';
-        for(var i=0;i<recoLines.length;i++){
-          h+='<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f0f0f0;"><span>'+recoLines[i].nom+'</span><strong style="color:var(--primary);">+'+recoLines[i].manque+' ISP</strong></div>';
-        }
-        h+='<div style="margin-top:6px;font-size:.85em;color:var(--text-light);">Pool actuel insuffisant pour couvrir '+cp+'% ('+BASE_H+'h/ISP, rayon '+travelMax+' min)</div>';
-        h+='</div>'; /* fin popup */
-        h+='</div>'; /* fin reco-tip */
-      }
+      h+='<div class="zone-reco" data-zone="'+zo.name+'" style="font-size:.72em;color:var(--orange);margin-top:3px;position:relative;cursor:pointer;" ';
+      h+='onmouseenter="var p=this.querySelector(\'.reco-popup\');if(p)p.style.display=\'block\'" onmouseleave="var p=this.querySelector(\'.reco-popup\');if(p)p.style.display=\'none\'">';
+      h+='\ud83d\udca1 <span class="reco-text">Calcul en cours\u2026</span>';
+      h+='</div>';
     }
 
     h+='</div>'; /* fin zone-card */
@@ -1193,53 +1170,134 @@ function renderZones(){
 
   document.getElementById('zoneCards').innerHTML=h;
 
+  /* ══════════════════════════════════════════════════════
+     ALGO ITÉRATIF DE RECRUTEMENT GLOBAL
+     Recruter 1 ISP à la fois au pire endroit, recalculer
+     tous les pools (car 1 recrue aide toutes les casernes
+     voisines dans le rayon), et recommencer.
+     ══════════════════════════════════════════════════════ */
+  function computeGreedyRecruitment(simIspBase, travelRadius){
+    var recruited={}; /* cisId → nb recruté */
+    /* Copie des ISP simulés */
+    var curIsp={};
+    for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=simIspBase(CIS[i].id);
+
+    /* Pré-calculer la matrice de voisinage (une seule fois) */
+    var neighbors={}; /* cisId → [cisId voisins dans le rayon] */
+    for(var i=0;i<CIS.length;i++){
+      var nb=[];
+      if(travelRadius>0){
+        for(var j=0;j<CIS.length;j++){
+          if(j!==i && cisDistMin(CIS[i],CIS[j])<=travelRadius) nb.push(CIS[j].id);
+        }
+      }
+      neighbors[CIS[i].id]=nb;
+    }
+
+    /* Fonction : pool d'une caserne avec l'état courant */
+    function pool(cid){
+      var tot=curIsp[cid]||0;
+      var nbs=neighbors[cid];
+      for(var n=0;n<nbs.length;n++) tot+=(curIsp[nbs[n]]||0);
+      return tot;
+    }
+
+    /* Fonction : couverture d'une caserne */
+    function cisCov(cid){
+      var gh=0;
+      for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cid) gh=gardeHMois(GARDE[g].zone);}
+      return covPct(pool(cid),gh);
+    }
+
+    /* Objectif par zone */
+    var zoneTarget={};
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zn=CARTE_ZONES[z].name;
+      zoneTarget[zn]=(window._zoneTargets[zn]!==undefined)?window._zoneTargets[zn]:defCp;
+    }
+
+    /* Boucle itérative : max 400 recrutements */
+    for(var iter=0;iter<400;iter++){
+      /* Trouver le pire maillon faible parmi toutes les zones non-OK */
+      var worstId=null, worstCovVal=Infinity, worstZone=null;
+      for(var z=0;z<CARTE_ZONES.length;z++){
+        var zo=CARTE_ZONES[z];
+        var target=zoneTarget[zo.name];
+        for(var i=0;i<zo.cis.length;i++){
+          var cc=cisCov(zo.cis[i]);
+          if(cc<target && cc<worstCovVal){
+            worstCovVal=cc; worstId=zo.cis[i]; worstZone=zo.name;
+          }
+        }
+      }
+      if(worstId===null) break; /* toutes les zones OK */
+
+      /* Recruter 1 ISP à cette caserne */
+      curIsp[worstId]=(curIsp[worstId]||0)+1;
+      recruited[worstId]=(recruited[worstId]||0)+1;
+    }
+
+    return recruited;
+  }
+
+  /* Exécuter l'algo avec le travel actuel */
+  var recruited=computeGreedyRecruitment(simIsp, travelMax);
+  /* Exécuter aussi avec travel=0 pour comparer */
+  var recruited0=computeGreedyRecruitment(simIsp, 0);
+
+  var totNeedRecruit=0; for(var cid in recruited) totNeedRecruit+=recruited[cid];
+  var totNeed0=0; for(var cid in recruited0) totNeed0+=recruited0[cid];
+  var econTravel=totNeed0-totNeedRecruit;
+
+  /* Construire le listing par zone à partir du résultat itératif */
+  var recruitList=[];
+  var recruitByZone={}; /* zoneName → [{caserne,manque}] */
+  for(var cid in recruited){
+    if(recruited[cid]<=0) continue;
+    var cNom='?',cZone='?',cColor='#666';
+    for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){cNom=CIS[j].nom;break;}}
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(CARTE_ZONES[z].cis.indexOf(cid)!==-1){cZone=CARTE_ZONES[z].name;cColor=CARTE_ZONES[z].color;break;}
+    }
+    var entry={zone:cZone,color:cColor,caserne:cNom,cisId:cid,manque:recruited[cid],pool:Math.round(cisPool[cid].pool),cov:cisPool[cid].cov};
+    recruitList.push(entry);
+    if(!recruitByZone[cZone]) recruitByZone[cZone]=[];
+    recruitByZone[cZone].push(entry);
+  }
+  recruitList.sort(function(a,b){return b.manque-a.manque;});
+
+  /* Mettre à jour les recommandations par zone dans les cards */
+  var recoEls=document.querySelectorAll('.zone-reco');
+  for(var i=0;i<recoEls.length;i++){
+    var zName=recoEls[i].getAttribute('data-zone');
+    var zRecs=recruitByZone[zName];
+    if(!zRecs||!zRecs.length){
+      recoEls[i].querySelector('.reco-text').textContent='\u2705 OK avec la mutualisation';
+      continue;
+    }
+    var zTotal=0; for(var j=0;j<zRecs.length;j++) zTotal+=zRecs[j].manque;
+    var zTarget=(window._zoneTargets[zName]!==undefined)?window._zoneTargets[zName]:defCp;
+    recoEls[i].querySelector('.reco-text').innerHTML='Recruter <strong>'+zTotal+' ISP</strong> pour atteindre '+zTarget+'%';
+
+    /* Popup détaillée */
+    var popup='<div class="reco-popup" style="display:none;position:absolute;left:0;bottom:100%;margin-bottom:4px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:10px 14px;z-index:999;min-width:260px;font-size:.95em;color:var(--text);">';
+    popup+='<div style="font-weight:700;margin-bottom:6px;color:var(--orange);">\ud83d\udcdd Plan de recrutement \u2014 '+zName+'</div>';
+    zRecs.sort(function(a,b){return b.manque-a.manque;});
+    for(var j=0;j<zRecs.length;j++){
+      popup+='<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f0f0f0;"><span>'+zRecs[j].caserne+'</span><strong style="color:var(--primary);">+'+zRecs[j].manque+' ISP</strong></div>';
+    }
+    popup+='<div style="margin-top:6px;font-size:.85em;color:var(--text-light);">Algo it\u00e9ratif : chaque recrue renforce tout le pool (rayon '+travelMax+' min)</div>';
+    popup+='</div>';
+    recoEls[i].insertAdjacentHTML('beforeend',popup);
+  }
+
   /* ══ SYNTHÈSE ══ */
   var allSimIsp=0;
   for(var i=0;i<CIS.length;i++) allSimIsp+=simIsp(CIS[i].id);
   var listingTotal=DATA&&DATA.effectifStats?DATA.effectifStats.total:'?';
   var globalCov=allCovN>0?Math.round(allCovSum/allCovN*10)/10:0;
 
-  /* ISP nécessaires TOTAL = pour chaque zone, combien faut-il dans le pool
-     du maillon faible pour atteindre l'objectif (en tenant compte du travel).
-     Quand travel augmente, le pool mutualise → le besoin de recrutement baisse. */
-  var totNeedRecruit=0;
-  for(var z=0;z<CARTE_ZONES.length;z++){
-    var zo=CARTE_ZONES[z];
-    var zcp=(window._zoneTargets[zo.name]!==undefined)?window._zoneTargets[zo.name]:defCp;
-    var zgh=gardeHMois(zo.name);
-    /* Pire caserne de la zone */
-    var worstPool=Infinity;
-    for(var i=0;i<zo.cis.length;i++){
-      if(cisPool[zo.cis[i]]) {
-        var p=cisPool[zo.cis[i]].pool;
-        if(p<worstPool) worstPool=p;
-      }
-    }
-    if(worstPool===Infinity) worstPool=0;
-    var zoneNeed=needISP(zcp,zgh);
-    var manque=zoneNeed-Math.round(worstPool);
-    if(manque>0) totNeedRecruit+=manque;
-  }
-
-  /* Calcul sans travel pour comparer */
-  var totNeed0=0;
-  for(var z=0;z<CARTE_ZONES.length;z++){
-    var zo=CARTE_ZONES[z];
-    var zcp=(window._zoneTargets[zo.name]!==undefined)?window._zoneTargets[zo.name]:defCp;
-    var zgh=gardeHMois(zo.name);
-    var worstOwn=Infinity;
-    for(var i=0;i<zo.cis.length;i++){
-      var ownOnly=simIsp(zo.cis[i]);
-      if(ownOnly<worstOwn) worstOwn=ownOnly;
-    }
-    if(worstOwn===Infinity) worstOwn=0;
-    var zn0=needISP(zcp,zgh);
-    var m0=zn0-Math.round(worstOwn);
-    if(m0>0) totNeed0+=m0;
-  }
-  var econTravel=totNeed0-totNeedRecruit;
-
-  /* Casernes isolées (couverture < objectif même à travelMax) */
+  /* Casernes isolées */
   var isolated=[];
   for(var i=0;i<CIS.length;i++){
     if(cisPool[CIS[i].id].cov<defCp) isolated.push({nom:CIS[i].nom,cov:cisPool[CIS[i].id].cov,pool:cisPool[CIS[i].id].pool});
@@ -1256,53 +1314,34 @@ function renderZones(){
     '<div class="tr" style="font-weight:700;font-size:1.1em;margin-top:4px;"><span>\ud83d\udcc8 Couverture moy.</span><strong style="color:'+(globalCov>=defCp?'var(--green)':'var(--primary)')+';">'+globalCov+'%</strong></div>'+
     '<div class="tr"><span>Zones OK (\u2265 objectif)</span><strong style="color:'+(zonesOk===CARTE_ZONES.length?'var(--green)':'var(--primary)')+';">'+zonesOk+' / '+CARTE_ZONES.length+'</strong></div>'+
     '<div style="margin-top:8px;padding:6px 8px;background:var(--blue-light);border-radius:6px;font-size:.82em;">'+
-    '<div style="display:flex;justify-content:space-between;font-weight:700;"><span>\ud83d\ude80 ISP \u00e0 recruter</span><strong style="color:var(--primary);">'+totNeedRecruit+'</strong></div>'+
+    '<div style="display:flex;justify-content:space-between;font-weight:700;"><span>\ud83d\ude80 ISP \u00e0 recruter (algo it\u00e9ratif)</span><strong style="color:var(--primary);">'+totNeedRecruit+'</strong></div>'+
+    '<div style="font-size:.8em;color:var(--text-light);margin-top:2px;">Chaque recrue renforce le pool de toutes les casernes \u00e0 port\u00e9e</div>'+
     (travelMax>0&&econTravel>0?'<div style="font-size:.85em;color:var(--green);margin-top:2px;">\u2705 Le rayon de '+travelMax+' min \u00e9conomise <strong>'+econTravel+' recrutement'+(econTravel>1?'s':'')+'</strong> vs 0 min</div>':'')+
     (travelMax===0?'<div style="font-size:.85em;color:var(--text-light);margin-top:2px;">\u2191 Augmentez le rayon d\'action pour mutualiser les pools</div>':'')+
     '</div>';
 
-  /* ══ LISTING COMPLET DES RECRUTEMENTS ══ */
-  var recruitList=[];
-  for(var z=0;z<CARTE_ZONES.length;z++){
-    var zo=CARTE_ZONES[z];
-    var zcp=(window._zoneTargets[zo.name]!==undefined)?window._zoneTargets[zo.name]:defCp;
-    var zgh=gardeHMois(zo.name);
-    for(var i=0;i<zo.cis.length;i++){
-      var cid=zo.cis[i];
-      if(!cisPool[cid])continue;
-      var rcp=cisPool[cid];
-      var rNeed=needISP(zcp,rcp.gh);
-      var rManque=rNeed-Math.round(rcp.pool);
-      if(rManque>0){
-        var cNom='?'; for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){cNom=CIS[j].nom;break;}}
-        recruitList.push({zone:zo.name,color:zo.color,caserne:cNom,manque:rManque,pool:Math.round(rcp.pool),cov:rcp.cov});
-      }
-    }
-  }
-  recruitList.sort(function(a,b){return b.manque-a.manque;});
-
+  /* ══ LISTING COMPLET DES RECRUTEMENTS (issu de l'algo itératif) ══ */
   if(recruitList.length>0){
     synthHtml+='<div style="margin-top:8px;padding:8px 10px;background:var(--orange-light);border-radius:6px;border:1px solid var(--orange);">';
-    synthHtml+='<div style="font-weight:700;font-size:.88em;color:var(--orange);margin-bottom:6px;">\ud83d\udcdd Listing des recrutements \u00e0 effectuer</div>';
+    synthHtml+='<div style="font-weight:700;font-size:.88em;color:var(--orange);margin-bottom:6px;">\ud83d\udcdd Recrutements \u00e0 effectuer (algo it\u00e9ratif)</div>';
     synthHtml+='<table style="width:100%;font-size:.78em;border-collapse:collapse;">';
-    synthHtml+='<tr style="background:var(--bg);"><th style="text-align:left;padding:4px 6px;">Zone</th><th style="text-align:left;padding:4px 6px;">Caserne</th><th style="text-align:center;padding:4px 6px;">Pool actuel</th><th style="text-align:center;padding:4px 6px;">Couv.</th><th style="text-align:center;padding:4px 6px;font-weight:700;color:var(--primary);">\u00c0 recruter</th></tr>';
+    synthHtml+='<tr style="background:var(--bg);"><th style="text-align:left;padding:4px 6px;">Zone</th><th style="text-align:left;padding:4px 6px;">Caserne</th><th style="text-align:center;padding:4px 6px;">Pool actuel</th><th style="text-align:center;padding:4px 6px;">Couv. actuelle</th><th style="text-align:center;padding:4px 6px;font-weight:700;color:var(--primary);">\u00c0 recruter</th></tr>';
     for(var i=0;i<recruitList.length;i++){
       var rl=recruitList[i];
       synthHtml+='<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 6px;"><span style="color:'+rl.color+';font-weight:600;">'+rl.zone+'</span></td><td style="padding:3px 6px;">'+rl.caserne+'</td><td style="text-align:center;padding:3px 6px;">'+rl.pool+'</td><td style="text-align:center;padding:3px 6px;">'+rl.cov+'%</td><td style="text-align:center;padding:3px 6px;font-weight:700;color:var(--primary);">+'+rl.manque+'</td></tr>';
     }
     synthHtml+='</table>';
-    var totalRecruitList=0; for(var i=0;i<recruitList.length;i++) totalRecruitList+=recruitList[i].manque;
-    synthHtml+='<div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;padding-top:4px;border-top:1px solid var(--orange);font-size:.9em;"><span>Total</span><span style="color:var(--primary);">+'+totalRecruitList+' ISP</span></div>';
+    synthHtml+='<div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;padding-top:4px;border-top:1px solid var(--orange);font-size:.9em;"><span>Total</span><span style="color:var(--primary);">+'+totNeedRecruit+' ISP</span></div>';
     synthHtml+='</div>';
   }
 
-  if(isolated.length>0&&isolated.length<=15){
+  if(isolated.length>0&&isolated.length<=20){
     synthHtml+='<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-size:.78em;">';
     synthHtml+='<strong style="color:var(--primary);">\ud83d\udea8 Casernes sous-couvertes ('+isolated.length+') :</strong>';
-    for(var i=0;i<Math.min(10,isolated.length);i++){
+    for(var i=0;i<Math.min(12,isolated.length);i++){
       synthHtml+='<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>'+isolated[i].nom+' (pool '+Math.round(isolated[i].pool)+')</span><strong style="color:var(--primary);">'+isolated[i].cov+'%</strong></div>';
     }
-    if(isolated.length>10) synthHtml+='<div style="color:var(--text-light);">...et '+(isolated.length-10)+' autres</div>';
+    if(isolated.length>12) synthHtml+='<div style="color:var(--text-light);">...et '+(isolated.length-12)+' autres</div>';
     synthHtml+='</div>';
   }
 
