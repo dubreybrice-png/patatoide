@@ -235,18 +235,17 @@
     <div id="map"></div>
     <div id="carteSidebar">
       <div class="sidebar-header">
-        <h3>🥔 Zones opérationnelles ISP</h3>
-        <p style="font-size:0.78em;color:var(--text-light);margin-bottom:8px;"><strong>ISP actuels</strong> = inscrits au listing. <strong>ISP requis</strong> = nécessaires pour l'objectif. Modèle : 36h/mois, 1/5 fait 72h.</p>
+        <h3>🥔 Aide à la décision — Recrutement ISP</h3>
+        <p style="font-size:0.75em;color:var(--text-light);margin-bottom:6px;">Ajustez les ISP <strong>par caserne</strong> et le temps de trajet.<br>Objectif personnalisable par zone (🎯). <em>Modèle : 36h/mois, 1/5 fait 72h.</em></p>
         <div class="coverage-control">
-          <label>Objectif couverture : <strong id="coverTarget">75</strong>%</label>
+          <label>Objectif couverture par défaut : <strong id="coverTarget">75</strong>%</label>
           <input type="range" id="coverSlider" min="50" max="100" value="75" oninput="updateCoverage(this.value)">
         </div>
-        <div class="coverage-control" style="margin-top:8px;">
-          <label>Temps de trajet max : <strong id="travelTarget">0</strong> min</label>
+        <div class="coverage-control" style="margin-top:6px;">
+          <label>Temps de trajet max (rayon d'action) : <strong id="travelTarget">0</strong> min</label>
           <input type="range" id="travelSlider" min="0" max="60" step="5" value="0" oninput="updateTravel(this.value)">
-          <div style="font-size:0.72em;color:var(--text-light);margin-top:2px;">↑ Augmenter pour inclure les casernes voisines dans chaque zone</div>
         </div>
-        <div id="zoneFilters" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px 8px;"></div>
+        <div id="zoneFilters" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 8px;"></div>
       </div>
       <div id="zoneTotals"></div>
       <div id="zoneCards"></div>
@@ -845,11 +844,21 @@ function hlZone(name){
 
 function renderZones(){
   var map=window._mapObj;if(!map)return;
-  var cp=parseInt(document.getElementById('coverSlider').value)||75;
+  var defCp=parseInt(document.getElementById('coverSlider').value)||75;
   var travelMax=parseInt(document.getElementById('travelSlider').value)||0;
   var nbMois=(DATA&&DATA.interStats)?DATA.interStats.nbMois||12:12;
 
-  // Build zone filter checkboxes (once)
+  if(!window._cisAdj) window._cisAdj={};
+  if(!window._zoneTargets) window._zoneTargets={};
+
+  /* ISP simulé pour une caserne (par défaut = listing réel) */
+  function simIsp(cid){
+    if(window._cisAdj[cid]!==undefined) return window._cisAdj[cid];
+    for(var i=0;i<CIS.length;i++){if(CIS[i].id===cid) return CIS[i].actualIsp||0;}
+    return 0;
+  }
+
+  /* ── Filtres zone (construits une seule fois) ── */
   var filDiv=document.getElementById('zoneFilters');
   if(!filDiv._built){
     var fh='';
@@ -860,40 +869,31 @@ function renderZones(){
     filDiv.innerHTML=fh;
     filDiv._built=true;
   }
-
-  // Read checked zones
   var checkedZones={};
   var checks=filDiv.querySelectorAll('input[type=checkbox]');
   for(var i=0;i<checks.length;i++){if(checks[i].checked)checkedZones[checks[i].getAttribute('data-zone')]=true;}
 
-  // Nettoyer anciens polygones et labels
+  /* ── Nettoyage carte ── */
   for(var i=0;i<window._zonePolys.length;i++)map.removeLayer(window._zonePolys[i]);
   for(var i=0;i<window._zoneLabels.length;i++)map.removeLayer(window._zoneLabels[i]);
   window._zonePolys=[];window._zoneLabels=[];
 
-  if(!window._ispAdjust)window._ispAdjust={};
-  var h='';
-  var totOwnIsp=0,totAdjIsp=0,totNeeded=0,totInter=0,zonesOk=0,globalNum=0,globalDen=0;
+  var h='',globalNum=0,globalDen=0,zonesOk=0,totNeeded=0;
 
   for(var z=0;z<CARTE_ZONES.length;z++){
     var zo=CARTE_ZONES[z];
     var visible=!!checkedZones[zo.name];
     var im=zIntMois(zo);
     var gh=gardeHMois(zo.name);
+    var cp=(window._zoneTargets[zo.name]!==undefined)?window._zoneTargets[zo.name]:defCp;
 
-    /* ── Casernes propres à la zone ── */
+    /* ── Casernes propres ── */
     var coreCis=[];
     for(var i=0;i<zo.cis.length;i++){
       for(var j=0;j<CIS.length;j++){if(CIS[j].id===zo.cis[i]){coreCis.push(CIS[j]);break;}}
     }
-    var ownIsp=0,coreDetail=[];
-    for(var i=0;i<coreCis.length;i++){
-      var n=coreCis[i].actualIsp||0;
-      ownIsp+=n;
-      coreDetail.push(coreCis[i].nom+' ('+n+')');
-    }
 
-    /* ── Casernes voisines individuelles (dans le temps de trajet) ── */
+    /* ── Casernes voisines (distance caserne par caserne) ── */
     var nearbyCis=[];
     if(travelMax>0){
       for(var i=0;i<CIS.length;i++){
@@ -903,34 +903,33 @@ function renderZones(){
           var d=cisDistMin(CIS[i],coreCis[j]);
           if(d<bestDist)bestDist=d;
         }
-        if(bestDist<=travelMax) nearbyCis.push({cis:CIS[i],dist:bestDist,isp:CIS[i].actualIsp||0});
+        if(bestDist<=travelMax) nearbyCis.push({cis:CIS[i],dist:bestDist});
       }
       nearbyCis.sort(function(a,b){return a.dist-b.dist;});
     }
+
+    /* ── Total ISP (propres simulés + renfort simulés) ── */
+    var ownIsp=0;
+    for(var i=0;i<coreCis.length;i++) ownIsp+=simIsp(coreCis[i].id);
     var nearbyIsp=0;
-    for(var i=0;i<nearbyCis.length;i++) nearbyIsp+=nearbyCis[i].isp;
+    for(var i=0;i<nearbyCis.length;i++) nearbyIsp+=simIsp(nearbyCis[i].cis.id);
+    var totalIsp=ownIsp+nearbyIsp;
 
-    /* ── ISP simulés (slider ou listing par défaut) ── */
-    var adjIsp=(window._ispAdjust[zo.name]!==undefined)?window._ispAdjust[zo.name]:Math.round(ownIsp);
-
-    /* ── Couverture (ISP propres + renfort) ── */
-    var effIsp=adjIsp+nearbyIsp;  // ISP effectifs = simulés propres + renfort accessible
-    var ownCov=covPct(adjIsp,im,gh);
-    var effCov=covPct(effIsp,im,gh);
+    /* ── Couverture ── */
+    var effCov=covPct(totalIsp,im,gh);
     var nd=needISP(cp,im,gh);
-    var df=effIsp-nd;  // écart basé sur l'effectif total (propres + renfort)
+    var df=Math.round(totalIsp)-nd;
     var demand=H_MOIS+im*DUREE_INTER;
-    globalNum+=Math.min(demand,ispH(effIsp)+gh);
+    globalNum+=Math.min(demand,ispH(totalIsp)+gh);
     globalDen+=demand;
+    totNeeded+=nd;
 
     var st,scl;
-    if(df>=0){st='✅ OK (+'+df+')';scl='ok';zonesOk++;}
-    else if(df>=-3){st='⚠️ −'+Math.abs(df)+' ISP';scl='warn';}
-    else{st='🚨 −'+Math.abs(df)+' ISP';scl='crit';}
+    if(df>=0){st='\u2705 OK (+'+df+')';scl='ok';zonesOk++;}
+    else if(df>=-3){st='\u26a0\ufe0f \u2212'+Math.abs(df)+' ISP';scl='warn';}
+    else{st='\ud83d\udea8 \u2212'+Math.abs(df)+' ISP';scl='crit';}
 
-    totOwnIsp+=ownIsp; totAdjIsp+=adjIsp; totNeeded+=nd; totInter+=im;
-
-    /* ── Polygone zone sur la carte ── */
+    /* ── Polygone zone sur carte ── */
     if(visible){
       var polyIds=zo.cis.slice();
       if(travelMax>0){for(var i=0;i<nearbyCis.length;i++)polyIds.push(nearbyCis[i].cis.id);}
@@ -946,60 +945,105 @@ function renderZones(){
       }
     }
 
-    /* ── Carte sidebar ── */
-    h+='<div class="zone-card" data-z="'+zo.name+'" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')" style="border-left-color:'+zo.color+';'+(visible?'':'opacity:0.4;')+'">';
-    h+='<div class="zn" style="color:'+zo.color+';">'+zo.name+'</div>';
-    h+='<div style="font-size:.78em;color:var(--text-light);margin-bottom:4px;">'+coreDetail.join(', ')+'</div>';
-    h+='<div class="zr"><span>Inter/mois ('+nbMois+' mois de données)</span><strong>~'+im+'</strong></div>';
-    if(gh>0){
-      h+='<div class="zr" style="color:var(--blue);"><span>🛡️ Garde (+'+gh+'h/mois)</span><strong>≈ +'+Math.round(gh/BASE_H)+' ISP éq.</strong></div>';
-      var gl=gardeLabel(zo.name);
-      if(gl) h+='<div style="font-size:.7em;color:var(--text-light);margin:-2px 0 2px;padding-left:4px;">'+gl+'</div>';
-    }
-    h+='<div class="zr" style="font-weight:700;"><span>ISP nécessaires pour '+cp+'%</span><strong style="font-size:1.1em;">'+nd+'</strong></div>';
-    h+='<div class="zr"><span>ISP actuels (listing)</span><strong>'+ownIsp+'</strong></div>';
-    h+='<div class="zr" style="display:flex;align-items:center;gap:4px;"><span style="flex:1;">🎚️ ISP simulés</span>';
-    h+='<input type="range" min="0" max="50" value="'+adjIsp+'" style="width:70px;margin:0;cursor:pointer;" ';
-    h+='oninput="this.parentNode.querySelector(\'.adj-val\').textContent=this.value;" ';
-    h+='onchange="if(!window._ispAdjust)window._ispAdjust={};window._ispAdjust[CARTE_ZONES['+z+'].name]=+this.value;renderZones();">';
-    h+='<strong class="adj-val" style="min-width:18px;text-align:right;">'+adjIsp+'</strong></div>';
-    h+='<div class="zr"><span>Couverture propre ('+adjIsp+' ISP × 36h'+(gh>0?' + garde':'')+' / 730h+inter)</span><strong>'+ownCov+'%</strong></div>';
+    /* ══════════ CARTE SIDEBAR — PAR ZONE ══════════ */
+    h+='<div class="zone-card" data-z="'+zo.name+'" style="border-left-color:'+zo.color+';'+(visible?'':'opacity:0.4;')+'">';
 
-    /* ── Détail renfort (CIS par CIS) ── */
+    /* Entête : nom zone + objectif personnalisé */
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')">';
+    h+='<span class="zn" style="color:'+zo.color+';margin:0;">'+zo.name+'</span>';
+    h+='<span style="font-size:.75em;color:var(--text-light);display:flex;align-items:center;gap:2px;" onclick="event.stopPropagation();">\ud83c\udfaf <input type="number" min="50" max="100" value="'+cp+'" style="width:36px;border:1px solid var(--border);border-radius:3px;text-align:center;font-size:.9em;padding:1px 2px;" onchange="window._zoneTargets[\''+zo.name.replace(/'/g,"\\'")+'\']= +this.value;renderZones();">%</span>';
+    h+='</div>';
+
+    /* Contexte : inter/mois + garde (compact) */
+    var meta='Inter/mois: <strong>~'+im+'</strong>';
+    if(gh>0) meta+=' | \ud83d\udee1\ufe0f Garde: <strong>+'+gh+'h</strong> (\u2248'+Math.round(gh/BASE_H)+' ISP \u00e9q.)';
+    h+='<div style="font-size:.73em;color:var(--text-light);margin:3px 0;">'+meta+'</div>';
+
+    /* Requis */
+    h+='<div class="zr" style="font-weight:700;"><span>Requis pour '+cp+'%</span><strong>'+nd+' ISP</strong></div>';
+
+    /* ── Casernes de la zone avec sliders ISP ── */
+    h+='<div style="margin-top:6px;">';
+    h+='<div style="font-size:.7em;font-weight:700;color:'+zo.color+';text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Casernes de la zone</div>';
+    for(var i=0;i<coreCis.length;i++){
+      var c=coreCis[i],sI=simIsp(c.id),aI=Math.round((c.actualIsp||0)*10)/10;
+      h+='<div style="display:flex;align-items:center;gap:3px;font-size:.78em;padding:2px 0;">';
+      h+='<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="Listing: '+aI+' ISP">'+c.nom+' <span style="color:var(--text-light);">('+aI+')</span></span>';
+      h+='<input type="range" min="0" max="30" value="'+Math.round(sI)+'" style="width:55px;margin:0;cursor:pointer;accent-color:'+zo.color+';" ';
+      h+='oninput="this.nextElementSibling.textContent=this.value;" ';
+      h+='onchange="window._cisAdj[\''+c.id+'\']= +this.value;renderZones();">';
+      h+='<strong style="min-width:16px;text-align:right;">'+Math.round(sI)+'</strong>';
+      h+='</div>';
+    }
+    h+='</div>';
+
+    /* ── Renfort : casernes voisines (lecture seule — les changer dans leur zone) ── */
     if(nearbyCis.length>0){
       h+='<div style="margin-top:4px;padding-top:4px;border-top:1px dashed var(--border);">';
-      h+='<div style="font-size:.78em;font-weight:700;color:var(--blue);margin-bottom:2px;">🚗 Renfort accessible (≤ '+travelMax+' min) :</div>';
+      h+='<div style="font-size:.7em;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">\ud83d\ude97 Renfort (\u2264'+travelMax+' min)</div>';
       for(var i=0;i<nearbyCis.length;i++){
-        var nc=nearbyCis[i];
-        h+='<div style="font-size:.75em;color:var(--text-light);padding:1px 0 1px 8px;">'+nc.cis.nom+' — <strong>'+nc.isp+' ISP</strong> — '+nc.dist+' min</div>';
+        var nc=nearbyCis[i],nsI=simIsp(nc.cis.id);
+        h+='<div style="font-size:.75em;color:var(--text-light);padding:1px 0 1px 4px;display:flex;justify-content:space-between;">';
+        h+='<span>'+nc.cis.nom+' \u2014 '+nc.dist+' min</span>';
+        h+='<strong>'+Math.round(nsI)+'</strong>';
+        h+='</div>';
       }
       h+='</div>';
     }
-    h+='<div class="zr" style="font-weight:700;background:rgba(0,0,0,.03);border-radius:4px;padding:4px 6px;margin-top:4px;"><span>📈 Couverture effective ('+effIsp+' ISP'+(nearbyIsp>0?' dont '+nearbyIsp+' renfort':'')+')</span><strong style="font-size:1.1em;color:'+(effCov>=cp?'var(--green)':'var(--primary)')+';">'+effCov+'%</strong></div>';
 
-    h+='<div class="zs '+scl+'">'+st+'</div></div>';
+    /* ── Résultat couverture ── */
+    h+='<div style="margin-top:6px;padding:5px 8px;background:rgba(0,0,0,.04);border-radius:5px;">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;font-size:.85em;">';
+    h+='<span style="font-weight:700;">\ud83d\udcc8 Couverture</span>';
+    h+='<strong style="font-size:1.2em;color:'+(effCov>=cp?'var(--green)':'var(--primary)')+';">'+effCov+'%</strong>';
+    h+='</div>';
+    h+='<div style="font-size:.68em;color:var(--text-light);">'+Math.round(totalIsp)+' ISP'+(nearbyIsp>0?' (dont '+Math.round(nearbyIsp)+' renfort)':'')+' \u00d7 36h'+(gh>0?' + '+gh+'h garde':'')+' / '+(H_MOIS+im*DUREE_INTER)+'h demande</div>';
+    /* ── Barre de progression ── */
+    var pctBar=Math.min(100,effCov);
+    h+='<div style="height:6px;background:#e5e7eb;border-radius:3px;margin-top:4px;overflow:hidden;">';
+    h+='<div style="width:'+pctBar+'%;height:100%;border-radius:3px;background:'+(effCov>=cp?'var(--green)':'var(--primary)')+';transition:width .3s;"></div>';
+    h+='</div>';
+    h+='</div>';
+
+    /* Statut */
+    h+='<div class="zs '+scl+'">'+st+'</div>';
+
+    /* ── Recommandation si pas à l'objectif ── */
+    if(df<0){
+      /* Trouver dans quelle caserne de la zone recruter aurait le plus d'impact */
+      var recCis=null,minSim=Infinity;
+      for(var i=0;i<coreCis.length;i++){
+        var s=simIsp(coreCis[i].id);
+        if(s<minSim){minSim=s;recCis=coreCis[i];}
+      }
+      var recTxt='Recruter <strong>'+Math.abs(df)+' ISP</strong>';
+      if(recCis) recTxt+=' (priorit\u00e9 : '+recCis.nom+')';
+      recTxt+=' pour atteindre '+cp+'%';
+      h+='<div style="font-size:.72em;color:var(--orange);margin-top:3px;">\ud83d\udca1 '+recTxt+'</div>';
+    }
+
+    h+='</div>'; /* fin zone-card */
   }
 
   document.getElementById('zoneCards').innerHTML=h;
 
-  /* ── Synthèse département ── */
+  /* ══════════ SYNTHÈSE DÉPARTEMENT ══════════ */
+  var allSimIsp=0;
+  for(var i=0;i<CIS.length;i++) allSimIsp+=simIsp(CIS[i].id);
   var listingTotal=DATA&&DATA.effectifStats?DATA.effectifStats.total:'?';
-  var totDf=totAdjIsp-totNeeded;
-  var tGarde=0;for(var z=0;z<CARTE_ZONES.length;z++)tGarde+=gardeHMois(CARTE_ZONES[z].name);
   var globalCov=globalDen>0?Math.round(globalNum/globalDen*1000)/10:0;
+  var tGarde=0;for(var z=0;z<CARTE_ZONES.length;z++)tGarde+=gardeHMois(CARTE_ZONES[z].name);
 
   var synthHtml=
     '<div class="zone-totals" style="margin-bottom:12px;">'+
-    '<div class="tr" style="font-weight:700;margin-bottom:6px;font-size:1em;"><span>📊 Synthèse département</span></div>'+
-    '<div class="tr"><span>Inter/mois total ('+nbMois+' mois)</span><strong>~'+totInter+'</strong></div>'+
+    '<div class="tr" style="font-weight:700;margin-bottom:6px;font-size:1em;"><span>\ud83d\udcca Synth\u00e8se d\u00e9partement</span></div>'+
     '<div class="tr"><span>ISP au listing</span><strong>'+listingTotal+'</strong></div>'+
-    '<div class="tr"><span>ISP simulés total</span><strong>'+totAdjIsp+'</strong></div>'+
-    (tGarde>0?'<div class="tr" style="color:var(--blue);"><span>🛡️ Gardes (+'+tGarde+'h/mois ≈ +'+Math.round(tGarde/BASE_H)+' ISP éq.)</span><strong></strong></div>':'')+
-    '<div class="tr"><span>ISP requis total ('+cp+'%)</span><strong>'+totNeeded+'</strong></div>'+
-    '<div class="tr"><span>Écart simulé</span><strong style="color:'+(totDf>=0?'var(--green)':'var(--primary)')+';">'+(totDf>=0?'+':'')+totDf+' ISP</strong></div>'+
-    '<div class="tr" style="font-weight:700;font-size:1.05em;"><span>📈 Couverture globale</span><strong style="color:'+(globalCov>=cp?'var(--green)':'var(--primary)')+';">'+globalCov+'%</strong></div>'+
-    '<div class="tr"><span>Zones à l\'objectif ('+cp+'%)</span><strong style="color:'+(zonesOk===CARTE_ZONES.length?'var(--green)':'var(--primary)')+';">'+zonesOk+' / '+CARTE_ZONES.length+'</strong></div>'+
-    '<div style="text-align:center;margin-top:6px;"><a href="#" onclick="window._ispAdjust={};renderZones();return false;" style="font-size:.75em;color:var(--blue);text-decoration:none;">🔄 Réinitialiser simulations</a></div>'+
+    '<div class="tr"><span>ISP simul\u00e9s (total casernes)</span><strong>'+Math.round(allSimIsp)+'</strong></div>'+
+    '<div class="tr"><span>ISP requis total</span><strong>'+totNeeded+'</strong></div>'+
+    (tGarde>0?'<div class="tr" style="color:var(--blue);"><span>\ud83d\udee1\ufe0f Gardes</span><strong>+'+tGarde+'h/mois \u2248 '+Math.round(tGarde/BASE_H)+' ISP \u00e9q.</strong></div>':'')+
+    '<div class="tr" style="font-weight:700;font-size:1.1em;margin-top:4px;"><span>\ud83d\udcc8 Couverture globale</span><strong style="color:'+(globalCov>=defCp?'var(--green)':'var(--primary)')+';">'+globalCov+'%</strong></div>'+
+    '<div class="tr"><span>Zones \u00e0 l\'objectif</span><strong style="color:'+(zonesOk===CARTE_ZONES.length?'var(--green)':'var(--primary)')+';">'+zonesOk+' / '+CARTE_ZONES.length+'</strong></div>'+
+    '<div style="text-align:center;margin-top:8px;"><a href="#" onclick="window._cisAdj={};window._zoneTargets={};renderZones();return false;" style="font-size:.78em;color:var(--blue);text-decoration:none;">\ud83d\udd04 R\u00e9initialiser tout</a></div>'+
     '</div>';
 
   document.getElementById('zoneTotals').innerHTML=synthHtml;
