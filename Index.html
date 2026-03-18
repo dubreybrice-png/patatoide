@@ -1079,9 +1079,19 @@ function renderZones(){
     var zoneOk=zoneCov>=cp;
     if(zoneOk) zonesOk++;
 
-    /* Polygone */
+    /* Polygone — inclut les casernes contributrices dans le rayon */
     if(visible){
-      var poly=mkZonePoly(zo.cis);
+      /* Collecter tous les CIS IDs qui contribuent à cette zone (core + voisins dans le rayon) */
+      var polyCisIds=zo.cis.slice();
+      if(travelMax>0){
+        for(var i=0;i<CIS.length;i++){
+          if(polyCisIds.indexOf(CIS[i].id)!==-1) continue;
+          for(var k=0;k<coreCis.length;k++){
+            if(cisDistMin(CIS[i],coreCis[k])<=travelMax){polyCisIds.push(CIS[i].id);break;}
+          }
+        }
+      }
+      var poly=mkZonePoly(polyCisIds);
       if(poly.length>0){
         var lyr=L.polygon(poly,{color:zo.color,weight:2,fillColor:zo.color,fillOpacity:.15,dashArray:'6,4'}).addTo(map);
         lyr._zoneName=zo.name;
@@ -1099,7 +1109,15 @@ function renderZones(){
     /* En-tête zone + objectif */
     h+='<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')">';
     h+='<span class="zn" style="color:'+zo.color+';margin:0;">'+zo.name+'</span>';
-    h+='<span style="font-size:.75em;color:var(--text-light);display:flex;align-items:center;gap:2px;" onclick="event.stopPropagation();">\ud83c\udfaf<input type="number" min="50" max="100" value="'+cp+'" style="width:36px;border:1px solid var(--border);border-radius:3px;text-align:center;font-size:.9em;padding:1px 2px;" onchange="window._zoneTargets[\''+zo.name.replace(/'/g,"\\'")+'\']= +this.value;renderZones();">%</span>';
+    h+='<span style="font-size:.78em;font-weight:700;color:'+(zoneOk?'var(--green)':'var(--primary)')+';">\ud83c\udfaf '+cp+'%</span>';
+    h+='</div>';
+    /* Slider objectif par zone */
+    h+='<div style="display:flex;align-items:center;gap:4px;margin:2px 0 4px;" onclick="event.stopPropagation();">';
+    h+='<span style="font-size:.68em;color:var(--text-light);white-space:nowrap;">Objectif</span>';
+    h+='<input type="range" min="50" max="100" value="'+cp+'" style="flex:1;margin:0;cursor:pointer;accent-color:'+zo.color+';height:14px;" ';
+    h+='oninput="this.nextElementSibling.textContent=this.value+\'%\'" ';
+    h+='onchange="window._zoneTargets[\''+zo.name.replace(/'/g,"\\'")+'\']= +this.value;renderZones();">';
+    h+='<strong style="min-width:30px;text-align:right;font-size:.78em;">'+cp+'%</strong>';
     h+='</div>';
 
     if(gh>0){
@@ -1320,18 +1338,33 @@ function renderZones(){
     (travelMax===0?'<div style="font-size:.85em;color:var(--text-light);margin-top:2px;">\u2191 Augmentez le rayon d\'action pour mutualiser les pools</div>':'')+
     '</div>';
 
-  /* ══ LISTING COMPLET DES RECRUTEMENTS (issu de l'algo itératif) ══ */
+  /* ══ LISTING RECRUTEMENTS GROUPÉ PAR ZONE (dépliable) ══ */
   if(recruitList.length>0){
     synthHtml+='<div style="margin-top:8px;padding:8px 10px;background:var(--orange-light);border-radius:6px;border:1px solid var(--orange);">';
-    synthHtml+='<div style="font-weight:700;font-size:.88em;color:var(--orange);margin-bottom:6px;">\ud83d\udcdd Recrutements \u00e0 effectuer (algo it\u00e9ratif)</div>';
-    synthHtml+='<table style="width:100%;font-size:.78em;border-collapse:collapse;">';
-    synthHtml+='<tr style="background:var(--bg);"><th style="text-align:left;padding:4px 6px;">Zone</th><th style="text-align:left;padding:4px 6px;">Caserne</th><th style="text-align:center;padding:4px 6px;">Pool actuel</th><th style="text-align:center;padding:4px 6px;">Couv. actuelle</th><th style="text-align:center;padding:4px 6px;font-weight:700;color:var(--primary);">\u00c0 recruter</th></tr>';
-    for(var i=0;i<recruitList.length;i++){
-      var rl=recruitList[i];
-      synthHtml+='<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 6px;"><span style="color:'+rl.color+';font-weight:600;">'+rl.zone+'</span></td><td style="padding:3px 6px;">'+rl.caserne+'</td><td style="text-align:center;padding:3px 6px;">'+rl.pool+'</td><td style="text-align:center;padding:3px 6px;">'+rl.cov+'%</td><td style="text-align:center;padding:3px 6px;font-weight:700;color:var(--primary);">+'+rl.manque+'</td></tr>';
+    synthHtml+='<div style="font-weight:700;font-size:.88em;color:var(--orange);margin-bottom:6px;">\ud83d\udcdd Recrutements \u00e0 effectuer</div>';
+    /* Grouper par zone */
+    var zoneOrder=[];
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zn=CARTE_ZONES[z].name;
+      if(recruitByZone[zn]&&recruitByZone[zn].length>0) zoneOrder.push({name:zn,color:CARTE_ZONES[z].color,recs:recruitByZone[zn]});
     }
-    synthHtml+='</table>';
-    synthHtml+='<div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;padding-top:4px;border-top:1px solid var(--orange);font-size:.9em;"><span>Total</span><span style="color:var(--primary);">+'+totNeedRecruit+' ISP</span></div>';
+    for(var zi=0;zi<zoneOrder.length;zi++){
+      var zg=zoneOrder[zi];
+      var zTotal=0; for(var j=0;j<zg.recs.length;j++) zTotal+=zg.recs[j].manque;
+      zg.recs.sort(function(a,b){return b.manque-a.manque;});
+      synthHtml+='<details style="margin-bottom:4px;"'+(zi===0?' open':'')+'>';
+      synthHtml+='<summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.85em;border-bottom:1px solid rgba(0,0,0,.08);">';
+      synthHtml+='<span style="color:'+zg.color+';font-weight:700;">'+zg.name+'</span>';
+      synthHtml+='<strong style="color:var(--primary);">+'+zTotal+' ISP</strong>';
+      synthHtml+='</summary>';
+      synthHtml+='<table style="width:100%;font-size:.76em;border-collapse:collapse;margin:4px 0 6px 8px;">';
+      for(var j=0;j<zg.recs.length;j++){
+        var rl=zg.recs[j];
+        synthHtml+='<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:2px 6px;">'+rl.caserne+'</td><td style="text-align:center;padding:2px 4px;font-size:.9em;">pool '+rl.pool+'</td><td style="text-align:center;padding:2px 4px;font-size:.9em;">'+rl.cov+'%</td><td style="text-align:right;padding:2px 6px;font-weight:700;color:var(--primary);">+'+rl.manque+'</td></tr>';
+      }
+      synthHtml+='</table></details>';
+    }
+    synthHtml+='<div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;padding-top:4px;border-top:1px solid var(--orange);font-size:.9em;"><span>Total d\u00e9partement</span><span style="color:var(--primary);">+'+totNeedRecruit+' ISP</span></div>';
     synthHtml+='</div>';
   }
 
