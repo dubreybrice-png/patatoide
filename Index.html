@@ -913,13 +913,14 @@ function renderZones(){
     /* ── ISP simulés (slider ou listing par défaut) ── */
     var adjIsp=(window._ispAdjust[zo.name]!==undefined)?window._ispAdjust[zo.name]:Math.round(ownIsp);
 
-    /* ── Couverture ── */
-    var adjCov=covPct(adjIsp,im,gh);
-    var totalCov=(nearbyIsp>0)?covPct(adjIsp+nearbyIsp,im,gh):adjCov;
+    /* ── Couverture (ISP propres + renfort) ── */
+    var effIsp=adjIsp+nearbyIsp;  // ISP effectifs = simulés propres + renfort accessible
+    var ownCov=covPct(adjIsp,im,gh);
+    var effCov=covPct(effIsp,im,gh);
     var nd=needISP(cp,im,gh);
-    var df=adjIsp-nd;
+    var df=effIsp-nd;  // écart basé sur l'effectif total (propres + renfort)
     var demand=H_MOIS+im*DUREE_INTER;
-    globalNum+=Math.min(demand,ispH(adjIsp)+gh);
+    globalNum+=Math.min(demand,ispH(effIsp)+gh);
     globalDen+=demand;
 
     var st,scl;
@@ -962,9 +963,9 @@ function renderZones(){
     h+='oninput="this.parentNode.querySelector(\'.adj-val\').textContent=this.value;" ';
     h+='onchange="if(!window._ispAdjust)window._ispAdjust={};window._ispAdjust[CARTE_ZONES['+z+'].name]=+this.value;renderZones();">';
     h+='<strong class="adj-val" style="min-width:18px;text-align:right;">'+adjIsp+'</strong></div>';
-    h+='<div class="zr"><span>Couverture ('+adjIsp+' ISP × 36h'+(gh>0?' + garde':'')+' / 730h+inter)</span><strong>'+adjCov+'%</strong></div>';
+    h+='<div class="zr"><span>Couverture propre ('+adjIsp+' ISP × 36h'+(gh>0?' + garde':'')+' / 730h+inter)</span><strong>'+ownCov+'%</strong></div>';
 
-    /* ── Détail renfort (CIS par CIS, pas zone par zone) ── */
+    /* ── Détail renfort (CIS par CIS) ── */
     if(nearbyCis.length>0){
       h+='<div style="margin-top:4px;padding-top:4px;border-top:1px dashed var(--border);">';
       h+='<div style="font-size:.78em;font-weight:700;color:var(--blue);margin-bottom:2px;">🚗 Renfort accessible (≤ '+travelMax+' min) :</div>';
@@ -972,9 +973,9 @@ function renderZones(){
         var nc=nearbyCis[i];
         h+='<div style="font-size:.75em;color:var(--text-light);padding:1px 0 1px 8px;">'+nc.cis.nom+' — <strong>'+nc.isp+' ISP</strong> — '+nc.dist+' min</div>';
       }
-      h+='<div class="zr" style="color:var(--blue);"><span>Couverture avec renfort ('+(adjIsp+nearbyIsp)+' ISP)</span><strong>'+totalCov+'%</strong></div>';
       h+='</div>';
     }
+    h+='<div class="zr" style="font-weight:700;background:rgba(0,0,0,.03);border-radius:4px;padding:4px 6px;margin-top:4px;"><span>📈 Couverture effective ('+effIsp+' ISP'+(nearbyIsp>0?' dont '+nearbyIsp+' renfort':'')+')</span><strong style="font-size:1.1em;color:'+(effCov>=cp?'var(--green)':'var(--primary)')+';">'+effCov+'%</strong></div>';
 
     h+='<div class="zs '+scl+'">'+st+'</div></div>';
   }
