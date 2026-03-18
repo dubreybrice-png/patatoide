@@ -82,7 +82,7 @@
   /* Carte */
   .carte-layout{display:flex;height:calc(100vh - 100px);}
   #map{flex:1;z-index:1;}
-  #carteSidebar{width:400px;overflow-y:auto;background:var(--card);padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,.1);z-index:2;}
+  #carteSidebar{width:550px;overflow-y:auto;background:var(--card);padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,.1);z-index:2;}
   .sidebar-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--primary);position:sticky;top:0;z-index:10;background:var(--card);}
   .sidebar-header h3{font-size:1.1em;color:var(--primary);margin-bottom:6px;}
   .coverage-control{margin-top:8px;}
@@ -205,6 +205,27 @@
     </div>
   </div>
 
+  <!-- ═══ HEURES AVEC 1 SEUL ISP PAR TRANCHE HORAIRE ═══ -->
+  <div class="section-sep">🕐 Heures avec 1 seul ISP — Quand se produisent-elles ?</div>
+  <div class="chart-grid">
+    <div class="chart-wrap">
+      <div class="chart-title">⚠️ Heures avec exactement 1 ISP disponible, par tranche horaire</div>
+      <canvas id="oneCoverHourChart"></canvas>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">📊 % du temps avec 1 seul ISP, par tranche horaire</div>
+      <canvas id="oneCoverPctChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ═══ SIMULATEUR CUSTOM CIS ═══ -->
+  <div class="section-sep">🔧 Simulateur — Couverture par sélection de CIS</div>
+  <div class="card">
+    <div class="card-title">☑️ Cochez les CIS pour calculer la couverture combinée</div>
+    <div id="customCisCheckboxes" style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:14px;"></div>
+    <div id="customCisResult"></div>
+  </div>
+
   <!-- ═══ EFFECTIF & CENTRES ═══ -->
   <div class="section-sep">👥 Effectif & répartition par centre</div>
   <div class="stat-row" id="effectifKpi"></div>
@@ -282,6 +303,8 @@ function renderAll(){
   renderGroupDist();
   renderRings();
   renderZeroCoverByHour();
+  renderOneCoverByHour();
+  renderCustomCisCheckboxes();
   renderEffectif();
   renderCentreTable();
   renderIspTable();
@@ -401,6 +424,120 @@ function renderZeroCoverByHour(){
 
   mkChart('zeroCoverHourChart','bar',labels,hVals,'Heures sans ISP',hColors);
   mkChart('zeroCoverPctChart','bar',labels,pctVals,'% sans ISP',pColors);
+}
+
+/* ═══ HEURES AVEC 1 SEUL ISP PAR TRANCHE HORAIRE ═══ */
+function renderOneCoverByHour(){
+  var oc=DATA.oneCoverageByHour;
+  if(!oc||!oc.byHour||!oc.byHour.length)return;
+
+  var labels=[],hVals=[],pctVals=[],hColors=[],pColors=[];
+  for(var i=0;i<oc.byHour.length;i++){
+    var h=oc.byHour[i];
+    labels.push(h.hour+'h');
+    hVals.push(h.heures);
+    pctVals.push(h.pct);
+    var isHigh=h.pct>40;
+    hColors.push(isHigh?'#e76f51':'#fdcb6e');
+    pColors.push(isHigh?'#e76f51CC':'#fdcb6eCC');
+  }
+
+  mkChart('oneCoverHourChart','bar',labels,hVals,'Heures 1 ISP',hColors);
+  mkChart('oneCoverPctChart','bar',labels,pctVals,'% 1 ISP',pColors);
+}
+
+/* ═══ SIMULATEUR CUSTOM CIS ═══ */
+function renderCustomCisCheckboxes(){
+  var sbc=DATA.slotsByCentre;
+  if(!sbc||!sbc.centres||!sbc.centres.length)return;
+
+  var container=document.getElementById('customCisCheckboxes');
+  var h='';
+  for(var i=0;i<sbc.centres.length;i++){
+    var c=sbc.centres[i];
+    h+='<label style="font-size:.82em;cursor:pointer;display:flex;align-items:center;gap:3px;min-width:140px;">';
+    h+='<input type="checkbox" data-centre-idx="'+i+'" onchange="computeCustomCis()" style="accent-color:var(--primary);">';
+    h+='<span>'+esc(c.name)+'</span></label>';
+  }
+  h+='<div style="margin-top:4px;"><a href="#" onclick="toggleAllCustomCis(true);return false;" style="font-size:.78em;color:var(--blue);margin-right:12px;">✅ Tout cocher</a><a href="#" onclick="toggleAllCustomCis(false);return false;" style="font-size:.78em;color:var(--blue);">❌ Tout décocher</a></div>';
+  container.innerHTML=h;
+  document.getElementById('customCisResult').innerHTML='<div style="color:var(--text-light);font-size:.88em;">Cochez des CIS ci-dessus pour voir la distribution.</div>';
+}
+function toggleAllCustomCis(state){
+  var cbs=document.querySelectorAll('#customCisCheckboxes input[type=checkbox]');
+  for(var i=0;i<cbs.length;i++) cbs[i].checked=state;
+  computeCustomCis();
+}
+function computeCustomCis(){
+  var sbc=DATA.slotsByCentre;
+  if(!sbc)return;
+  var cbs=document.querySelectorAll('#customCisCheckboxes input[type=checkbox]');
+  var selectedIdx=[];
+  for(var i=0;i<cbs.length;i++){if(cbs[i].checked) selectedIdx.push(parseInt(cbs[i].getAttribute('data-centre-idx')));}
+
+  var res=document.getElementById('customCisResult');
+  if(selectedIdx.length===0){
+    res.innerHTML='<div style="color:var(--text-light);font-size:.88em;">Cochez des CIS ci-dessus pour voir la distribution.</div>';
+    return;
+  }
+
+  /* Calculer le nb d'ISP par slot en combinant les centres sélectionnés */
+  var slotCounts={};
+  var selectedNames=[];
+  for(var i=0;i<selectedIdx.length;i++){
+    var c=sbc.centres[selectedIdx[i]];
+    selectedNames.push(c.name);
+    for(var ts in c.slots){
+      slotCounts[ts]=(slotCounts[ts]||0)+c.slots[ts];
+    }
+  }
+
+  /* Distribution */
+  var dist={}, slotsWithIsp=0, maxIsp=0;
+  for(var ts in slotCounts){
+    var n=slotCounts[ts];
+    dist[n]=(dist[n]||0)+1;
+    slotsWithIsp++;
+    if(n>maxIsp) maxIsp=n;
+  }
+  var slotsZero=sbc.totalSlots-slotsWithIsp;
+  if(slotsZero<0)slotsZero=0;
+  dist[0]=slotsZero;
+
+  var slotDur=30; /* Config.SLOT_DURATION_MIN */
+  var h='<div style="font-size:.85em;margin-bottom:8px;"><strong>CIS sélectionnés :</strong> '+esc(selectedNames.join(', '))+'</div>';
+  h+='<div class="table-wrap"><table><thead><tr><th>Nb ISP dispo</th><th>Créneaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
+  var showMax=Math.min(maxIsp,10); /* montrer jusqu'à 10 lignes max */
+  for(var n=0;n<=showMax;n++){
+    var count=dist[n]||0;
+    var heures=Math.round(count*slotDur/60*10)/10;
+    var pct=sbc.totalSlots>0?Math.round(count/sbc.totalSlots*1000)/10:0;
+    var highlight=n<=1&&count>0;
+    h+='<tr'+(n===0?' style="background:var(--primary-light);font-weight:700;"':(n===1?' style="background:#fdf0ec;"':''))+'>';
+    h+='<td>'+n+' ISP</td><td>'+count+'</td><td>'+heures+'h</td><td>'+pct+'%</td></tr>';
+  }
+  if(maxIsp>showMax){
+    var restCount=0;
+    for(var n=showMax+1;n<=maxIsp;n++) restCount+=(dist[n]||0);
+    var restH=Math.round(restCount*slotDur/60*10)/10;
+    var restPct=sbc.totalSlots>0?Math.round(restCount/sbc.totalSlots*1000)/10:0;
+    h+='<tr><td>'+(showMax+1)+'+ ISP</td><td>'+restCount+'</td><td>'+restH+'h</td><td>'+restPct+'%</td></tr>';
+  }
+  h+='</tbody></table></div>';
+
+  /* KPIs rapides */
+  var zeroH=Math.round((dist[0]||0)*slotDur/60*10)/10;
+  var zeroPct=sbc.totalSlots>0?Math.round((dist[0]||0)/sbc.totalSlots*1000)/10:0;
+  var oneH=Math.round((dist[1]||0)*slotDur/60*10)/10;
+  var onePct=sbc.totalSlots>0?Math.round((dist[1]||0)/sbc.totalSlots*1000)/10:0;
+  h='<div class="stat-row" style="margin-bottom:12px;">'+
+    sc(zeroH+'h','0 ISP ('+zeroPct+'%)','red')+
+    sc(oneH+'h','1 ISP ('+onePct+'%)','orange')+
+    sc(maxIsp+' max','ISP simultanés','green')+
+    sc(selectedIdx.length,'CIS sélectionnés','blue')+
+    '</div>'+h;
+
+  res.innerHTML=h;
 }
 
 /* ═══ DISTRIBUTION PAR GROUPE DE CASERNES ═══ */

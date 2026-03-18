@@ -142,6 +142,8 @@ function getPageData() {
     availRings:       buildRingAvailability_(deduped),
     availByGroup:     buildAvailByGroup_(deduped),
     zeroCoverageByHour: buildZeroCoverageByHour_(deduped),
+    oneCoverageByHour: buildOneCoverageByHour_(deduped),
+    slotsByCentre:    buildSlotsByCentre_(deduped),
     centres:          buildCentresList_(listing),
     rawCentreNames:   buildRawCentreNames_(listing)
   };
@@ -589,4 +591,80 @@ function buildZeroCoverageByHour_(deduped) {
   }
 
   return { byHour: byHour, totalZeroSlots: totalZeroSlots };
+}
+
+/* ═══════════════════════════════════════════════════════
+   HEURES AVEC 1 SEUL ISP — PAR TRANCHE HORAIRE
+   ═══════════════════════════════════════════════════════ */
+function buildOneCoverageByHour_(deduped) {
+  var slotCounts = {};
+  for (var i = 0; i < deduped.length; i++) {
+    var r = deduped[i];
+    if (r.type === 'garde') continue;
+    slotCounts[r.slotTs] = (slotCounts[r.slotTs] || 0) + 1;
+  }
+
+  var minTs = Infinity, maxTs = -Infinity;
+  for (var i = 0; i < deduped.length; i++) {
+    var ts = deduped[i].slotTs;
+    if (ts < minTs) minTs = ts;
+    if (ts > maxTs) maxTs = ts;
+  }
+  if (minTs >= Infinity) return { byHour: [], totalOneSlots: 0 };
+
+  var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
+  var oneByHour = {};
+  var totalByHour = {};
+  var totalOneSlots = 0;
+  for (var h = 0; h < 24; h++) { oneByHour[h] = 0; totalByHour[h] = 0; }
+
+  for (var ts = minTs; ts <= maxTs; ts += slotMs) {
+    var d = new Date(ts);
+    var h = d.getHours();
+    totalByHour[h]++;
+    if ((slotCounts[ts] || 0) === 1) {
+      oneByHour[h]++;
+      totalOneSlots++;
+    }
+  }
+
+  var byHour = [];
+  for (var h = 0; h < 24; h++) {
+    var pct = totalByHour[h] > 0 ? Math.round(oneByHour[h] / totalByHour[h] * 1000) / 10 : 0;
+    byHour.push({ hour: h, oneSlots: oneByHour[h], totalSlots: totalByHour[h], pct: pct, heures: Math.round(oneByHour[h] * Config.SLOT_DURATION_MIN / 60 * 10) / 10 });
+  }
+  return { byHour: byHour, totalOneSlots: totalOneSlots };
+}
+
+/* ═══════════════════════════════════════════════════════
+   SLOTS PAR CENTRE — pour le simulateur custom côté client
+   Retourne {centres:[{name, slots:{slotTs:count,...}}], totalSlots, minTs, maxTs}
+   ═══════════════════════════════════════════════════════ */
+function buildSlotsByCentre_(deduped) {
+  var byCentre = {};
+  var minTs = Infinity, maxTs = -Infinity;
+
+  for (var i = 0; i < deduped.length; i++) {
+    var r = deduped[i];
+    if (r.type === 'garde') continue;
+    var c = r.centre || 'Inconnu';
+    if (!byCentre[c]) byCentre[c] = {};
+    byCentre[c][r.slotTs] = (byCentre[c][r.slotTs] || 0) + 1;
+    if (r.slotTs < minTs) minTs = r.slotTs;
+    if (r.slotTs > maxTs) maxTs = r.slotTs;
+  }
+
+  var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
+  var totalSlots = 0;
+  if (minTs < Infinity && maxTs > -Infinity) {
+    totalSlots = Math.floor((maxTs - minTs) / slotMs) + 1;
+  }
+
+  var centres = [];
+  for (var name in byCentre) {
+    centres.push({ name: name, slots: byCentre[name] });
+  }
+  centres.sort(function(a, b) { return a.name.localeCompare(b.name); });
+
+  return { centres: centres, totalSlots: totalSlots, slotMs: slotMs, minTs: minTs, maxTs: maxTs };
 }
