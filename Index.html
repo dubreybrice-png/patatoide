@@ -1020,12 +1020,34 @@ function renderZones(){
     var st=zoneOk?('\u2705 Couverte ('+Math.round(zoneCov)+'%)'):('\ud83d\udea8 '+Math.round(zoneCov)+'% (maillon faible : '+worstCis.nom+')');
     h+='<div class="zs '+scl+'" style="margin-top:6px;">'+st+'</div>';
 
-    /* Recommandation */
-    if(!zoneOk&&worstCis){
-      var wpI=cisPool[worstCis.id].pool;
-      var manque=needISP(cp,cisPool[worstCis.id].gh)-Math.round(wpI);
-      if(manque>0){
-        h+='<div style="font-size:.72em;color:var(--orange);margin-top:3px;">\ud83d\udca1 Recruter <strong>'+manque+' ISP</strong> \u00e0/autour de <strong>'+worstCis.nom+'</strong> pour atteindre '+cp+'%</div>';
+    /* Recommandation détaillée par caserne */
+    if(!zoneOk){
+      /* Pour chaque caserne de la zone : combien manque-t-il pour atteindre l'objectif */
+      var recoLines=[];
+      for(var i=0;i<coreCis.length;i++){
+        var rc=coreCis[i], rcp=cisPool[rc.id];
+        var rNeed=needISP(cp,rcp.gh);
+        var rManque=rNeed-Math.round(rcp.pool);
+        if(rManque>0) recoLines.push({nom:rc.nom,manque:rManque,pool:Math.round(rcp.pool),cov:rcp.cov});
+      }
+      recoLines.sort(function(a,b){return b.manque-a.manque;});
+      if(recoLines.length>0){
+        var totalManque=0; for(var i=0;i<recoLines.length;i++) totalManque+=recoLines[i].manque;
+        /* Ligne résumé avec tooltip popup */
+        var tipLines=[];
+        for(var i=0;i<recoLines.length;i++) tipLines.push(recoLines[i].nom+' : +'+recoLines[i].manque+' ISP (pool actuel '+recoLines[i].pool+', couv '+recoLines[i].cov+'%)');
+        h+='<div class="reco-tip" style="font-size:.72em;color:var(--orange);margin-top:3px;position:relative;cursor:pointer;" ';
+        h+='onmouseenter="this.querySelector(\'.reco-popup\').style.display=\'block\'" onmouseleave="this.querySelector(\'.reco-popup\').style.display=\'none\'">';
+        h+='\ud83d\udca1 Recruter <strong>'+totalManque+' ISP</strong> pour atteindre '+cp+'%';
+        /* Popup au survol */
+        h+='<div class="reco-popup" style="display:none;position:absolute;left:0;bottom:100%;margin-bottom:4px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:10px 14px;z-index:999;min-width:260px;font-size:.95em;color:var(--text);">';
+        h+='<div style="font-weight:700;margin-bottom:6px;color:var(--orange);">\ud83d\udcdd Plan de recrutement — '+zo.name+'</div>';
+        for(var i=0;i<recoLines.length;i++){
+          h+='<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f0f0f0;"><span>'+recoLines[i].nom+'</span><strong style="color:var(--primary);">+'+recoLines[i].manque+' ISP</strong></div>';
+        }
+        h+='<div style="margin-top:6px;font-size:.85em;color:var(--text-light);">Pool actuel insuffisant pour couvrir '+cp+'% ('+BASE_H+'h/ISP, rayon '+travelMax+' min)</div>';
+        h+='</div>'; /* fin popup */
+        h+='</div>'; /* fin reco-tip */
       }
     }
 
@@ -1101,6 +1123,41 @@ function renderZones(){
     (travelMax>0&&econTravel>0?'<div style="font-size:.85em;color:var(--green);margin-top:2px;">\u2705 Le rayon de '+travelMax+' min \u00e9conomise <strong>'+econTravel+' recrutement'+(econTravel>1?'s':'')+'</strong> vs 0 min</div>':'')+
     (travelMax===0?'<div style="font-size:.85em;color:var(--text-light);margin-top:2px;">\u2191 Augmentez le rayon d\'action pour mutualiser les pools</div>':'')+
     '</div>';
+
+  /* ══ LISTING COMPLET DES RECRUTEMENTS ══ */
+  var recruitList=[];
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    var zo=CARTE_ZONES[z];
+    var zcp=(window._zoneTargets[zo.name]!==undefined)?window._zoneTargets[zo.name]:defCp;
+    var zgh=gardeHMois(zo.name);
+    for(var i=0;i<zo.cis.length;i++){
+      var cid=zo.cis[i];
+      if(!cisPool[cid])continue;
+      var rcp=cisPool[cid];
+      var rNeed=needISP(zcp,rcp.gh);
+      var rManque=rNeed-Math.round(rcp.pool);
+      if(rManque>0){
+        var cNom='?'; for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){cNom=CIS[j].nom;break;}}
+        recruitList.push({zone:zo.name,color:zo.color,caserne:cNom,manque:rManque,pool:Math.round(rcp.pool),cov:rcp.cov});
+      }
+    }
+  }
+  recruitList.sort(function(a,b){return b.manque-a.manque;});
+
+  if(recruitList.length>0){
+    synthHtml+='<div style="margin-top:8px;padding:8px 10px;background:var(--orange-light);border-radius:6px;border:1px solid var(--orange);">';
+    synthHtml+='<div style="font-weight:700;font-size:.88em;color:var(--orange);margin-bottom:6px;">\ud83d\udcdd Listing des recrutements \u00e0 effectuer</div>';
+    synthHtml+='<table style="width:100%;font-size:.78em;border-collapse:collapse;">';
+    synthHtml+='<tr style="background:var(--bg);"><th style="text-align:left;padding:4px 6px;">Zone</th><th style="text-align:left;padding:4px 6px;">Caserne</th><th style="text-align:center;padding:4px 6px;">Pool actuel</th><th style="text-align:center;padding:4px 6px;">Couv.</th><th style="text-align:center;padding:4px 6px;font-weight:700;color:var(--primary);">\u00c0 recruter</th></tr>';
+    for(var i=0;i<recruitList.length;i++){
+      var rl=recruitList[i];
+      synthHtml+='<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 6px;"><span style="color:'+rl.color+';font-weight:600;">'+rl.zone+'</span></td><td style="padding:3px 6px;">'+rl.caserne+'</td><td style="text-align:center;padding:3px 6px;">'+rl.pool+'</td><td style="text-align:center;padding:3px 6px;">'+rl.cov+'%</td><td style="text-align:center;padding:3px 6px;font-weight:700;color:var(--primary);">+'+rl.manque+'</td></tr>';
+    }
+    synthHtml+='</table>';
+    var totalRecruitList=0; for(var i=0;i<recruitList.length;i++) totalRecruitList+=recruitList[i].manque;
+    synthHtml+='<div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;padding-top:4px;border-top:1px solid var(--orange);font-size:.9em;"><span>Total</span><span style="color:var(--primary);">+'+totalRecruitList+' ISP</span></div>';
+    synthHtml+='</div>';
+  }
 
   if(isolated.length>0&&isolated.length<=15){
     synthHtml+='<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-size:.78em;">';
