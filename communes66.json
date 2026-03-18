@@ -1,0 +1,2491 @@
+﻿{
+    "value":  [
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.897,
+                                                         42.4762
+                                                     ]
+                                 },
+                      "nom":  "L\u0027Albère",
+                      "code":  "66001"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9824,
+                                                         42.6413
+                                                     ]
+                                 },
+                      "nom":  "Alénya",
+                      "code":  "66002"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.687,
+                                                         42.4508
+                                                     ]
+                                 },
+                      "nom":  "Amélie-les-Bains-Palalda",
+                      "code":  "66003"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.049,
+                                                         42.5797
+                                                     ]
+                                 },
+                      "nom":  "Les Angles",
+                      "code":  "66004"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.9443,
+                                                         42.546
+                                                     ]
+                                 },
+                      "nom":  "Angoustrine-Villeneuve-des-Escaldes",
+                      "code":  "66005"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5233,
+                                                         42.7646
+                                                     ]
+                                 },
+                      "nom":  "Ansignan",
+                      "code":  "66006"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4953,
+                                                         42.6669
+                                                     ]
+                                 },
+                      "nom":  "Arboussols",
+                      "code":  "66007"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.0234,
+                                                         42.53
+                                                     ]
+                                 },
+                      "nom":  "Argelès-sur-Mer",
+                      "code":  "66008"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6228,
+                                                         42.4531
+                                                     ]
+                                 },
+                      "nom":  "Arles-sur-Tech",
+                      "code":  "66009"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1962,
+                                                         42.5561
+                                                     ]
+                                 },
+                      "nom":  "Ayguatébia-Talau",
+                      "code":  "66010"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8893,
+                                                         42.6075
+                                                     ]
+                                 },
+                      "nom":  "Bages",
+                      "code":  "66011"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8229,
+                                                         42.7066
+                                                     ]
+                                 },
+                      "nom":  "Baho",
+                      "code":  "66012"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5266,
+                                                         42.5682
+                                                     ]
+                                 },
+                      "nom":  "Baillestavy",
+                      "code":  "66013"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8079,
+                                                         42.744
+                                                     ]
+                                 },
+                      "nom":  "Baixas",
+                      "code":  "66014"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8649,
+                                                         42.5653
+                                                     ]
+                                 },
+                      "nom":  "Banyuls-dels-Aspres",
+                      "code":  "66015"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.1014,
+                                                         42.4602
+                                                     ]
+                                 },
+                      "nom":  "Banyuls-sur-Mer",
+                      "code":  "66016"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.028,
+                                                         42.8118
+                                                     ]
+                                 },
+                      "nom":  "Le Barcarès",
+                      "code":  "66017"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5752,
+                                                         42.5371
+                                                     ]
+                                 },
+                      "nom":  "La Bastide",
+                      "code":  "66018"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6228,
+                                                         42.7241
+                                                     ]
+                                 },
+                      "nom":  "Bélesta",
+                      "code":  "66019"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0614,
+                                                         42.5225
+                                                     ]
+                                 },
+                      "nom":  "Bolquère",
+                      "code":  "66020"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9426,
+                                                         42.7271
+                                                     ]
+                                 },
+                      "nom":  "Bompas",
+                      "code":  "66021"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5905,
+                                                         42.5884
+                                                     ]
+                                 },
+                      "nom":  "Boule-d\u0027Amont",
+                      "code":  "66022"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5878,
+                                                         42.6435
+                                                     ]
+                                 },
+                      "nom":  "Bouleternère",
+                      "code":  "66023"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8328,
+                                                         42.5267
+                                                     ]
+                                 },
+                      "nom":  "Le Boulou",
+                      "code":  "66024"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.9608,
+                                                         42.438
+                                                     ]
+                                 },
+                      "nom":  "Bourg-Madame",
+                      "code":  "66025"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8927,
+                                                         42.5759
+                                                     ]
+                                 },
+                      "nom":  "Brouilla",
+                      "code":  "66026"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1056,
+                                                         42.501
+                                                     ]
+                                 },
+                      "nom":  "La Cabanasse",
+                      "code":  "66027"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9507,
+                                                         42.6804
+                                                     ]
+                                 },
+                      "nom":  "Cabestany",
+                      "code":  "66028"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6633,
+                                                         42.6031
+                                                     ]
+                                 },
+                      "nom":  "Caixas",
+                      "code":  "66029"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7545,
+                                                         42.7477
+                                                     ]
+                                 },
+                      "nom":  "Calce",
+                      "code":  "66030"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6735,
+                                                         42.5507
+                                                     ]
+                                 },
+                      "nom":  "Calmeilles",
+                      "code":  "66032"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6911,
+                                                         42.6404
+                                                     ]
+                                 },
+                      "nom":  "Camélas",
+                      "code":  "66033"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3826,
+                                                         42.6506
+                                                     ]
+                                 },
+                      "nom":  "Campôme",
+                      "code":  "66034"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.452,
+                                                         42.6978
+                                                     ]
+                                 },
+                      "nom":  "Campoussy",
+                      "code":  "66035"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2179,
+                                                         42.5348
+                                                     ]
+                                 },
+                      "nom":  "Canaveilles",
+                      "code":  "66036"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.002,
+                                                         42.6809
+                                                     ]
+                                 },
+                      "nom":  "Canet-en-Roussillon",
+                      "code":  "66037"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8294,
+                                                         42.6514
+                                                     ]
+                                 },
+                      "nom":  "Canohès",
+                      "code":  "66038"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5572,
+                                                         42.7388
+                                                     ]
+                                 },
+                      "nom":  "Caramany",
+                      "code":  "66039"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6127,
+                                                         42.6156
+                                                     ]
+                                 },
+                      "nom":  "Casefabre",
+                      "code":  "66040"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7771,
+                                                         42.7931
+                                                     ]
+                                 },
+                      "nom":  "Cases-de-Pène",
+                      "code":  "66041"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.626,
+                                                         42.7415
+                                                     ]
+                                 },
+                      "nom":  "Cassagnes",
+                      "code":  "66042"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4229,
+                                                         42.5035
+                                                     ]
+                                 },
+                      "nom":  "Casteil",
+                      "code":  "66043"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7046,
+                                                         42.6247
+                                                     ]
+                                 },
+                      "nom":  "Castelnou",
+                      "code":  "66044"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4186,
+                                                         42.6407
+                                                     ]
+                                 },
+                      "nom":  "Catllar",
+                      "code":  "66045"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3781,
+                                                         42.8213
+                                                     ]
+                                 },
+                      "nom":  "Caudiès-de-Fenouillèdes",
+                      "code":  "66046"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1451,
+                                                         42.5623
+                                                     ]
+                                 },
+                      "nom":  "Caudiès-de-Conflent",
+                      "code":  "66047"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.1493,
+                                                         42.4471
+                                                     ]
+                                 },
+                      "nom":  "Cerbère",
+                      "code":  "66048"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7565,
+                                                         42.473
+                                                     ]
+                                 },
+                      "nom":  "Céret",
+                      "code":  "66049"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9458,
+                                                         42.7626
+                                                     ]
+                                 },
+                      "nom":  "Claira",
+                      "code":  "66050"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4489,
+                                                         42.5831
+                                                     ]
+                                 },
+                      "nom":  "Clara-Villerach",
+                      "code":  "66051"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4169,
+                                                         42.6015
+                                                     ]
+                                 },
+                      "nom":  "Codalet",
+                      "code":  "66052"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.0744,
+                                                         42.5087
+                                                     ]
+                                 },
+                      "nom":  "Collioure",
+                      "code":  "66053"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3426,
+                                                         42.6203
+                                                     ]
+                                 },
+                      "nom":  "Conat",
+                      "code":  "66054"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6614,
+                                                         42.6515
+                                                     ]
+                                 },
+                      "nom":  "Corbère",
+                      "code":  "66055"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6837,
+                                                         42.66
+                                                     ]
+                                 },
+                      "nom":  "Corbère-les-Cabanes",
+                      "code":  "66056"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.382,
+                                                         42.5786
+                                                     ]
+                                 },
+                      "nom":  "Corneilla-de-Conflent",
+                      "code":  "66057"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7247,
+                                                         42.7098
+                                                     ]
+                                 },
+                      "nom":  "Corneilla-la-Rivière",
+                      "code":  "66058"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9512,
+                                                         42.6228
+                                                     ]
+                                 },
+                      "nom":  "Corneilla-del-Vercol",
+                      "code":  "66059"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.541,
+                                                         42.483
+                                                     ]
+                                 },
+                      "nom":  "Corsavy",
+                      "code":  "66060"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.632,
+                                                         42.3602
+                                                     ]
+                                 },
+                      "nom":  "Coustouges",
+                      "code":  "66061"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.9224,
+                                                         42.5125
+                                                     ]
+                                 },
+                      "nom":  "Dorres",
+                      "code":  "66062"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8437,
+                                                         42.4847
+                                                     ]
+                                 },
+                      "nom":  "Les Cluses",
+                      "code":  "66063"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0195,
+                                                         42.5008
+                                                     ]
+                                 },
+                      "nom":  "Égat",
+                      "code":  "66064"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.978,
+                                                         42.6083
+                                                     ]
+                                 },
+                      "nom":  "Elne",
+                      "code":  "66065"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.8922,
+                                                         42.491
+                                                     ]
+                                 },
+                      "nom":  "Enveitg",
+                      "code":  "66066"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0678,
+                                                         42.4131
+                                                     ]
+                                 },
+                      "nom":  "Err",
+                      "code":  "66067"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.319,
+                                                         42.5337
+                                                     ]
+                                 },
+                      "nom":  "Escaro",
+                      "code":  "66068"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8231,
+                                                         42.7987
+                                                     ]
+                                 },
+                      "nom":  "Espira-de-l\u0027Agly",
+                      "code":  "66069"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4923,
+                                                         42.6168
+                                                     ]
+                                 },
+                      "nom":  "Espira-de-Conflent",
+                      "code":  "66070"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7077,
+                                                         42.7642
+                                                     ]
+                                 },
+                      "nom":  "Estagel",
+                      "code":  "66071"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0121,
+                                                         42.4764
+                                                     ]
+                                 },
+                      "nom":  "Estavar",
+                      "code":  "66072"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4829,
+                                                         42.5695
+                                                     ]
+                                 },
+                      "nom":  "Estoher",
+                      "code":  "66073"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4478,
+                                                         42.6552
+                                                     ]
+                                 },
+                      "nom":  "Eus",
+                      "code":  "66074"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.111,
+                                                         42.4544
+                                                     ]
+                                 },
+                      "nom":  "Eyne",
+                      "code":  "66075"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4877,
+                                                         42.7613
+                                                     ]
+                                 },
+                      "nom":  "Feilluns",
+                      "code":  "66076"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.382,
+                                                         42.7786
+                                                     ]
+                                 },
+                      "nom":  "Fenouillet",
+                      "code":  "66077"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4257,
+                                                         42.5587
+                                                     ]
+                                 },
+                      "nom":  "Fillols",
+                      "code":  "66078"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5194,
+                                                         42.6068
+                                                     ]
+                                 },
+                      "nom":  "Finestret",
+                      "code":  "66079"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.202,
+                                                         42.4718
+                                                     ]
+                                 },
+                      "nom":  "Fontpédrouse",
+                      "code":  "66080"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0514,
+                                                         42.6413
+                                                     ]
+                                 },
+                      "nom":  "Fontrabiouse",
+                      "code":  "66081"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0629,
+                                                         42.6227
+                                                     ]
+                                 },
+                      "nom":  "Formiguères",
+                      "code":  "66082"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4335,
+                                                         42.7842
+                                                     ]
+                                 },
+                      "nom":  "Fosse",
+                      "code":  "66083"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7759,
+                                                         42.5845
+                                                     ]
+                                 },
+                      "nom":  "Fourques",
+                      "code":  "66084"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3549,
+                                                         42.5673
+                                                     ]
+                                 },
+                      "nom":  "Fuilla",
+                      "code":  "66085"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5528,
+                                                         42.5904
+                                                     ]
+                                 },
+                      "nom":  "Glorianes",
+                      "code":  "66086"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6167,
+                                                         42.6746
+                                                     ]
+                                 },
+                      "nom":  "Ille-sur-Têt",
+                      "code":  "66088"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5244,
+                                                         42.6151
+                                                     ]
+                                 },
+                      "nom":  "Joch",
+                      "code":  "66089"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2823,
+                                                         42.5852
+                                                     ]
+                                 },
+                      "nom":  "Jujols",
+                      "code":  "66090"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5191,
+                                                         42.3628
+                                                     ]
+                                 },
+                      "nom":  "Lamanère",
+                      "code":  "66091"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5651,
+                                                         42.7685
+                                                     ]
+                                 },
+                      "nom":  "Lansac",
+                      "code":  "66092"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9314,
+                                                         42.5179
+                                                     ]
+                                 },
+                      "nom":  "Laroque-des-Albères",
+                      "code":  "66093"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.0067,
+                                                         42.6041
+                                                     ]
+                                 },
+                      "nom":  "Latour-Bas-Elne",
+                      "code":  "66094"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.8736,
+                                                         42.4746
+                                                     ]
+                                 },
+                      "nom":  "Latour-de-Carol",
+                      "code":  "66095"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6498,
+                                                         42.7701
+                                                     ]
+                                 },
+                      "nom":  "Latour-de-France",
+                      "code":  "66096"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5381,
+                                                         42.7927
+                                                     ]
+                                 },
+                      "nom":  "Lesquerde",
+                      "code":  "66097"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.083,
+                                                         42.5401
+                                                     ]
+                                 },
+                      "nom":  "La Llagonne",
+                      "code":  "66098"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7494,
+                                                         42.5458
+                                                     ]
+                                 },
+                      "nom":  "Llauro",
+                      "code":  "66099"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0895,
+                                                         42.4358
+                                                     ]
+                                 },
+                      "nom":  "Llo",
+                      "code":  "66100"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7827,
+                                                         42.6275
+                                                     ]
+                                 },
+                      "nom":  "Llupia",
+                      "code":  "66101"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2922,
+                                                         42.4555
+                                                     ]
+                                 },
+                      "nom":  "Mantet",
+                      "code":  "66102"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4848,
+                                                         42.6344
+                                                     ]
+                                 },
+                      "nom":  "Marquixanes",
+                      "code":  "66103"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4593,
+                                                         42.6145
+                                                     ]
+                                 },
+                      "nom":  "Los Masos",
+                      "code":  "66104"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1154,
+                                                         42.5788
+                                                     ]
+                                 },
+                      "nom":  "Matemale",
+                      "code":  "66105"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7999,
+                                                         42.4635
+                                                     ]
+                                 },
+                      "nom":  "Maureillas-las-Illas",
+                      "code":  "66106"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6194,
+                                                         42.816
+                                                     ]
+                                 },
+                      "nom":  "Maury",
+                      "code":  "66107"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6865,
+                                                         42.6966
+                                                     ]
+                                 },
+                      "nom":  "Millas",
+                      "code":  "66108"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3955,
+                                                         42.6624
+                                                     ]
+                                 },
+                      "nom":  "Molitg-les-Bains",
+                      "code":  "66109"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5658,
+                                                         42.699
+                                                     ]
+                                 },
+                      "nom":  "Montalba-le-Château",
+                      "code":  "66111"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.725,
+                                                         42.5777
+                                                     ]
+                                 },
+                      "nom":  "Montauriol",
+                      "code":  "66112"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6265,
+                                                         42.4924
+                                                     ]
+                                 },
+                      "nom":  "Montbolo",
+                      "code":  "66113"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9188,
+                                                         42.6158
+                                                     ]
+                                 },
+                      "nom":  "Montescot",
+                      "code":  "66114"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8685,
+                                                         42.5206
+                                                     ]
+                                 },
+                      "nom":  "Montesquieu-des-Albères",
+                      "code":  "66115"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.567,
+                                                         42.4415
+                                                     ]
+                                 },
+                      "nom":  "Montferrer",
+                      "code":  "66116"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1197,
+                                                         42.5098
+                                                     ]
+                                 },
+                      "nom":  "Mont-Louis",
+                      "code":  "66117"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6946,
+                                                         42.7439
+                                                     ]
+                                 },
+                      "nom":  "Montner",
+                      "code":  "66118"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2848,
+                                                         42.6719
+                                                     ]
+                                 },
+                      "nom":  "Mosset",
+                      "code":  "66119"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.9995,
+                                                         42.4243
+                                                     ]
+                                 },
+                      "nom":  "Nahuja",
+                      "code":  "66120"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6566,
+                                                         42.696
+                                                     ]
+                                 },
+                      "nom":  "Néfiach",
+                      "code":  "66121"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2547,
+                                                         42.6256
+                                                     ]
+                                 },
+                      "nom":  "Nohèdes",
+                      "code":  "66122"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2764,
+                                                         42.4957
+                                                     ]
+                                 },
+                      "nom":  "Nyer",
+                      "code":  "66123"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0212,
+                                                         42.5145
+                                                     ]
+                                 },
+                      "nom":  "Font-Romeu-Odeillo-Via",
+                      "code":  "66124"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2449,
+                                                         42.5938
+                                                     ]
+                                 },
+                      "nom":  "Olette",
+                      "code":  "66125"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7102,
+                                                         42.5319
+                                                     ]
+                                 },
+                      "nom":  "Oms",
+                      "code":  "66126"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8601,
+                                                         42.8817
+                                                     ]
+                                 },
+                      "nom":  "Opoul-Périllos",
+                      "code":  "66127"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2272,
+                                                         42.5788
+                                                     ]
+                                 },
+                      "nom":  "Oreilla",
+                      "code":  "66128"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9191,
+                                                         42.5855
+                                                     ]
+                                 },
+                      "nom":  "Ortaffa",
+                      "code":  "66129"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0006,
+                                                         42.3923
+                                                     ]
+                                 },
+                      "nom":  "Osséja",
+                      "code":  "66130"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.9818,
+                                                         42.3864
+                                                     ]
+                                 },
+                      "nom":  "Palau-de-Cerdagne",
+                      "code":  "66132"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9595,
+                                                         42.5662
+                                                     ]
+                                 },
+                      "nom":  "Palau-del-Vidre",
+                      "code":  "66133"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.804,
+                                                         42.5674
+                                                     ]
+                                 },
+                      "nom":  "Passa",
+                      "code":  "66134"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9045,
+                                                         42.699
+                                                     ]
+                                 },
+                      "nom":  "Perpignan",
+                      "code":  "66136"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8639,
+                                                         42.4664
+                                                     ]
+                                 },
+                      "nom":  "Le Perthus",
+                      "code":  "66137"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8471,
+                                                         42.7484
+                                                     ]
+                                 },
+                      "nom":  "Peyrestortes",
+                      "code":  "66138"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4884,
+                                                         42.7356
+                                                     ]
+                                 },
+                      "nom":  "Pézilla-de-Conflent",
+                      "code":  "66139"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.76,
+                                                         42.7089
+                                                     ]
+                                 },
+                      "nom":  "Pézilla-la-Rivière",
+                      "code":  "66140"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9172,
+                                                         42.7506
+                                                     ]
+                                 },
+                      "nom":  "Pia",
+                      "code":  "66141"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1444,
+                                                         42.4701
+                                                     ]
+                                 },
+                      "nom":  "Planès",
+                      "code":  "66142"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6215,
+                                                         42.7736
+                                                     ]
+                                 },
+                      "nom":  "Planèzes",
+                      "code":  "66143"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8736,
+                                                         42.6373
+                                                     ]
+                                 },
+                      "nom":  "Pollestres",
+                      "code":  "66144"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8288,
+                                                         42.6347
+                                                     ]
+                                 },
+                      "nom":  "Ponteilla",
+                      "code":  "66145"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.7935,
+                                                         42.5212
+                                                     ]
+                                 },
+                      "nom":  "Porta",
+                      "code":  "66146"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.8381,
+                                                         42.5546
+                                                     ]
+                                 },
+                      "nom":  "Porté-Puymorens",
+                      "code":  "66147"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.1048,
+                                                         42.5034
+                                                     ]
+                                 },
+                      "nom":  "Port-Vendres",
+                      "code":  "66148"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4276,
+                                                         42.6107
+                                                     ]
+                                 },
+                      "nom":  "Prades",
+                      "code":  "66149"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4229,
+                                                         42.4174
+                                                     ]
+                                 },
+                      "nom":  "Prats-de-Mollo-la-Preste",
+                      "code":  "66150"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4535,
+                                                         42.7399
+                                                     ]
+                                 },
+                      "nom":  "Prats-de-Sournia",
+                      "code":  "66151"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.435,
+                                                         42.8254
+                                                     ]
+                                 },
+                      "nom":  "Prugnanes",
+                      "code":  "66152"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6373,
+                                                         42.5655
+                                                     ]
+                                 },
+                      "nom":  "Prunet-et-Belpuig",
+                      "code":  "66153"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1097,
+                                                         42.6488
+                                                     ]
+                                 },
+                      "nom":  "Puyvalador",
+                      "code":  "66154"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3635,
+                                                         42.4683
+                                                     ]
+                                 },
+                      "nom":  "Py",
+                      "code":  "66155"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3646,
+                                                         42.7265
+                                                     ]
+                                 },
+                      "nom":  "Rabouillet",
+                      "code":  "66156"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1619,
+                                                         42.5923
+                                                     ]
+                                 },
+                      "nom":  "Railleu",
+                      "code":  "66157"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5979,
+                                                         42.7732
+                                                     ]
+                                 },
+                      "nom":  "Rasiguères",
+                      "code":  "66158"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1488,
+                                                         42.64
+                                                     ]
+                                 },
+                      "nom":  "Réal",
+                      "code":  "66159"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6971,
+                                                         42.466
+                                                     ]
+                                 },
+                      "nom":  "Reynès",
+                      "code":  "66160"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3828,
+                                                         42.6101
+                                                     ]
+                                 },
+                      "nom":  "Ria-Sirach",
+                      "code":  "66161"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5375,
+                                                         42.6292
+                                                     ]
+                                 },
+                      "nom":  "Rigarda",
+                      "code":  "66162"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8769,
+                                                         42.7761
+                                                     ]
+                                 },
+                      "nom":  "Rivesaltes",
+                      "code":  "66164"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5485,
+                                                         42.6563
+                                                     ]
+                                 },
+                      "nom":  "Rodès",
+                      "code":  "66165"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3565,
+                                                         42.5255
+                                                     ]
+                                 },
+                      "nom":  "Sahorre",
+                      "code":  "66166"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0382,
+                                                         42.4564
+                                                     ]
+                                 },
+                      "nom":  "Saillagouse",
+                      "code":  "66167"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9794,
+                                                         42.5541
+                                                     ]
+                                 },
+                      "nom":  "Saint-André",
+                      "code":  "66168"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5343,
+                                                         42.7737
+                                                     ]
+                                 },
+                      "nom":  "Saint-Arnac",
+                      "code":  "66169"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7421,
+                                                         42.6161
+                                                     ]
+                                 },
+                      "nom":  "Sainte-Colombe-de-la-Commanderie",
+                      "code":  "66170"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.0139,
+                                                         42.6205
+                                                     ]
+                                 },
+                      "nom":  "Saint-Cyprien",
+                      "code":  "66171"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8445,
+                                                         42.7154
+                                                     ]
+                                 },
+                      "nom":  "Saint-Estève",
+                      "code":  "66172"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7166,
+                                                         42.6752
+                                                     ]
+                                 },
+                      "nom":  "Saint-Féliu-d\u0027Amont",
+                      "code":  "66173"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7498,
+                                                         42.6733
+                                                     ]
+                                 },
+                      "nom":  "Saint-Féliu-d\u0027Avall",
+                      "code":  "66174"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9221,
+                                                         42.5488
+                                                     ]
+                                 },
+                      "nom":  "Saint-Génis-des-Fontaines",
+                      "code":  "66175"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9754,
+                                                         42.8104
+                                                     ]
+                                 },
+                      "nom":  "Saint-Hippolyte",
+                      "code":  "66176"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8646,
+                                                         42.5863
+                                                     ]
+                                 },
+                      "nom":  "Saint-Jean-Lasseille",
+                      "code":  "66177"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7938,
+                                                         42.5183
+                                                     ]
+                                 },
+                      "nom":  "Saint-Jean-Pla-de-Corts",
+                      "code":  "66178"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6222,
+                                                         42.3944
+                                                     ]
+                                 },
+                      "nom":  "Saint-Laurent-de-Cerdans",
+                      "code":  "66179"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9993,
+                                                         42.8073
+                                                     ]
+                                 },
+                      "nom":  "Saint-Laurent-de-la-Salanque",
+                      "code":  "66180"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0057,
+                                                         42.4298
+                                                     ]
+                                 },
+                      "nom":  "Sainte-Léocadie",
+                      "code":  "66181"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.0168,
+                                                         42.7262
+                                                     ]
+                                 },
+                      "nom":  "Sainte-Marie-la-Mer",
+                      "code":  "66182"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6182,
+                                                         42.5256
+                                                     ]
+                                 },
+                      "nom":  "Saint-Marsal",
+                      "code":  "66183"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4777,
+                                                         42.7848
+                                                     ]
+                                 },
+                      "nom":  "Saint-Martin-de-Fenouillet",
+                      "code":  "66184"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6268,
+                                                         42.6465
+                                                     ]
+                                 },
+                      "nom":  "Saint-Michel-de-Llotes",
+                      "code":  "66185"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9895,
+                                                         42.6619
+                                                     ]
+                                 },
+                      "nom":  "Saint-Nazaire",
+                      "code":  "66186"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5025,
+                                                         42.8229
+                                                     ]
+                                 },
+                      "nom":  "Saint-Paul-de-Fenouillet",
+                      "code":  "66187"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.114,
+                                                         42.4778
+                                                     ]
+                                 },
+                      "nom":  "Saint-Pierre-dels-Forcats",
+                      "code":  "66188"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.947,
+                                                         42.6553
+                                                     ]
+                                 },
+                      "nom":  "Saleilles",
+                      "code":  "66189"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.9134,
+                                                         42.8359
+                                                     ]
+                                 },
+                      "nom":  "Salses-le-Château",
+                      "code":  "66190"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1788,
+                                                         42.6189
+                                                     ]
+                                 },
+                      "nom":  "Sansa",
+                      "code":  "66191"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.1461,
+                                                         42.5166
+                                                     ]
+                                 },
+                      "nom":  "Sauto",
+                      "code":  "66192"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.324,
+                                                         42.5736
+                                                     ]
+                                 },
+                      "nom":  "Serdinya",
+                      "code":  "66193"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5559,
+                                                         42.3846
+                                                     ]
+                                 },
+                      "nom":  "Serralongue",
+                      "code":  "66194"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7999,
+                                                         42.6756
+                                                     ]
+                                 },
+                      "nom":  "Le Soler",
+                      "code":  "66195"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.988,
+                                                         42.5083
+                                                     ]
+                                 },
+                      "nom":  "Sorède",
+                      "code":  "66196"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2826,
+                                                         42.5493
+                                                     ]
+                                 },
+                      "nom":  "Souanyas",
+                      "code":  "66197"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4171,
+                                                         42.7138
+                                                     ]
+                                 },
+                      "nom":  "Sournia",
+                      "code":  "66198"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6808,
+                                                         42.5191
+                                                     ]
+                                 },
+                      "nom":  "Taillet",
+                      "code":  "66199"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5081,
+                                                         42.6816
+                                                     ]
+                                 },
+                      "nom":  "Tarerach",
+                      "code":  "66201"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.9877,
+                                                         42.5014
+                                                     ]
+                                 },
+                      "nom":  "Targasonne",
+                      "code":  "66202"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.6145,
+                                                         42.5149
+                                                     ]
+                                 },
+                      "nom":  "Taulis",
+                      "code":  "66203"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4408,
+                                                         42.555
+                                                     ]
+                                 },
+                      "nom":  "Taurinya",
+                      "code":  "66204"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7161,
+                                                         42.8163
+                                                     ]
+                                 },
+                      "nom":  "Tautavel",
+                      "code":  "66205"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5154,
+                                                         42.4439
+                                                     ]
+                                 },
+                      "nom":  "Le Tech",
+                      "code":  "66206"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7584,
+                                                         42.6046
+                                                     ]
+                                 },
+                      "nom":  "Terrats",
+                      "code":  "66207"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.947,
+                                                         42.6403
+                                                     ]
+                                 },
+                      "nom":  "Théza",
+                      "code":  "66208"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2317,
+                                                         42.5006
+                                                     ]
+                                 },
+                      "nom":  "Thuès-Entre-Valls",
+                      "code":  "66209"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7618,
+                                                         42.6384
+                                                     ]
+                                 },
+                      "nom":  "Thuir",
+                      "code":  "66210"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7619,
+                                                         42.5653
+                                                     ]
+                                 },
+                      "nom":  "Tordères",
+                      "code":  "66211"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         3.0059,
+                                                         42.7571
+                                                     ]
+                                 },
+                      "nom":  "Torreilles",
+                      "code":  "66212"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8234,
+                                                         42.6723
+                                                     ]
+                                 },
+                      "nom":  "Toulouges",
+                      "code":  "66213"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.842,
+                                                         42.5559
+                                                     ]
+                                 },
+                      "nom":  "Tresserre",
+                      "code":  "66214"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5105,
+                                                         42.7091
+                                                     ]
+                                 },
+                      "nom":  "Trévillach",
+                      "code":  "66215"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5229,
+                                                         42.7369
+                                                     ]
+                                 },
+                      "nom":  "Trilla",
+                      "code":  "66216"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8235,
+                                                         42.6055
+                                                     ]
+                                 },
+                      "nom":  "Trouillas",
+                      "code":  "66217"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         1.9382,
+                                                         42.4594
+                                                     ]
+                                 },
+                      "nom":  "Ur",
+                      "code":  "66218"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.2964,
+                                                         42.6429
+                                                     ]
+                                 },
+                      "nom":  "Urbanya",
+                      "code":  "66219"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.0472,
+                                                         42.382
+                                                     ]
+                                 },
+                      "nom":  "Valcebollère",
+                      "code":  "66220"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5089,
+                                                         42.5251
+                                                     ]
+                                 },
+                      "nom":  "Valmanya",
+                      "code":  "66221"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4152,
+                                                         42.5363
+                                                     ]
+                                 },
+                      "nom":  "Vernet-les-Bains",
+                      "code":  "66222"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3575,
+                                                         42.5955
+                                                     ]
+                                 },
+                      "nom":  "Villefranche-de-Conflent",
+                      "code":  "66223"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.977,
+                                                         42.7261
+                                                     ]
+                                 },
+                      "nom":  "Villelongue-de-la-Salanque",
+                      "code":  "66224"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.8979,
+                                                         42.5238
+                                                     ]
+                                 },
+                      "nom":  "Villelongue-dels-Monts",
+                      "code":  "66225"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.848,
+                                                         42.5976
+                                                     ]
+                                 },
+                      "nom":  "Villemolaque",
+                      "code":  "66226"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.909,
+                                                         42.6402
+                                                     ]
+                                 },
+                      "nom":  "Villeneuve-de-la-Raho",
+                      "code":  "66227"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7964,
+                                                         42.7046
+                                                     ]
+                                 },
+                      "nom":  "Villeneuve-la-Rivière",
+                      "code":  "66228"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.5225,
+                                                         42.6431
+                                                     ]
+                                 },
+                      "nom":  "Vinça",
+                      "code":  "66230"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.7904,
+                                                         42.8588
+                                                     ]
+                                 },
+                      "nom":  "Vingrau",
+                      "code":  "66231"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.3899,
+                                                         42.7653
+                                                     ]
+                                 },
+                      "nom":  "Vira",
+                      "code":  "66232"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.766,
+                                                         42.5303
+                                                     ]
+                                 },
+                      "nom":  "Vivès",
+                      "code":  "66233"
+                  },
+                  {
+                      "centre":  {
+                                     "type":  "Point",
+                                     "coordinates":  [
+                                                         2.4423,
+                                                         42.7637
+                                                     ]
+                                 },
+                      "nom":  "Le Vivier",
+                      "code":  "66234"
+                  }
+              ],
+    "Count":  226
+}

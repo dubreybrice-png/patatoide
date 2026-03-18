@@ -101,6 +101,19 @@
   .zone-totals{margin-top:16px;padding:14px;background:var(--bg);border-radius:8px;}
   .zone-totals .tr{display:flex;justify-content:space-between;padding:3px 0;font-size:0.88em;}
   @media(max-width:900px){.carte-layout{flex-direction:column;}#carteSidebar{width:100%;max-height:45vh;}}
+
+  /* Recrutement tab */
+  .recruit-layout{display:flex;height:calc(100vh - 100px);}
+  #recruitMap{flex:1;z-index:1;}
+  #recruitSidebar{width:550px;overflow-y:auto;background:var(--card);padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,.1);z-index:2;}
+  .wave-btn{padding:8px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;font-weight:700;font-size:.82em;background:var(--card);color:var(--text);transition:all .2s;font-family:inherit;}
+  .wave-btn:hover{border-color:var(--primary);color:var(--primary);}
+  .wave-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .legend-bar{display:flex;border-radius:6px;overflow:hidden;height:18px;margin:8px 0;}
+  .legend-labels{display:flex;justify-content:space-between;font-size:.7em;color:var(--text-light);}
+  .wave-detail{background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+  .wave-detail summary{cursor:pointer;font-weight:700;font-size:.92em;display:flex;justify-content:space-between;align-items:center;}
+  @media(max-width:900px){.recruit-layout{flex-direction:column;}#recruitSidebar{width:100%;max-height:45vh;}}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -114,6 +127,7 @@
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="stats" onclick="switchTab('stats')">📊 Statistiques</button>
     <button class="tab-btn" data-tab="carte" onclick="switchTab('carte')">🗺️ Carte</button>
+    <button class="tab-btn" data-tab="recruit" onclick="switchTab('recruit')">📈 Recrutement</button>
   </div>
 </div>
 
@@ -274,6 +288,25 @@
       </div>
       <div id="zoneTotals"></div>
       <div id="zoneCards"></div>
+    </div>
+  </div>
+</div>
+
+<div id="viewRecruit" style="display:none;">
+  <div class="recruit-layout">
+    <div id="recruitMap"></div>
+    <div id="recruitSidebar">
+      <div style="position:sticky;top:0;z-index:10;background:var(--card);padding-bottom:12px;border-bottom:2px solid var(--primary);margin-bottom:14px;">
+        <h3 style="font-size:1.1em;color:var(--primary);margin-bottom:6px;">📈 Plan de recrutement par vagues</h3>
+        <p style="font-size:.75em;color:var(--text-light);margin-bottom:10px;">Carte de chaleur commune par commune. Chaque vague = 12 ISP recrutés aux casernes optimales.</p>
+        <div id="waveBtns" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <div style="margin-top:10px;">
+          <div class="legend-bar" id="legendBar"></div>
+          <div class="legend-labels"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+        </div>
+        <div id="recruitGlobalKpi" style="margin-top:10px;"></div>
+      </div>
+      <div id="waveDetails"></div>
     </div>
   </div>
 </div>
@@ -690,9 +723,11 @@ function buildBar(arr,color,total){
 function switchTab(tab){
   document.getElementById('viewStats').style.display=tab==='stats'?'':'none';
   document.getElementById('viewCarte').style.display=tab==='carte'?'':'none';
+  document.getElementById('viewRecruit').style.display=tab==='recruit'?'':'none';
   var btns=document.querySelectorAll('.tab-btn');
   for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',btns[i].getAttribute('data-tab')===tab);
   if(tab==='carte'){if(!window._mapObj)setTimeout(initCarte,120);else window._mapObj.invalidateSize();}
+  if(tab==='recruit'){if(!window._recruitMapObj)setTimeout(initRecruitTab,120);else window._recruitMapObj.invalidateSize();}
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1387,6 +1422,261 @@ function renderZones(){
 function updateCoverage(v){document.getElementById('coverTarget').textContent=v;renderZones();}
 function updateTravel(v){document.getElementById('travelTarget').textContent=v;renderZones();}
 function updateBaseH(v){document.getElementById('baseHTarget').textContent=v;renderZones();}
+
+/* ═══════════════════════════════════════════════════════
+   ONGLET 3 — RECRUTEMENT PAR VAGUES
+   ═══════════════════════════════════════════════════════ */
+var COMMUNES=[{n:'L\u2019Albère',lat:42.4762,lng:2.897},{n:'Alénya',lat:42.6413,lng:2.9824},{n:'Amélie-les-Bains-Palalda',lat:42.4508,lng:2.687},{n:'Les Angles',lat:42.5797,lng:2.049},{n:'Angoustrine-Villeneuve-des-Escaldes',lat:42.546,lng:1.9443},{n:'Ansignan',lat:42.7646,lng:2.5233},{n:'Arboussols',lat:42.6669,lng:2.4953},{n:'Argelès-sur-Mer',lat:42.53,lng:3.0234},{n:'Arles-sur-Tech',lat:42.4531,lng:2.6228},{n:'Ayguatébia-Talau',lat:42.5561,lng:2.1962},{n:'Bages',lat:42.6075,lng:2.8893},{n:'Baho',lat:42.7066,lng:2.8229},{n:'Baillestavy',lat:42.5682,lng:2.5266},{n:'Baixas',lat:42.744,lng:2.8079},{n:'Banyuls-dels-Aspres',lat:42.5653,lng:2.8649},{n:'Banyuls-sur-Mer',lat:42.4602,lng:3.1014},{n:'Le Barcarès',lat:42.8118,lng:3.028},{n:'La Bastide',lat:42.5371,lng:2.5752},{n:'Bélesta',lat:42.7241,lng:2.6228},{n:'Bolquère',lat:42.5225,lng:2.0614},{n:'Bompas',lat:42.7271,lng:2.9426},{n:'Boule-d\u2019Amont',lat:42.5884,lng:2.5905},{n:'Bouleternère',lat:42.6435,lng:2.5878},{n:'Le Boulou',lat:42.5267,lng:2.8328},{n:'Bourg-Madame',lat:42.438,lng:1.9608},{n:'Brouilla',lat:42.5759,lng:2.8927},{n:'La Cabanasse',lat:42.501,lng:2.1056},{n:'Cabestany',lat:42.6804,lng:2.9507},{n:'Caixas',lat:42.6031,lng:2.6633},{n:'Calce',lat:42.7477,lng:2.7545},{n:'Calmeilles',lat:42.5507,lng:2.6735},{n:'Camélas',lat:42.6404,lng:2.6911},{n:'Campôme',lat:42.6506,lng:2.3826},{n:'Campoussy',lat:42.6978,lng:2.452},{n:'Canaveilles',lat:42.5348,lng:2.2179},{n:'Canet-en-Roussillon',lat:42.6809,lng:3.002},{n:'Canohès',lat:42.6514,lng:2.8294},{n:'Caramany',lat:42.7388,lng:2.5572},{n:'Casefabre',lat:42.6156,lng:2.6127},{n:'Cases-de-Pène',lat:42.7931,lng:2.7771},{n:'Cassagnes',lat:42.7415,lng:2.626},{n:'Casteil',lat:42.5035,lng:2.4229},{n:'Castelnou',lat:42.6247,lng:2.7046},{n:'Catllar',lat:42.6407,lng:2.4186},{n:'Caudiès-de-Fenouillèdes',lat:42.8213,lng:2.3781},{n:'Caudiès-de-Conflent',lat:42.5623,lng:2.1451},{n:'Cerbère',lat:42.4471,lng:3.1493},{n:'Céret',lat:42.473,lng:2.7565},{n:'Claira',lat:42.7626,lng:2.9458},{n:'Clara-Villerach',lat:42.5831,lng:2.4489},{n:'Codalet',lat:42.6015,lng:2.4169},{n:'Collioure',lat:42.5087,lng:3.0744},{n:'Conat',lat:42.6203,lng:2.3426},{n:'Corbère',lat:42.6515,lng:2.6614},{n:'Corbère-les-Cabanes',lat:42.66,lng:2.6837},{n:'Corneilla-de-Conflent',lat:42.5786,lng:2.382},{n:'Corneilla-la-Rivière',lat:42.7098,lng:2.7247},{n:'Corneilla-del-Vercol',lat:42.6228,lng:2.9512},{n:'Corsavy',lat:42.483,lng:2.541},{n:'Coustouges',lat:42.3602,lng:2.632},{n:'Dorres',lat:42.5125,lng:1.9224},{n:'Les Cluses',lat:42.4847,lng:2.8437},{n:'Égat',lat:42.5008,lng:2.0195},{n:'Elne',lat:42.6083,lng:2.978},{n:'Enveitg',lat:42.491,lng:1.8922},{n:'Err',lat:42.4131,lng:2.0678},{n:'Escaro',lat:42.5337,lng:2.319},{n:'Espira-de-l\u2019Agly',lat:42.7987,lng:2.8231},{n:'Espira-de-Conflent',lat:42.6168,lng:2.4923},{n:'Estagel',lat:42.7642,lng:2.7077},{n:'Estavar',lat:42.4764,lng:2.0121},{n:'Estoher',lat:42.5695,lng:2.4829},{n:'Eus',lat:42.6552,lng:2.4478},{n:'Eyne',lat:42.4544,lng:2.111},{n:'Feilluns',lat:42.7613,lng:2.4877},{n:'Fenouillet',lat:42.7786,lng:2.382},{n:'Fillols',lat:42.5587,lng:2.4257},{n:'Finestret',lat:42.6068,lng:2.5194},{n:'Fontpédrouse',lat:42.4718,lng:2.202},{n:'Fontrabiouse',lat:42.6413,lng:2.0514},{n:'Formiguères',lat:42.6227,lng:2.0629},{n:'Fosse',lat:42.7842,lng:2.4335},{n:'Fourques',lat:42.5845,lng:2.7759},{n:'Fuilla',lat:42.5673,lng:2.3549},{n:'Glorianes',lat:42.5904,lng:2.5528},{n:'Ille-sur-Têt',lat:42.6746,lng:2.6167},{n:'Joch',lat:42.6151,lng:2.5244},{n:'Jujols',lat:42.5852,lng:2.2823},{n:'Lamanère',lat:42.3628,lng:2.5191},{n:'Lansac',lat:42.7685,lng:2.5651},{n:'Laroque-des-Albères',lat:42.5179,lng:2.9314},{n:'Latour-Bas-Elne',lat:42.6041,lng:3.0067},{n:'Latour-de-Carol',lat:42.4746,lng:1.8736},{n:'Latour-de-France',lat:42.7701,lng:2.6498},{n:'Lesquerde',lat:42.7927,lng:2.5381},{n:'La Llagonne',lat:42.5401,lng:2.083},{n:'Llauro',lat:42.5458,lng:2.7494},{n:'Llo',lat:42.4358,lng:2.0895},{n:'Llupia',lat:42.6275,lng:2.7827},{n:'Mantet',lat:42.4555,lng:2.2922},{n:'Marquixanes',lat:42.6344,lng:2.4848},{n:'Los Masos',lat:42.6145,lng:2.4593},{n:'Matemale',lat:42.5788,lng:2.1154},{n:'Maureillas-las-Illas',lat:42.4635,lng:2.7999},{n:'Maury',lat:42.816,lng:2.6194},{n:'Millas',lat:42.6966,lng:2.6865},{n:'Molitg-les-Bains',lat:42.6624,lng:2.3955},{n:'Montalba-le-Château',lat:42.699,lng:2.5658},{n:'Montauriol',lat:42.5777,lng:2.725},{n:'Montbolo',lat:42.4924,lng:2.6265},{n:'Montescot',lat:42.6158,lng:2.9188},{n:'Montesquieu-des-Albères',lat:42.5206,lng:2.8685},{n:'Montferrer',lat:42.4415,lng:2.567},{n:'Mont-Louis',lat:42.5098,lng:2.1197},{n:'Montner',lat:42.7439,lng:2.6946},{n:'Mosset',lat:42.6719,lng:2.2848},{n:'Nahuja',lat:42.4243,lng:1.9995},{n:'Néfiach',lat:42.696,lng:2.6566},{n:'Nohèdes',lat:42.6256,lng:2.2547},{n:'Nyer',lat:42.4957,lng:2.2764},{n:'Font-Romeu-Odeillo-Via',lat:42.5145,lng:2.0212},{n:'Olette',lat:42.5938,lng:2.2449},{n:'Oms',lat:42.5319,lng:2.7102},{n:'Opoul-Périllos',lat:42.8817,lng:2.8601},{n:'Oreilla',lat:42.5788,lng:2.2272},{n:'Ortaffa',lat:42.5855,lng:2.9191},{n:'Osséja',lat:42.3923,lng:2.0006},{n:'Palau-de-Cerdagne',lat:42.3864,lng:1.9818},{n:'Palau-del-Vidre',lat:42.5662,lng:2.9595},{n:'Passa',lat:42.5674,lng:2.804},{n:'Perpignan',lat:42.699,lng:2.9045},{n:'Le Perthus',lat:42.4664,lng:2.8639},{n:'Peyrestortes',lat:42.7484,lng:2.8471},{n:'Pézilla-de-Conflent',lat:42.7356,lng:2.4884},{n:'Pézilla-la-Rivière',lat:42.7089,lng:2.76},{n:'Pia',lat:42.7506,lng:2.9172},{n:'Planès',lat:42.4701,lng:2.1444},{n:'Planèzes',lat:42.7736,lng:2.6215},{n:'Pollestres',lat:42.6373,lng:2.8736},{n:'Ponteilla',lat:42.6347,lng:2.8288},{n:'Porta',lat:42.5212,lng:1.7935},{n:'Porté-Puymorens',lat:42.5546,lng:1.8381},{n:'Port-Vendres',lat:42.5034,lng:3.1048},{n:'Prades',lat:42.6107,lng:2.4276},{n:'Prats-de-Mollo-la-Preste',lat:42.4174,lng:2.4229},{n:'Prats-de-Sournia',lat:42.7399,lng:2.4535},{n:'Prugnanes',lat:42.8254,lng:2.435},{n:'Prunet-et-Belpuig',lat:42.5655,lng:2.6373},{n:'Puyvalador',lat:42.6488,lng:2.1097},{n:'Py',lat:42.4683,lng:2.3635},{n:'Rabouillet',lat:42.7265,lng:2.3646},{n:'Railleu',lat:42.5923,lng:2.1619},{n:'Rasiguères',lat:42.7732,lng:2.5979},{n:'Réal',lat:42.64,lng:2.1488},{n:'Reynès',lat:42.466,lng:2.6971},{n:'Ria-Sirach',lat:42.6101,lng:2.3828},{n:'Rigarda',lat:42.6292,lng:2.5375},{n:'Rivesaltes',lat:42.7761,lng:2.8769},{n:'Rodès',lat:42.6563,lng:2.5485},{n:'Sahorre',lat:42.5255,lng:2.3565},{n:'Saillagouse',lat:42.4564,lng:2.0382},{n:'Saint-André',lat:42.5541,lng:2.9794},{n:'Saint-Arnac',lat:42.7737,lng:2.5343},{n:'Sainte-Colombe-de-la-Commanderie',lat:42.6161,lng:2.7421},{n:'Saint-Cyprien',lat:42.6205,lng:3.0139},{n:'Saint-Estève',lat:42.7154,lng:2.8445},{n:'Saint-Féliu-d\u2019Amont',lat:42.6752,lng:2.7166},{n:'Saint-Féliu-d\u2019Avall',lat:42.6733,lng:2.7498},{n:'Saint-Génis-des-Fontaines',lat:42.5488,lng:2.9221},{n:'Saint-Hippolyte',lat:42.8104,lng:2.9754},{n:'Saint-Jean-Lasseille',lat:42.5863,lng:2.8646},{n:'Saint-Jean-Pla-de-Corts',lat:42.5183,lng:2.7938},{n:'Saint-Laurent-de-Cerdans',lat:42.3944,lng:2.6222},{n:'Saint-Laurent-de-la-Salanque',lat:42.8073,lng:2.9993},{n:'Sainte-Léocadie',lat:42.4298,lng:2.0057},{n:'Sainte-Marie-la-Mer',lat:42.7262,lng:3.0168},{n:'Saint-Marsal',lat:42.5256,lng:2.6182},{n:'Saint-Martin-de-Fenouillet',lat:42.7848,lng:2.4777},{n:'Saint-Michel-de-Llotes',lat:42.6465,lng:2.6268},{n:'Saint-Nazaire',lat:42.6619,lng:2.9895},{n:'Saint-Paul-de-Fenouillet',lat:42.8229,lng:2.5025},{n:'Saint-Pierre-dels-Forcats',lat:42.4778,lng:2.114},{n:'Saleilles',lat:42.6553,lng:2.947},{n:'Salses-le-Château',lat:42.8359,lng:2.9134},{n:'Sansa',lat:42.6189,lng:2.1788},{n:'Sauto',lat:42.5166,lng:2.1461},{n:'Serdinya',lat:42.5736,lng:2.324},{n:'Serralongue',lat:42.3846,lng:2.5559},{n:'Le Soler',lat:42.6756,lng:2.7999},{n:'Sorède',lat:42.5083,lng:2.988},{n:'Souanyas',lat:42.5493,lng:2.2826},{n:'Sournia',lat:42.7138,lng:2.4171},{n:'Taillet',lat:42.5191,lng:2.6808},{n:'Tarerach',lat:42.6816,lng:2.5081},{n:'Targasonne',lat:42.5014,lng:1.9877},{n:'Taulis',lat:42.5149,lng:2.6145},{n:'Taurinya',lat:42.555,lng:2.4408},{n:'Tautavel',lat:42.8163,lng:2.7161},{n:'Le Tech',lat:42.4439,lng:2.5154},{n:'Terrats',lat:42.6046,lng:2.7584},{n:'Théza',lat:42.6403,lng:2.947},{n:'Thuès-Entre-Valls',lat:42.5006,lng:2.2317},{n:'Thuir',lat:42.6384,lng:2.7618},{n:'Tordères',lat:42.5653,lng:2.7619},{n:'Torreilles',lat:42.7571,lng:3.0059},{n:'Toulouges',lat:42.6723,lng:2.8234},{n:'Tresserre',lat:42.5559,lng:2.842},{n:'Trévillach',lat:42.7091,lng:2.5105},{n:'Trilla',lat:42.7369,lng:2.5229},{n:'Trouillas',lat:42.6055,lng:2.8235},{n:'Ur',lat:42.4594,lng:1.9382},{n:'Urbanya',lat:42.6429,lng:2.2964},{n:'Valcebollère',lat:42.382,lng:2.0472},{n:'Valmanya',lat:42.5251,lng:2.5089},{n:'Vernet-les-Bains',lat:42.5363,lng:2.4152},{n:'Villefranche-de-Conflent',lat:42.5955,lng:2.3575},{n:'Villelongue-de-la-Salanque',lat:42.7261,lng:2.977},{n:'Villelongue-dels-Monts',lat:42.5238,lng:2.8979},{n:'Villemolaque',lat:42.5976,lng:2.848},{n:'Villeneuve-de-la-Raho',lat:42.6402,lng:2.909},{n:'Villeneuve-la-Rivière',lat:42.7046,lng:2.7964},{n:'Vinça',lat:42.6431,lng:2.5225},{n:'Vingrau',lat:42.8588,lng:2.7904},{n:'Vira',lat:42.7653,lng:2.3899},{n:'Vivès',lat:42.5303,lng:2.766},{n:'Le Vivier',lat:42.7637,lng:2.4423}];
+
+/* Couleur chaleur couverture */
+function covColor(pct){
+  if(pct>=90) return '#1a9641';
+  if(pct>=75) return '#a6d96a';
+  if(pct>=60) return '#ffffbf';
+  if(pct>=40) return '#fdae61';
+  if(pct>=20) return '#f46d43';
+  return '#d73027';
+}
+
+/* CIS le plus proche d'un point (commune) */
+function nearestCis(lat,lng){
+  var best=null,bestD=Infinity;
+  for(var i=0;i<CIS.length;i++){
+    var dlat=CIS[i].lat-lat, dlng=CIS[i].lng-lng;
+    var d=dlat*dlat+dlng*dlng;
+    if(d<bestD){bestD=d;best=CIS[i];}
+  }
+  return best;
+}
+
+/* Calculer la couverture de chaque commune selon un état ISP donné */
+function computeCommuneCoverage(ispState){
+  /* Pour chaque commune, on trouve le CIS le plus proche.
+     La couverture de la commune = covPct du pool du CIS le plus proche.
+     Le pool = ISP de ce CIS + ISP des CIS voisins dans un rayon fixe de 20 min */
+  var TRAVEL_RADIUS=20;
+  var result=[];
+  for(var i=0;i<COMMUNES.length;i++){
+    var c=COMMUNES[i];
+    var cis=nearestCis(c.lat,c.lng);
+    /* Pool de ce CIS */
+    var pool=ispState[cis.id]||0;
+    for(var j=0;j<CIS.length;j++){
+      if(CIS[j].id!==cis.id && cisDistMin(CIS[j],cis)<=TRAVEL_RADIUS){
+        pool+=(ispState[CIS[j].id]||0);
+      }
+    }
+    var gh=0;
+    for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cis.id) gh=gardeHMois(GARDE[g].zone);}
+    var cov=covPct(pool,gh);
+    result.push({nom:c.n,lat:c.lat,lng:c.lng,cov:cov,cisNom:cis.nom,cisId:cis.id,pool:pool});
+  }
+  return result;
+}
+
+/* Algo greedy par vagues de 12 ISP */
+function computeRecruitWaves(){
+  populateCisIsp();
+  /* État ISP de départ */
+  var curIsp={};
+  for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=CIS[i].actualIsp||0;
+
+  var TRAVEL_RADIUS=20;
+  /* Pré-calculer la matrice de voisinage */
+  var neighbors={};
+  for(var i=0;i<CIS.length;i++){
+    var nb=[];
+    for(var j=0;j<CIS.length;j++){
+      if(j!==i && cisDistMin(CIS[i],CIS[j])<=TRAVEL_RADIUS) nb.push(CIS[j].id);
+    }
+    neighbors[CIS[i].id]=nb;
+  }
+
+  function pool(cid){
+    var tot=curIsp[cid]||0;
+    var nbs=neighbors[cid];
+    for(var n=0;n<nbs.length;n++) tot+=(curIsp[nbs[n]]||0);
+    return tot;
+  }
+  function cisCov(cid){
+    var gh=0;
+    for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cid) gh=gardeHMois(GARDE[g].zone);}
+    return covPct(pool(cid),gh);
+  }
+
+  var waves=[];
+  /* Vague 0 = situation actuelle */
+  var snap0={}; for(var k in curIsp) snap0[k]=curIsp[k];
+  waves.push({label:'Situation actuelle',snap:snap0,recruited:{}});
+
+  /* 5 vagues de 12 ISP */
+  for(var w=0;w<5;w++){
+    var waveRec={};
+    for(var r=0;r<12;r++){
+      /* Trouver le pire CIS */
+      var worstId=null, worstCov=Infinity;
+      for(var i=0;i<CIS.length;i++){
+        var cc=cisCov(CIS[i].id);
+        if(cc<worstCov){worstCov=cc;worstId=CIS[i].id;}
+      }
+      if(worstId===null) break;
+      curIsp[worstId]=(curIsp[worstId]||0)+1;
+      waveRec[worstId]=(waveRec[worstId]||0)+1;
+    }
+    var snap={}; for(var k in curIsp) snap[k]=curIsp[k];
+    waves.push({label:'Vague '+(w+1)+' (+12 ISP = +'+(12*(w+1))+' total)',snap:snap,recruited:waveRec});
+  }
+  return waves;
+}
+
+var _recruitWaves=null;
+var _recruitMarkers=[];
+function initRecruitTab(){
+  if(!DATA) return;
+  /* Init map */
+  var map=L.map('recruitMap').setView([42.58,2.55],10);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© CARTO © OSM',maxZoom:18
+  }).addTo(map);
+  window._recruitMapObj=map;
+
+  /* CIS markers (petits, discrets) */
+  for(var i=0;i<CIS.length;i++){
+    L.circleMarker([CIS[i].lat,CIS[i].lng],{radius:4,color:'#333',weight:1,fillColor:'#666',fillOpacity:.5})
+      .bindTooltip(CIS[i].nom,{direction:'top',offset:[0,-4],className:''})
+      .addTo(map);
+  }
+
+  /* Légende couleur */
+  var cols=['#d73027','#f46d43','#fdae61','#ffffbf','#a6d96a','#1a9641'];
+  var lb=''; for(var i=0;i<cols.length;i++) lb+='<div style="flex:1;background:'+cols[i]+';"></div>';
+  document.getElementById('legendBar').innerHTML=lb;
+
+  /* Calculer vagues */
+  _recruitWaves=computeRecruitWaves();
+
+  /* Boutons vagues */
+  var btnHtml='';
+  for(var w=0;w<_recruitWaves.length;w++){
+    var lbl=w===0?'🏠 Actuel':'🔄 Vague '+w+' (+'+12*w+')';
+    btnHtml+='<button class="wave-btn'+(w===0?' active':'')+'" data-wave="'+w+'" onclick="showWave('+w+')">'+lbl+'</button>';
+  }
+  document.getElementById('waveBtns').innerHTML=btnHtml;
+
+  /* Afficher les détails de toutes les vagues dans la sidebar */
+  renderWaveSidebar();
+
+  /* Afficher vague 0 par défaut */
+  showWave(0);
+}
+
+function showWave(wIdx){
+  if(!_recruitWaves) return;
+  var map=window._recruitMapObj;
+  var wave=_recruitWaves[wIdx];
+
+  /* Update boutons */
+  var btns=document.querySelectorAll('#waveBtns .wave-btn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',parseInt(btns[i].getAttribute('data-wave'))===wIdx);
+
+  /* Supprimer anciens marqueurs */
+  for(var i=0;i<_recruitMarkers.length;i++) map.removeLayer(_recruitMarkers[i]);
+  _recruitMarkers=[];
+
+  /* Calculer couverture des communes */
+  var covData=computeCommuneCoverage(wave.snap);
+
+  /* Stats globales */
+  var totIsp=0; for(var k in wave.snap) totIsp+=wave.snap[k];
+  var sumCov=0; for(var i=0;i<covData.length;i++) sumCov+=covData[i].cov;
+  var avgCov=covData.length>0?Math.round(sumCov/covData.length*10)/10:0;
+  var above75=0,below50=0;
+  for(var i=0;i<covData.length;i++){if(covData[i].cov>=75)above75++;if(covData[i].cov<50)below50++;}
+
+  document.getElementById('recruitGlobalKpi').innerHTML=
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+
+    '<div style="flex:1;min-width:100px;background:var(--blue-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--blue);">'+totIsp+'</div><div style="font-size:.7em;color:var(--text-light);">ISP total</div></div>'+
+    '<div style="flex:1;min-width:100px;background:'+(avgCov>=75?'var(--green-light)':'var(--primary-light)')+';border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:'+(avgCov>=75?'var(--green)':'var(--primary)')+';">'+avgCov+'%</div><div style="font-size:.7em;color:var(--text-light);">Couv. moyenne</div></div>'+
+    '<div style="flex:1;min-width:100px;background:var(--green-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--green);">'+above75+'</div><div style="font-size:.7em;color:var(--text-light);">Communes ≥75%</div></div>'+
+    '<div style="flex:1;min-width:100px;background:var(--primary-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--primary);">'+below50+'</div><div style="font-size:.7em;color:var(--text-light);">Communes <50%</div></div>'+
+    '</div>';
+
+  /* Placer marqueurs communes */
+  for(var i=0;i<covData.length;i++){
+    var cd=covData[i];
+    var col=covColor(cd.cov);
+    var m=L.circleMarker([cd.lat,cd.lng],{radius:7,color:'#fff',weight:1.5,fillColor:col,fillOpacity:.85})
+      .bindTooltip('<strong>'+cd.nom+'</strong><br>Couverture : <strong>'+cd.cov+'%</strong><br>CIS : '+cd.cisNom+' (pool '+cd.pool+')',{direction:'top',className:''})
+      .addTo(map);
+    _recruitMarkers.push(m);
+  }
+
+  /* Highlight la wave active dans la sidebar */
+  var details=document.querySelectorAll('#waveDetails details.wave-detail');
+  for(var i=0;i<details.length;i++){
+    details[i].style.borderLeft=parseInt(details[i].getAttribute('data-wave'))===wIdx?'4px solid var(--primary)':'4px solid transparent';
+    if(parseInt(details[i].getAttribute('data-wave'))===wIdx) details[i].open=true;
+  }
+}
+
+function renderWaveSidebar(){
+  if(!_recruitWaves) return;
+  var html='';
+  for(var w=0;w<_recruitWaves.length;w++){
+    var wave=_recruitWaves[w];
+    var covData=computeCommuneCoverage(wave.snap);
+    var sumCov=0; for(var i=0;i<covData.length;i++) sumCov+=covData[i].cov;
+    var avgCov=covData.length>0?Math.round(sumCov/covData.length*10)/10:0;
+
+    html+='<details class="wave-detail" data-wave="'+w+'"'+(w<=1?' open':'')+'  style="border-left:4px solid '+(w===0?'var(--primary)':'transparent')+';">';
+
+    if(w===0){
+      /* Situation actuelle */
+      var totIsp=0; for(var k in wave.snap) totIsp+=wave.snap[k];
+      html+='<summary><span>🏠 Situation actuelle</span><span style="color:var(--blue);font-size:.85em;">'+totIsp+' ISP — '+avgCov+'% moy.</span></summary>';
+      html+='<div style="padding:8px 0 4px;font-size:.82em;color:var(--text-light);">État des lieux avec l\u2019effectif actuel du listing ISP.</div>';
+      /* Top 10 communes les moins couvertes */
+      covData.sort(function(a,b){return a.cov-b.cov;});
+      html+='<div style="margin-top:6px;font-size:.78em;"><strong style="color:var(--primary);">🚨 10 communes les moins couvertes :</strong>';
+      for(var i=0;i<Math.min(10,covData.length);i++){
+        html+='<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f0f0f0;"><span>'+covData[i].nom+'</span><strong style="color:'+covColor(covData[i].cov)+';">'+covData[i].cov+'%</strong></div>';
+      }
+      html+='</div>';
+    } else {
+      /* Vague de recrutement */
+      html+='<summary onclick="showWave('+w+')" style="cursor:pointer;"><span>🔄 Vague '+w+' — +12 ISP</span><span style="color:var(--green);font-size:.85em;">→ '+avgCov+'% moy.</span></summary>';
+      /* Détail : où recruter */
+      var recs=[];
+      for(var cid in wave.recruited){
+        if(wave.recruited[cid]>0){
+          var nom='?';
+          for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){nom=CIS[j].nom;break;}}
+          /* Trouver la zone */
+          var zone='?',color='#666';
+          for(var z=0;z<CARTE_ZONES.length;z++){
+            if(CARTE_ZONES[z].cis.indexOf(cid)!==-1){zone=CARTE_ZONES[z].name;color=CARTE_ZONES[z].color;break;}
+          }
+          recs.push({caserne:nom,nb:wave.recruited[cid],zone:zone,color:color});
+        }
+      }
+      recs.sort(function(a,b){return b.nb-a.nb;});
+      html+='<table style="width:100%;font-size:.78em;border-collapse:collapse;margin:6px 0;">';
+      html+='<tr style="background:var(--bg);"><th style="text-align:left;padding:3px 6px;">Caserne</th><th style="text-align:left;padding:3px 6px;">Zone</th><th style="text-align:center;padding:3px 6px;">À recruter</th></tr>';
+      for(var j=0;j<recs.length;j++){
+        html+='<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 6px;font-weight:600;">'+recs[j].caserne+'</td><td style="padding:3px 6px;"><span style="color:'+recs[j].color+';font-weight:600;">'+recs[j].zone+'</span></td><td style="text-align:center;padding:3px 6px;font-weight:700;color:var(--primary);">+'+recs[j].nb+'</td></tr>';
+      }
+      html+='</table>';
+      /* Impact */
+      var prevCov=computeCommuneCoverage(_recruitWaves[w-1].snap);
+      var prevSum=0; for(var i=0;i<prevCov.length;i++) prevSum+=prevCov[i].cov;
+      var prevAvg=prevCov.length>0?Math.round(prevSum/prevCov.length*10)/10:0;
+      var delta=Math.round((avgCov-prevAvg)*10)/10;
+      html+='<div style="margin-top:4px;padding:4px 8px;background:var(--green-light);border-radius:4px;font-size:.8em;">📈 Impact : couverture moyenne <strong>'+prevAvg+'% → '+avgCov+'%</strong> (+'+delta+' pts)</div>';
+    }
+    html+='</details>';
+  }
+  document.getElementById('waveDetails').innerHTML=html;
+}
 </script>
 </body>
 </html>
