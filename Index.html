@@ -876,31 +876,49 @@ function populateCisIsp(){
 
   // Normalise : minuscules, accents retirés, tirets → espaces
   var norm=function(s){
-    try{s=s.normalize('NFC');}catch(e){}
+    try{s=s.normalize('NFD');}catch(e){}
     return(s||'').toLowerCase()
-      .replace(/[\u0300-\u036f]/g,'')  // combining diacritics
+      .replace(/[\u0300-\u036f]/g,'')
       .replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u')
       .replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c')
-      .replace(/[-_']/g,' ').replace(/\s+/g,' ').trim();
+      .replace(/[-_'\u2019\u2018]/g,' ').replace(/\s+/g,' ').trim();
   };
 
   // Index CIS par id
   var cisById={};
   for(var i=0;i<CIS.length;i++) cisById[CIS[i].id]=i;
 
+  // Build reverse index: norm(CIS.nom) → CIS.id for fuzzy fallback
+  var nomToCis={};
+  for(var i=0;i<CIS.length;i++) nomToCis[norm(CIS[i].nom)]=CIS[i].id;
+
   var matched=0,unmatched=[];
   for(var j=0;j<src.length;j++){
     var n=norm(src[j].centre);
     var cisId=CENTRE_TO_CIS[n];
+    // Fuzzy fallback 1: try direct name match
+    if(!cisId) cisId=nomToCis[n];
+    // Fuzzy fallback 2: try contains match on CENTRE_TO_CIS keys
+    if(!cisId){
+      for(var k in CENTRE_TO_CIS){
+        if(n.indexOf(k)!==-1||k.indexOf(n)!==-1){cisId=CENTRE_TO_CIS[k];break;}
+      }
+    }
     if(cisId&&cisById[cisId]!==undefined){
       CIS[cisById[cisId]].actualIsp+=src[j].nbIsp;
       matched++;
     } else {
-      unmatched.push(src[j].centre);
+      unmatched.push(src[j].centre+'→['+n+']');
     }
   }
   console.log('ISP MATCHING: '+matched+'/'+src.length+' centres matchés');
-  if(unmatched.length) console.log('NON MATCHÉS:', unmatched.join(', '));
+  if(unmatched.length) console.log('NON MATCHÉS:', unmatched);
+  // Debug: visible banner if 0 matched
+  var total=0; for(var i=0;i<CIS.length;i++) total+=CIS[i].actualIsp;
+  if(total===0 && src.length>0){
+    console.warn('⚠️ 0 ISP matched! src centres:', src.map(function(s){return s.centre+'('+s.nbIsp+')';}));
+    console.warn('rawCentreNames:', DATA.rawCentreNames);
+  }
 }
 
 /* ═══ CASERNES CONTRIBUANT À UNE ZONE (avec temps trajet) ═══ */
@@ -1513,11 +1531,14 @@ function computeRecruitWaves(){
   for(var w=0;w<5;w++){
     var waveRec={};
     for(var r=0;r<12;r++){
-      /* Trouver le pire CIS */
-      var worstId=null, worstCov=Infinity;
+      /* Trouver le pire CIS (en cas d'égalité, préférer celui avec le plus petit pool propre) */
+      var worstId=null, worstCov=Infinity, worstPool=Infinity;
       for(var i=0;i<CIS.length;i++){
         var cc=cisCov(CIS[i].id);
-        if(cc<worstCov){worstCov=cc;worstId=CIS[i].id;}
+        var pp=curIsp[CIS[i].id]||0;
+        if(cc<worstCov || (cc===worstCov && pp<worstPool)){
+          worstCov=cc;worstId=CIS[i].id;worstPool=pp;
+        }
       }
       if(worstId===null) break;
       curIsp[worstId]=(curIsp[worstId]||0)+1;
@@ -1568,6 +1589,18 @@ function initRecruitTab(){
 
   /* Afficher vague 0 par défaut */
   showWave(0);
+}
+
+/* Afficher 10 communes de plus */
+var _worstShown=10;
+function showMoreCommunes(){
+  _worstShown+=10;
+  var rows=document.querySelectorAll('.worst-commune-row');
+  for(var i=0;i<rows.length;i++){
+    rows[i].style.display=i<_worstShown?'flex':'none';
+  }
+  var btn=document.getElementById('showMoreWorst');
+  if(btn && _worstShown>=rows.length) btn.style.display='none';
 }
 
 function showWave(wIdx){
@@ -1633,15 +1666,36 @@ function renderWaveSidebar(){
     if(w===0){
       /* Situation actuelle */
       var totIsp=0; for(var k in wave.snap) totIsp+=wave.snap[k];
-      html+='<summary><span>🏠 Situation actuelle</span><span style="color:var(--blue);font-size:.85em;">'+totIsp+' ISP — '+avgCov+'% moy.</span></summary>';
-      html+='<div style="padding:8px 0 4px;font-size:.82em;color:var(--text-light);">État des lieux avec l\u2019effectif actuel du listing ISP.</div>';
-      /* Top 10 communes les moins couvertes */
+      html+='<summary><span>\ud83c\udfe0 Situation actuelle</span><span style="color:var(--blue);font-size:.85em;">'+totIsp+' ISP \u2014 '+avgCov+'% moy.</span></summary>';
+      html+='<div style="padding:8px 0 4px;font-size:.82em;color:var(--text-light);">\u00c9tat des lieux avec l\u2019effectif actuel du listing ISP.</div>';
+
+      /* ── Top communes les moins couvertes (paginé par 10) ── */
       covData.sort(function(a,b){return a.cov-b.cov;});
-      html+='<div style="margin-top:6px;font-size:.78em;"><strong style="color:var(--primary);">🚨 10 communes les moins couvertes :</strong>';
-      for(var i=0;i<Math.min(10,covData.length);i++){
-        html+='<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f0f0f0;"><span>'+covData[i].nom+'</span><strong style="color:'+covColor(covData[i].cov)+';">'+covData[i].cov+'%</strong></div>';
+      html+='<div style="margin-top:6px;font-size:.78em;"><strong style="color:var(--primary);">\ud83d\udea8 Communes les moins couvertes :</strong>';
+      html+='<div id="worstCommunesList">';
+      for(var i=0;i<covData.length;i++){
+        html+='<div class="worst-commune-row" style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f0f0f0;'+(i>=10?'display:none;':'')+'" data-idx="'+i+'"><span>'+covData[i].nom+'</span><strong style="color:'+covColor(covData[i].cov)+';">'+covData[i].cov+'%</strong></div>';
       }
       html+='</div>';
+      if(covData.length>10){
+        html+='<button id="showMoreWorst" onclick="showMoreCommunes()" style="margin-top:4px;padding:4px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);cursor:pointer;font-size:.85em;font-weight:600;color:var(--primary);width:100%;">\u25bc Afficher 10 de plus</button>';
+      }
+      html+='</div>';
+
+      /* ── Top 10 grosses villes les mieux couvertes ── */
+      var GROSSES_VILLES=['Perpignan','Canet-en-Roussillon','Saint-Estève','Cabestany','Argelès-sur-Mer','Saint-Cyprien','Elne','Rivesaltes','Thuir','Céret','Prades','Ille-sur-Têt','Le Boulou','Bompas','Pia','Claira','Toulouges','Pollestres','Canohès','Saleilles','Saint-Laurent-de-la-Salanque','Le Barcarès','Banyuls-sur-Mer','Collioure','Port-Vendres','Font-Romeu-Odeillo-Via','Saillagouse','Millas','Amélie-les-Bains-Palalda','Le Soler'];
+      var bigCities=[];
+      for(var i=0;i<covData.length;i++){
+        if(GROSSES_VILLES.indexOf(covData[i].nom)!==-1) bigCities.push(covData[i]);
+      }
+      bigCities.sort(function(a,b){return b.cov-a.cov;});
+      if(bigCities.length>0){
+        html+='<div style="margin-top:10px;font-size:.78em;"><strong style="color:var(--blue);">\ud83c\udfd9\ufe0f Grosses villes — couverture :</strong>';
+        for(var i=0;i<Math.min(15,bigCities.length);i++){
+          html+='<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f0f0f0;"><span>'+bigCities[i].nom+'</span><strong style="color:'+covColor(bigCities[i].cov)+';">'+bigCities[i].cov+'%</strong></div>';
+        }
+        html+='</div>';
+      }
     } else {
       /* Vague de recrutement */
       html+='<summary onclick="showWave('+w+')" style="cursor:pointer;"><span>🔄 Vague '+w+' — +12 ISP</span><span style="color:var(--green);font-size:.85em;">→ '+avgCov+'% moy.</span></summary>';
