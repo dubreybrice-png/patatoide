@@ -113,6 +113,9 @@
   .legend-labels{display:flex;justify-content:space-between;font-size:.7em;color:var(--text-light);}
   .wave-detail{background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
   .wave-detail summary{cursor:pointer;font-weight:700;font-size:.92em;display:flex;justify-content:space-between;align-items:center;}
+  .export-pdf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 0;margin:20px 0 4px;background:linear-gradient(135deg,var(--primary),#c0392b);color:#fff;border:none;border-radius:8px;font-size:.95em;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px rgba(230,57,70,.3);transition:all .2s;}
+  .export-pdf-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(230,57,70,.4);}
+  .export-pdf-btn:active{transform:translateY(0);}
   .sim-separator{height:4px;background:linear-gradient(90deg,var(--primary),var(--blue));border-radius:4px;margin:28px 0 20px;}
   .sim-section h3{font-size:1.1em;color:var(--primary);margin-bottom:4px;}
   .sim-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
@@ -127,6 +130,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -316,6 +320,7 @@
         <div id="recruitGlobalKpi" style="margin-top:10px;"></div>
       </div>
       <div id="waveDetails"></div>
+      <button class="export-pdf-btn" onclick="exportRecruitPDF()">📄 Exporter le plan de recrutement en PDF</button>
       <div class="sim-separator"></div>
       <div class="sim-section">
         <h3>🎯 Simulation de recrutement</h3>
@@ -1882,6 +1887,293 @@ function updateSimulation(){
   }
   h+='</div>';
   rd.innerHTML=h;
+}
+
+/* ═══ EXPORT PDF ═══ */
+function exportRecruitPDF(){
+  if(!_recruitWaves||_recruitWaves.length===0){alert('Aucune donnée à exporter.');return;}
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210,M=15,CW=W-2*M;
+  var y=M;
+
+  function addPage(){doc.addPage();y=M;}
+  function checkPage(need){if(y+need>280){addPage();return true;}return false;}
+
+  /* ── Couleurs ── */
+  var RED=[230,57,70],BLUE=[69,123,157],GREEN=[26,154,65],GRAY=[100,100,100],BLACK=[30,30,30];
+
+  /* ══════ EN-TÊTE ══════ */
+  doc.setFillColor(RED[0],RED[1],RED[2]);
+  doc.rect(0,0,W,38,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(20);doc.setFont('helvetica','bold');
+  doc.text('SDIS 66 — Plan de recrutement ISP',W/2,16,{align:'center'});
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('Aide à la décision — Dimensionnement ISP par caserne',W/2,24,{align:'center'});
+  var now=new Date();
+  doc.text('Généré le '+now.toLocaleDateString('fr-FR')+' à '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),W/2,31,{align:'center'});
+  y=46;
+
+  /* ── Paramètres du modèle ── */
+  doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+  doc.setFontSize(8);doc.setFont('helvetica','italic');
+  doc.text('Modèle : '+H_MOIS+'h/mois à couvrir — '+BASE_H+'h/ISP/mois — Rayon de renfort : 20 min',M,y);
+  y+=8;
+
+  /* ══════ SITUATION ACTUELLE ══════ */
+  var w0=_recruitWaves[0];
+  var cov0=computeCommuneCoverage(w0.snap);
+  var s0=0;for(var i=0;i<cov0.length;i++)s0+=cov0[i].cov;
+  var avg0=Math.round(s0/cov0.length*10)/10;
+  var tot0=0;for(var k in w0.snap)tot0+=w0.snap[k];
+  var a750=0,b500=0;for(var i=0;i<cov0.length;i++){if(cov0[i].cov>=75)a750++;if(cov0[i].cov<50)b500++;}
+
+  doc.setFillColor(240,240,245);
+  doc.roundedRect(M,y,CW,22,3,3,'F');
+  doc.setTextColor(RED[0],RED[1],RED[2]);
+  doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('Situation actuelle',M+5,y+8);
+  doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text(tot0+' ISP — Couverture moyenne : '+avg0+'%',M+5,y+15);
+  doc.text('Communes ≥75% : '+a750+' | Communes <50% : '+b500,M+5,y+20);
+  y+=28;
+
+  /* ══════ VAGUES 1-5 ══════ */
+  var prevAvg=avg0;
+  for(var w=1;w<_recruitWaves.length;w++){
+    var wave=_recruitWaves[w];
+    var covW=computeCommuneCoverage(wave.snap);
+    var sW=0;for(var i=0;i<covW.length;i++)sW+=covW[i].cov;
+    var avgW=Math.round(sW/covW.length*10)/10;
+    var deltaW=Math.round((avgW-prevAvg)*10)/10;
+    var totW=0;for(var k in wave.snap)totW+=wave.snap[k];
+    var a75w=0,b50w=0;for(var i=0;i<covW.length;i++){if(covW[i].cov>=75)a75w++;if(covW[i].cov<50)b50w++;}
+
+    /* Collecter recrutements */
+    var recs=[];
+    for(var cid in wave.recruited){
+      if(wave.recruited[cid]>0){
+        var nom='?';
+        for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){nom=CIS[j].nom;break;}}
+        var zone='?';
+        for(var z=0;z<CARTE_ZONES.length;z++){if(CARTE_ZONES[z].cis.indexOf(cid)!==-1){zone=CARTE_ZONES[z].name;break;}}
+        recs.push({caserne:nom,zone:zone,nb:wave.recruited[cid]});
+      }
+    }
+    recs.sort(function(a,b){return b.nb-a.nb;});
+
+    /* Espace nécessaire : titre(16) + table header(6) + rows(5 each) + impact(10) + marge(6) */
+    var blockH=16+6+recs.length*5+10+6;
+    checkPage(blockH);
+
+    /* Bande titre vague */
+    var wColors=[[230,57,70],[69,123,157],[42,157,143],[231,111,81],[108,92,231]];
+    var wc=wColors[(w-1)%wColors.length];
+    doc.setFillColor(wc[0],wc[1],wc[2]);
+    doc.roundedRect(M,y,CW,10,2,2,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(11);doc.setFont('helvetica','bold');
+    doc.text('Vague '+w+' — +12 ISP (total : '+(12*w)+' recrutés)',M+5,y+7);
+    y+=14;
+
+    /* Tableau recrutements */
+    doc.setFillColor(245,245,248);
+    doc.rect(M,y,CW,5,'F');
+    doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+    doc.text('Caserne',M+3,y+3.5);
+    doc.text('Zone',M+60,y+3.5);
+    doc.text('À recruter',M+CW-25,y+3.5);
+    y+=5;
+
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+    for(var r=0;r<recs.length;r++){
+      if(r%2===0){doc.setFillColor(252,252,254);doc.rect(M,y,CW,5,'F');}
+      doc.setFontSize(8);
+      doc.setFont('helvetica','bold');
+      doc.text(recs[r].caserne,M+3,y+3.5);
+      doc.setFont('helvetica','normal');
+      doc.text(recs[r].zone,M+60,y+3.5);
+      doc.setTextColor(RED[0],RED[1],RED[2]);
+      doc.setFont('helvetica','bold');
+      doc.text('+'+recs[r].nb,M+CW-20,y+3.5);
+      doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+      y+=5;
+    }
+    y+=2;
+
+    /* Impact */
+    doc.setFillColor(232,245,233);
+    doc.roundedRect(M,y,CW,8,2,2,'F');
+    doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.setTextColor(GREEN[0],GREEN[1],GREEN[2]);
+    doc.text('Impact : '+prevAvg+'% → '+avgW+'% (+'+deltaW+' pts) — '+totW+' ISP total — '+a75w+' communes ≥75% — '+b50w+' communes <50%',M+4,y+5.5);
+    y+=14;
+
+    prevAvg=avgW;
+  }
+
+  /* ══════ RÉCAP FINAL ══════ */
+  checkPage(35);
+  var lastW=_recruitWaves[_recruitWaves.length-1];
+  var covF=computeCommuneCoverage(lastW.snap);
+  var sF=0;for(var i=0;i<covF.length;i++)sF+=covF[i].cov;
+  var avgF=Math.round(sF/covF.length*10)/10;
+  var totF=0;for(var k in lastW.snap)totF+=lastW.snap[k];
+  var a75f=0,b50f=0;for(var i=0;i<covF.length;i++){if(covF[i].cov>=75)a75f++;if(covF[i].cov<50)b50f++;}
+
+  doc.setFillColor(RED[0],RED[1],RED[2]);
+  doc.roundedRect(M,y,CW,24,3,3,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(12);doc.setFont('helvetica','bold');
+  doc.text('Récapitulatif après 5 vagues (+60 ISP)',M+5,y+8);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Effectif total : '+totF+' ISP — Couverture moyenne : '+avg0+'% → '+avgF+'%',M+5,y+15);
+  doc.text('Communes ≥75% : '+a75f+' — Communes <50% : '+b50f,M+5,y+21);
+  y+=30;
+
+  /* ══════ COUVERTURE PAR ZONE FINALE ══════ */
+  checkPage(10+CARTE_ZONES.length*5+6);
+  doc.setTextColor(BLUE[0],BLUE[1],BLUE[2]);
+  doc.setFontSize(11);doc.setFont('helvetica','bold');
+  doc.text('Couverture par secteur (après 5 vagues)',M,y+5);
+  y+=10;
+
+  function cisToZone(cid){
+    for(var z=0;z<CARTE_ZONES.length;z++){if(CARTE_ZONES[z].cis.indexOf(cid)!==-1)return z;}
+    return -1;
+  }
+  var z0B={},z0A={},zC={};
+  for(var z=0;z<CARTE_ZONES.length;z++){z0B[z]=0;z0A[z]=0;zC[z]=0;}
+  for(var i=0;i<cov0.length;i++){
+    var zi=cisToZone(cov0[i].cisId);
+    if(zi>=0){z0B[zi]+=cov0[i].cov;z0A[zi]+=covF[i].cov;zC[zi]++;}
+  }
+
+  /* En-tête tableau */
+  doc.setFillColor(245,245,248);
+  doc.rect(M,y,CW,5,'F');
+  doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+  doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+  doc.text('Secteur',M+3,y+3.5);
+  doc.text('Avant',M+90,y+3.5);
+  doc.text('Après',M+110,y+3.5);
+  doc.text('Gain',M+CW-18,y+3.5);
+  y+=5;
+
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    if(zC[z]===0)continue;
+    var zB=Math.round(z0B[z]/zC[z]*10)/10;
+    var zA=Math.round(z0A[z]/zC[z]*10)/10;
+    var dz=Math.round((zA-zB)*10)/10;
+    if(z%2===0){doc.setFillColor(252,252,254);doc.rect(M,y,CW,5,'F');}
+    doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+    doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.text(CARTE_ZONES[z].name,M+3,y+3.5);
+    doc.setFont('helvetica','normal');
+    doc.text(zB+'%',M+90,y+3.5);
+    doc.text(zA+'%',M+110,y+3.5);
+    doc.setTextColor(GREEN[0],GREEN[1],GREEN[2]);doc.setFont('helvetica','bold');
+    doc.text('+'+(dz>0?dz:0)+' pts',M+CW-18,y+3.5);
+    doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+    y+=5;
+  }
+  y+=6;
+
+  /* ══════ SIMULATION PERSO (si remplie) ══════ */
+  var selects=document.querySelectorAll('.sim-select');
+  var simRecs=[];
+  for(var i=0;i<selects.length;i++){
+    if(selects[i].value){
+      var cid=selects[i].value;
+      var nom='?';for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){nom=CIS[j].nom;break;}}
+      simRecs.push({idx:i+1,cid:cid,nom:nom});
+    }
+  }
+  if(simRecs.length>0){
+    checkPage(40+simRecs.length*5);
+    doc.setFillColor(69,123,157);
+    doc.roundedRect(M,y,CW,10,2,2,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(11);doc.setFont('helvetica','bold');
+    doc.text('Simulation personnalisée ('+simRecs.length+' ISP)',M+5,y+7);
+    y+=14;
+
+    var simSnap={};
+    for(var k in w0.snap) simSnap[k]=w0.snap[k];
+    for(var i=0;i<simRecs.length;i++) simSnap[simRecs[i].cid]=(simSnap[simRecs[i].cid]||0)+1;
+
+    /* Liste ISP simulés */
+    for(var i=0;i<simRecs.length;i++){
+      if(i%2===0){doc.setFillColor(245,248,252);doc.rect(M,y,CW,5,'F');}
+      doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+      doc.setFontSize(8);doc.setFont('helvetica','normal');
+      doc.text('Nouvel ISP '+simRecs[i].idx+' → '+simRecs[i].nom,M+3,y+3.5);
+      y+=5;
+    }
+    y+=4;
+
+    /* Impact simulation */
+    var covSB=computeCommuneCoverage(w0.snap);
+    var covSA=computeCommuneCoverage(simSnap);
+    var sSB=0,sSA=0;
+    for(var i=0;i<covSB.length;i++)sSB+=covSB[i].cov;
+    for(var i=0;i<covSA.length;i++)sSA+=covSA[i].cov;
+    var avgSB=Math.round(sSB/covSB.length*10)/10;
+    var avgSA=Math.round(sSA/covSA.length*10)/10;
+    var dS=Math.round((avgSA-avgSB)*10)/10;
+
+    doc.setFillColor(232,245,233);
+    doc.roundedRect(M,y,CW,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.setTextColor(GREEN[0],GREEN[1],GREEN[2]);
+    doc.text('Couverture globale : '+avgSB+'% → '+avgSA+'% (+'+dS+' pts)',M+4,y+5.5);
+    y+=12;
+
+    /* Secteurs impactés */
+    var zsB={},zsA={},zsC={};
+    for(var z=0;z<CARTE_ZONES.length;z++){zsB[z]=0;zsA[z]=0;zsC[z]=0;}
+    for(var i=0;i<covSB.length;i++){
+      var zi=cisToZone(covSB[i].cisId);
+      if(zi>=0){zsB[zi]+=covSB[i].cov;zsA[zi]+=covSA[i].cov;zsC[zi]++;}
+    }
+    var simImpact=[];
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(zsC[z]===0)continue;
+      var bz=Math.round(zsB[z]/zsC[z]*10)/10;
+      var az=Math.round(zsA[z]/zsC[z]*10)/10;
+      if(az!==bz) simImpact.push({name:CARTE_ZONES[z].name,before:bz,after:az,delta:Math.round((az-bz)*10)/10});
+    }
+    if(simImpact.length>0){
+      doc.setTextColor(BLUE[0],BLUE[1],BLUE[2]);
+      doc.setFontSize(9);doc.setFont('helvetica','bold');
+      doc.text('Secteurs impactés :',M,y+4);
+      y+=8;
+      for(var i=0;i<simImpact.length;i++){
+        if(i%2===0){doc.setFillColor(245,248,252);doc.rect(M,y,CW,5,'F');}
+        doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+        doc.setFontSize(8);doc.setFont('helvetica','bold');
+        doc.text(simImpact[i].name,M+3,y+3.5);
+        doc.setFont('helvetica','normal');
+        doc.text(simImpact[i].before+'% → '+simImpact[i].after+'% (+'+simImpact[i].delta+' pts)',M+70,y+3.5);
+        y+=5;
+      }
+    }
+  }
+
+  /* ── Pied de page ── */
+  var pc=doc.internal.getNumberOfPages();
+  for(var p=1;p<=pc;p++){
+    doc.setPage(p);
+    doc.setFontSize(7);doc.setFont('helvetica','italic');
+    doc.setTextColor(170,170,170);
+    doc.text('SDIS 66 — Plan de recrutement ISP — Page '+p+'/'+pc,W/2,292,{align:'center'});
+  }
+
+  doc.save('Plan_Recrutement_ISP_SDIS66_'+now.toISOString().slice(0,10)+'.pdf');
 }
 </script>
 </body>
