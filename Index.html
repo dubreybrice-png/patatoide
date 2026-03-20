@@ -274,15 +274,15 @@
         <p style="font-size:0.75em;color:var(--text-light);margin-bottom:6px;">Ajustez les ISP <strong>par caserne</strong>, le temps de trajet et les heures/ISP.<br>Objectif personnalisable par zone (🎯).</p>
         <div class="coverage-control">
           <label>Objectif couverture par défaut : <strong id="coverTarget">75</strong>%</label>
-          <input type="range" id="coverSlider" min="50" max="100" value="75" oninput="updateCoverage(this.value)">
+          <input type="range" id="coverSlider" min="50" max="100" value="75" oninput="document.getElementById('coverTarget').textContent=this.value" onchange="updateCoverage(this.value)">
         </div>
         <div class="coverage-control" style="margin-top:6px;">
           <label>Temps de trajet max (rayon d'action) : <strong id="travelTarget">0</strong> min</label>
-          <input type="range" id="travelSlider" min="0" max="60" step="5" value="0" oninput="updateTravel(this.value)">
+          <input type="range" id="travelSlider" min="0" max="60" step="5" value="0" oninput="document.getElementById('travelTarget').textContent=this.value" onchange="updateTravel(this.value)">
         </div>
         <div class="coverage-control" style="margin-top:6px;">
           <label>Heures / ISP / mois : <strong id="baseHTarget">36</strong>h</label>
-          <input type="range" id="baseHSlider" min="12" max="72" step="2" value="36" oninput="updateBaseH(this.value)">
+          <input type="range" id="baseHSlider" min="12" max="72" step="2" value="36" oninput="document.getElementById('baseHTarget').textContent=this.value" onchange="updateBaseH(this.value)">
         </div>
         <div id="zoneFilters" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 8px;"></div>
       </div>
@@ -1168,7 +1168,8 @@ function renderZones(){
     h+='<div style="display:flex;align-items:center;gap:4px;margin:2px 0 4px;" onclick="event.stopPropagation();">';
     h+='<span style="font-size:.68em;color:var(--text-light);white-space:nowrap;">Objectif</span>';
     h+='<input type="range" min="50" max="100" value="'+cp+'" style="flex:1;margin:0;cursor:pointer;accent-color:'+zo.color+';height:14px;" ';
-    h+='oninput="this.nextElementSibling.textContent=this.value+\'%\'" ';
+    h+='oninput="this.nextElementSibling.textContent=this.value+\'%\';event.stopPropagation();" ';
+    h+='onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();" ';
     h+='onchange="window._zoneTargets[\''+zo.name.replace(/'/g,"\\'")+'\']= +this.value;renderZones();">';
     h+='<strong style="min-width:30px;text-align:right;font-size:.78em;">'+cp+'%</strong>';
     h+='</div>';
@@ -1191,7 +1192,8 @@ function renderZones(){
       h+='<div style="display:flex;align-items:center;gap:3px;font-size:.82em;margin-bottom:3px;">';
       h+='<strong style="flex:1;">'+c.nom+'</strong>';
       h+='<input type="range" min="0" max="30" value="'+Math.round(sI)+'" style="width:55px;margin:0;cursor:pointer;accent-color:'+zo.color+';" ';
-      h+='oninput="this.nextElementSibling.textContent=this.value;" ';
+      h+='oninput="this.nextElementSibling.textContent=this.value;event.stopPropagation();" ';
+      h+='onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();" ';
       h+='onchange="window._cisAdj[\''+c.id+'\']= +this.value;renderZones();">';
       h+='<strong style="min-width:16px;text-align:right;">'+Math.round(sI)+'</strong>';
       h+='</div>';
@@ -1527,22 +1529,43 @@ function computeRecruitWaves(){
   var snap0={}; for(var k in curIsp) snap0[k]=curIsp[k];
   waves.push({label:'Situation actuelle',snap:snap0,recruited:{}});
 
-  /* 5 vagues de 12 ISP */
+  /* 5 vagues de 12 ISP — Algo à impact global marginal
+     Pour chaque recrutement, on simule +1 ISP dans CHAQUE caserne
+     et on retient celle qui maximise le gain TOTAL de couverture
+     sur l'ensemble du département (toutes casernes confondues).
+     Ainsi, un ISP placé en B peut couvrir B ET renforcer C via le rayon,
+     avec un meilleur impact global qu'un ISP isolé en C. */
+  function totalCovScore(){
+    var s=0;
+    for(var i=0;i<CIS.length;i++) s+=cisCov(CIS[i].id);
+    return s;
+  }
+
   for(var w=0;w<5;w++){
     var waveRec={};
     for(var r=0;r<12;r++){
-      /* Trouver le pire CIS (en cas d'égalité, préférer celui avec le plus petit pool propre) */
-      var worstId=null, worstCov=Infinity, worstPool=Infinity;
+      var bestId=null, bestGain=-1;
+      var baseCov=totalCovScore();
       for(var i=0;i<CIS.length;i++){
-        var cc=cisCov(CIS[i].id);
-        var pp=curIsp[CIS[i].id]||0;
-        if(cc<worstCov || (cc===worstCov && pp<worstPool)){
-          worstCov=cc;worstId=CIS[i].id;worstPool=pp;
+        var cid=CIS[i].id;
+        /* Simuler +1 ISP ici */
+        curIsp[cid]=(curIsp[cid]||0)+1;
+        var gain=totalCovScore()-baseCov;
+        /* Bonus : si cette caserne ou un voisin est sous 50%, favoriser légèrement */
+        var lowBonus=0;
+        if(cisCov(cid)<50) lowBonus=0.5;
+        else{
+          var nbs=neighbors[cid];
+          for(var n=0;n<nbs.length;n++){if(cisCov(nbs[n])<50){lowBonus=0.3;break;}}
         }
+        gain+=lowBonus;
+        if(gain>bestGain){bestGain=gain;bestId=cid;}
+        /* Annuler la simulation */
+        curIsp[cid]-=1;
       }
-      if(worstId===null) break;
-      curIsp[worstId]=(curIsp[worstId]||0)+1;
-      waveRec[worstId]=(waveRec[worstId]||0)+1;
+      if(bestId===null) break;
+      curIsp[bestId]=(curIsp[bestId]||0)+1;
+      waveRec[bestId]=(waveRec[bestId]||0)+1;
     }
     var snap={}; for(var k in curIsp) snap[k]=curIsp[k];
     waves.push({label:'Vague '+(w+1)+' (+12 ISP = +'+(12*(w+1))+' total)',snap:snap,recruited:waveRec});
