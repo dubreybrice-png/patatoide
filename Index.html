@@ -113,6 +113,15 @@
   .legend-labels{display:flex;justify-content:space-between;font-size:.7em;color:var(--text-light);}
   .wave-detail{background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
   .wave-detail summary{cursor:pointer;font-weight:700;font-size:.92em;display:flex;justify-content:space-between;align-items:center;}
+  .sim-separator{height:4px;background:linear-gradient(90deg,var(--primary),var(--blue));border-radius:4px;margin:28px 0 20px;}
+  .sim-section h3{font-size:1.1em;color:var(--primary);margin-bottom:4px;}
+  .sim-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+  .sim-label{font-size:.82em;font-weight:600;min-width:95px;color:var(--text);}
+  .sim-select{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:.8em;font-family:inherit;background:var(--card);color:var(--text);cursor:pointer;}
+  .sim-select:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 2px rgba(230,57,70,.15);}
+  .sim-result-box{margin-top:14px;padding:12px 14px;background:var(--bg);border-radius:8px;border:2px solid var(--primary);}
+  .sim-result-global{padding:6px 0;}
+  .sim-zone-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #eee;font-size:.82em;}
   @media(max-width:900px){.recruit-layout{flex-direction:column;}#recruitSidebar{width:100%;max-height:45vh;}}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -307,6 +316,13 @@
         <div id="recruitGlobalKpi" style="margin-top:10px;"></div>
       </div>
       <div id="waveDetails"></div>
+      <div class="sim-separator"></div>
+      <div class="sim-section">
+        <h3>🎯 Simulation de recrutement</h3>
+        <p style="font-size:.75em;color:var(--text-light);margin-bottom:12px;">Positionnez vos futurs ISP et visualisez l'impact sur la couverture.</p>
+        <div id="simRows"></div>
+        <div id="simResults"><div style="color:var(--text-light);font-size:.82em;text-align:center;padding:12px 0;">Sélectionnez au moins un CIS pour voir l'impact.</div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1612,6 +1628,9 @@ function initRecruitTab(){
 
   /* Afficher vague 0 par défaut */
   showWave(0);
+
+  /* Init dropdowns simulation */
+  initSimDropdowns();
 }
 
 /* Afficher 10 communes de plus */
@@ -1753,6 +1772,116 @@ function renderWaveSidebar(){
     html+='</details>';
   }
   document.getElementById('waveDetails').innerHTML=html;
+}
+
+/* ═══ SIMULATION DE RECRUTEMENT ═══ */
+function initSimDropdowns(){
+  var sorted=CIS.slice().sort(function(a,b){return a.nom.localeCompare(b.nom);});
+  /* Grouper par zone pour le optgroup */
+  var zoneMap={};
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    zoneMap[CARTE_ZONES[z].name]=[];
+  }
+  for(var i=0;i<sorted.length;i++){
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(CARTE_ZONES[z].cis.indexOf(sorted[i].id)!==-1){
+        zoneMap[CARTE_ZONES[z].name].push(sorted[i]);
+        break;
+      }
+    }
+  }
+  var optionsHtml='<option value="">— Choisir un CIS —</option>';
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    var zn=CARTE_ZONES[z].name;
+    if(!zoneMap[zn]||zoneMap[zn].length===0) continue;
+    optionsHtml+='<optgroup label="'+zn+'">';
+    for(var j=0;j<zoneMap[zn].length;j++){
+      optionsHtml+='<option value="'+zoneMap[zn][j].id+'">'+zoneMap[zn][j].nom+'</option>';
+    }
+    optionsHtml+='</optgroup>';
+  }
+  var rows='';
+  for(var i=1;i<=12;i++){
+    rows+='<div class="sim-row"><span class="sim-label">Nouvel ISP '+i+'</span><select class="sim-select" onchange="updateSimulation()">'+optionsHtml+'</select></div>';
+  }
+  document.getElementById('simRows').innerHTML=rows;
+}
+
+function updateSimulation(){
+  if(!_recruitWaves) return;
+  var baseSnap=_recruitWaves[0].snap;
+  var simSnap={};
+  for(var k in baseSnap) simSnap[k]=baseSnap[k];
+
+  var selects=document.querySelectorAll('.sim-select');
+  var nbSelected=0;
+  for(var i=0;i<selects.length;i++){
+    if(selects[i].value){
+      simSnap[selects[i].value]=(simSnap[selects[i].value]||0)+1;
+      nbSelected++;
+    }
+  }
+
+  var rd=document.getElementById('simResults');
+  if(nbSelected===0){
+    rd.innerHTML='<div style="color:var(--text-light);font-size:.82em;text-align:center;padding:12px 0;">Sélectionnez au moins un CIS pour voir l\'impact.</div>';
+    return;
+  }
+
+  var covBefore=computeCommuneCoverage(baseSnap);
+  var covAfter=computeCommuneCoverage(simSnap);
+
+  /* Moyennes globales */
+  var sB=0,sA=0;
+  for(var i=0;i<covBefore.length;i++) sB+=covBefore[i].cov;
+  for(var i=0;i<covAfter.length;i++) sA+=covAfter[i].cov;
+  var avgB=Math.round(sB/covBefore.length*10)/10;
+  var avgA=Math.round(sA/covAfter.length*10)/10;
+  var dG=Math.round((avgA-avgB)*10)/10;
+
+  /* Grouper par zone */
+  function cisToZone(cid){
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(CARTE_ZONES[z].cis.indexOf(cid)!==-1) return z;
+    }
+    return -1;
+  }
+  var zSumB={},zSumA={},zCnt={};
+  for(var z=0;z<CARTE_ZONES.length;z++){zSumB[z]=0;zSumA[z]=0;zCnt[z]=0;}
+  for(var i=0;i<covBefore.length;i++){
+    var zi=cisToZone(covBefore[i].cisId);
+    if(zi>=0){zSumB[zi]+=covBefore[i].cov;zSumA[zi]+=covAfter[i].cov;zCnt[zi]++;}
+  }
+
+  var impacted=[];
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    if(zCnt[z]===0) continue;
+    var zB=Math.round(zSumB[z]/zCnt[z]*10)/10;
+    var zA=Math.round(zSumA[z]/zCnt[z]*10)/10;
+    if(zA!==zB) impacted.push({name:CARTE_ZONES[z].name,color:CARTE_ZONES[z].color,before:zB,after:zA,delta:Math.round((zA-zB)*10)/10});
+  }
+  impacted.sort(function(a,b){return b.delta-a.delta;});
+
+  var h='<div class="sim-result-box">';
+  h+='<div class="sim-result-global">';
+  h+='<span style="font-size:.82em;font-weight:600;">🌐 Couverture globale</span>';
+  h+='<div style="font-size:1.3em;font-weight:800;margin-top:4px;">'+avgB+'% <span style="font-size:1em;color:var(--text-light);">→</span> <span style="color:var(--green);">'+avgA+'%</span> <span style="font-size:.7em;color:var(--green);">(+'+dG+' pts)</span></div>';
+  h+='</div>';
+
+  if(impacted.length>0){
+    h+='<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">';
+    h+='<div style="font-size:.82em;font-weight:600;color:var(--text);margin-bottom:6px;">📍 Secteurs impactés :</div>';
+    for(var i=0;i<impacted.length;i++){
+      var iz=impacted[i];
+      h+='<div class="sim-zone-row">';
+      h+='<span style="color:'+iz.color+';font-weight:600;">'+iz.name+'</span>';
+      h+='<span>'+iz.before+'% → <strong style="color:var(--green);">'+iz.after+'%</strong> <span style="font-size:.8em;color:var(--green);">(+'+iz.delta+')</span></span>';
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+  rd.innerHTML=h;
 }
 </script>
 </body>
