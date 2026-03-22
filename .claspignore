@@ -1,0 +1,9 @@
+# Fichiers non Apps Script (ne pas pousser vers GAS)
+osrm_travel_data.js
+build_osrm_matrix.py
+fix_encoding_insert.py
+osrm_log.txt
+Index_original_temp.html
+**/*.py
+**/*.txt
+**/*.bat

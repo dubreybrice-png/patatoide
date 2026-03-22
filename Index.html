@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -43,7 +43,7 @@
   table{width:100%;border-collapse:collapse;font-size:0.83em;}
   th{background:var(--bg);font-weight:700;text-align:left;padding:9px 12px;border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
   th:hover{background:#dfe1e4;}
-  th.sort-asc::after{content:' â–²';font-size:0.7em;} th.sort-desc::after{content:' â–¼';font-size:0.7em;}
+  th.sort-asc::after{content:' ▲';font-size:0.7em;} th.sort-desc::after{content:' ▼';font-size:0.7em;}
   td{padding:7px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
   tr:hover td{background:#f8f9fb;}
 
@@ -135,19 +135,19 @@
 <body>
 
 <div class="topbar">
-  <div class="topbar-title">ðŸ¥ PatatoÃ¯de â€” Dimensionnement ISP</div>
-  <div class="topbar-sub">SDIS 66 â€” Aide Ã  la dÃ©cision pour le recrutement ISP</div>
+  <div class="topbar-title">🏥 Patatoïde — Dimensionnement ISP</div>
+  <div class="topbar-sub">SDIS 66 — Aide à la décision pour le recrutement ISP</div>
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="stats" onclick="switchTab('stats')">ðŸ“Š Statistiques</button>
-    <button class="tab-btn" data-tab="carte" onclick="switchTab('carte')">ðŸ—ºï¸ Carte</button>
-    <button class="tab-btn" data-tab="recruit" onclick="switchTab('recruit')">ðŸ“ˆ Recrutement</button>
+    <button class="tab-btn active" data-tab="stats" onclick="switchTab('stats')">📊 Statistiques</button>
+    <button class="tab-btn" data-tab="carte" onclick="switchTab('carte')">🗺️ Carte</button>
+    <button class="tab-btn" data-tab="recruit" onclick="switchTab('recruit')">📈 Recrutement</button>
   </div>
 </div>
 
 <div id="viewStats">
 <div class="loading" id="loadingScreen">
   <div class="spinner"></div>
-  <div style="font-weight:600;font-size:1.1em;">Chargement des donnÃ©esâ€¦</div>
+  <div style="font-weight:600;font-size:1.1em;">Chargement des données…</div>
   <div style="color:var(--text-light);font-size:0.9em;">Lecture des 4 onglets du spreadsheet</div>
 </div>
 
@@ -157,120 +157,120 @@
   <!-- KPI -->
   <div class="stat-row" id="kpiRow"></div>
 
-  <!-- INTER PAR HEURE + CRÃ‰NEAUX ISP PAR HEURE -->
+  <!-- INTER PAR HEURE + CRÉNEAUX ISP PAR HEURE -->
   <div class="chart-grid" id="hourCharts">
     <div class="chart-wrap">
-      <div class="chart-title">ðŸš’ Interventions par tranche horaire (toutes)</div>
+      <div class="chart-title">🚒 Interventions par tranche horaire (toutes)</div>
       <canvas id="interHourChart"></canvas>
     </div>
     <div class="chart-wrap">
-      <div class="chart-title">â±ï¸ CrÃ©neaux ISP par tranche horaire (astreinte + dispo)</div>
+      <div class="chart-title">⏱️ Créneaux ISP par tranche horaire (astreinte + dispo)</div>
       <canvas id="tempsHourChart"></canvas>
     </div>
   </div>
 
-  <!-- RÃ‰PARTITION ASTREINTE vs DISPO + CRÃ‰NEAUX PAR MOIS -->
+  <!-- RÉPARTITION ASTREINTE vs DISPO + CRÉNEAUX PAR MOIS -->
   <div class="chart-grid">
     <div class="chart-wrap">
-      <div class="chart-title">ðŸ“Š RÃ©partition Astreinte vs DisponibilitÃ©</div>
+      <div class="chart-title">📊 Répartition Astreinte vs Disponibilité</div>
       <canvas id="typeBarChart"></canvas>
     </div>
     <div class="chart-wrap">
-      <div class="chart-title">ðŸ“… CrÃ©neaux ISP par mois (astreinte + dispo)</div>
+      <div class="chart-title">📅 Créneaux ISP par mois (astreinte + dispo)</div>
       <canvas id="tempsMonthChart"></canvas>
     </div>
   </div>
 
   <!-- TOP 30 COMMUNES -->
   <div class="card">
-    <div class="card-title">ðŸ˜ï¸ Top 30 communes par volume d'interventions</div>
+    <div class="card-title">🏘️ Top 30 communes par volume d'interventions</div>
     <div id="communeBar"></div>
   </div>
 
   <!-- COMMUNES PAR GROUPE -->
   <div class="card">
-    <div class="card-title">ðŸ—ºï¸ Interventions par zone gÃ©ographique (groupes de communes)</div>
+    <div class="card-title">🗺️ Interventions par zone géographique (groupes de communes)</div>
     <div id="groupBar"></div>
   </div>
 
-  <!-- â•â•â• COUVERTURE DÃ‰PARTEMENT â•â•â• -->
-  <div class="section-sep">ðŸŽ¯ Couverture ISP â€” DÃ©partement entier</div>
+  <!-- ═══ COUVERTURE DÉPARTEMENT ═══ -->
+  <div class="section-sep">🎯 Couverture ISP — Département entier</div>
   <div class="stat-row" id="coverDeptKpi"></div>
   <div class="chart-grid">
     <div class="chart-wrap">
-      <div class="chart-title">ðŸ“Š Distribution : combien d'ISP disponibles Ã  chaque instant ?</div>
+      <div class="chart-title">📊 Distribution : combien d'ISP disponibles à chaque instant ?</div>
       <canvas id="coverDeptChart"></canvas>
     </div>
     <div class="chart-wrap" id="coverDeptTableWrap">
-      <div class="chart-title">ðŸ“‹ DÃ©tail de la distribution</div>
+      <div class="chart-title">📋 Détail de la distribution</div>
       <div class="table-wrap"><table id="coverDeptTable"></table></div>
     </div>
   </div>
 
-  <!-- â•â•â• DISTRIBUTION PAR GROUPE DE CASERNES â•â•â• -->
-  <div class="section-sep">ðŸ“Š Distribution ISP par groupe de casernes</div>
+  <!-- ═══ DISTRIBUTION PAR GROUPE DE CASERNES ═══ -->
+  <div class="section-sep">📊 Distribution ISP par groupe de casernes</div>
   <div id="groupDistContainer"></div>
 
-  <!-- â•â•â• COUVERTURE PAR ANNEAUX PERPIGNAN â•â•â• -->
-  <div class="section-sep">ðŸŽ¯ Couverture ISP â€” Anneaux concentriques depuis Perpignan</div>
+  <!-- ═══ COUVERTURE PAR ANNEAUX PERPIGNAN ═══ -->
+  <div class="section-sep">🎯 Couverture ISP — Anneaux concentriques depuis Perpignan</div>
   <div class="card">
-    <div class="card-title">ðŸ“ Plus on s'Ã©loigne de Perpignan, plus la couverture s'amÃ©liore (cumulatif)</div>
+    <div class="card-title">📍 Plus on s'éloigne de Perpignan, plus la couverture s'améliore (cumulatif)</div>
     <div class="table-wrap"><table id="ringTable" class="ring-table"></table></div>
   </div>
   <div id="ringChartsContainer"></div>
 
-  <!-- â•â•â• HEURES SANS COUVERTURE PAR TRANCHE HORAIRE â•â•â• -->
-  <div class="section-sep">ðŸ• Heures sans couverture â€” Quand se produisent-elles ?</div>
+  <!-- ═══ HEURES SANS COUVERTURE PAR TRANCHE HORAIRE ═══ -->
+  <div class="section-sep">🕐 Heures sans couverture — Quand se produisent-elles ?</div>
   <div class="chart-grid">
     <div class="chart-wrap">
-      <div class="chart-title">ðŸš¨ Heures avec 0 ISP disponible, par tranche horaire</div>
+      <div class="chart-title">🚨 Heures avec 0 ISP disponible, par tranche horaire</div>
       <canvas id="zeroCoverHourChart"></canvas>
     </div>
     <div class="chart-wrap">
-      <div class="chart-title">ðŸ“Š % du temps sans ISP, par tranche horaire</div>
+      <div class="chart-title">📊 % du temps sans ISP, par tranche horaire</div>
       <canvas id="zeroCoverPctChart"></canvas>
     </div>
   </div>
 
-  <!-- â•â•â• HEURES AVEC 1 SEUL ISP PAR TRANCHE HORAIRE â•â•â• -->
-  <div class="section-sep">ðŸ• Heures avec 1 seul ISP â€” Quand se produisent-elles ?</div>
+  <!-- ═══ HEURES AVEC 1 SEUL ISP PAR TRANCHE HORAIRE ═══ -->
+  <div class="section-sep">🕐 Heures avec 1 seul ISP — Quand se produisent-elles ?</div>
   <div class="chart-grid">
     <div class="chart-wrap">
-      <div class="chart-title">âš ï¸ Heures avec exactement 1 ISP disponible, par tranche horaire</div>
+      <div class="chart-title">⚠️ Heures avec exactement 1 ISP disponible, par tranche horaire</div>
       <canvas id="oneCoverHourChart"></canvas>
     </div>
     <div class="chart-wrap">
-      <div class="chart-title">ðŸ“Š % du temps avec 1 seul ISP, par tranche horaire</div>
+      <div class="chart-title">📊 % du temps avec 1 seul ISP, par tranche horaire</div>
       <canvas id="oneCoverPctChart"></canvas>
     </div>
   </div>
 
-  <!-- â•â•â• SIMULATEUR CUSTOM CIS â•â•â• -->
-  <div class="section-sep">ðŸ”§ Simulateur â€” Couverture par sÃ©lection de CIS</div>
+  <!-- ═══ SIMULATEUR CUSTOM CIS ═══ -->
+  <div class="section-sep">🔧 Simulateur — Couverture par sélection de CIS</div>
   <div class="card">
-    <div class="card-title">â˜‘ï¸ Cochez les CIS pour calculer la couverture combinÃ©e</div>
+    <div class="card-title">☑️ Cochez les CIS pour calculer la couverture combinée</div>
     <div id="customCisCheckboxes" style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:14px;"></div>
     <div id="customCisResult"></div>
   </div>
 
-  <!-- â•â•â• EFFECTIF & CENTRES â•â•â• -->
-  <div class="section-sep">ðŸ‘¥ Effectif & rÃ©partition par centre</div>
+  <!-- ═══ EFFECTIF & CENTRES ═══ -->
+  <div class="section-sep">👥 Effectif & répartition par centre</div>
   <div class="stat-row" id="effectifKpi"></div>
   <div class="card">
-    <div class="card-title">ðŸ¥ Effectif ISP par centre</div>
+    <div class="card-title">🏥 Effectif ISP par centre</div>
     <div id="effectifBar"></div>
   </div>
 
-  <!-- RÃ‰PARTITION PAR CENTRE (% astreinte/dispo) -->
+  <!-- RÉPARTITION PAR CENTRE (% astreinte/dispo) -->
   <div class="card">
-    <div class="card-title">ðŸ“Š RÃ©partition par centre â€” % Astreinte vs Dispo</div>
+    <div class="card-title">📊 Répartition par centre — % Astreinte vs Dispo</div>
     <div class="table-wrap"><table id="centreTable"></table></div>
   </div>
 
-  <!-- DÃ‰TAIL PAR ISP -->
+  <!-- DÉTAIL PAR ISP -->
   <div class="card">
-    <div class="card-title">ðŸ‘¤ DÃ©tail par ISP</div>
-    <input type="text" class="search-box" id="ispSearch" placeholder="Rechercher un ISPâ€¦" oninput="filterIspTable()">
+    <div class="card-title">👤 Détail par ISP</div>
+    <input type="text" class="search-box" id="ispSearch" placeholder="Rechercher un ISP…" oninput="filterIspTable()">
     <div class="table-wrap"><table id="ispTable"></table></div>
   </div>
 
@@ -283,10 +283,10 @@
     <div id="map"></div>
     <div id="carteSidebar">
       <div class="sidebar-header">
-        <h3>ðŸ¥” Aide Ã  la dÃ©cision â€” Recrutement ISP</h3>
-        <p style="font-size:0.75em;color:var(--text-light);margin-bottom:6px;">Ajustez les ISP <strong>par caserne</strong>, le temps de trajet et les heures/ISP.<br>Objectif personnalisable par zone (ðŸŽ¯).</p>
+        <h3>🥔 Aide à la décision — Recrutement ISP</h3>
+        <p style="font-size:0.75em;color:var(--text-light);margin-bottom:6px;">Ajustez les ISP <strong>par caserne</strong>, le temps de trajet et les heures/ISP.<br>Objectif personnalisable par zone (🎯).</p>
         <div class="coverage-control">
-          <label>Objectif couverture par dÃ©faut : <strong id="coverTarget">75</strong>%</label>
+          <label>Objectif couverture par défaut : <strong id="coverTarget">75</strong>%</label>
           <input type="range" id="coverSlider" min="50" max="100" value="75" oninput="document.getElementById('coverTarget').textContent=this.value" onchange="updateCoverage(this.value)">
         </div>
         <div class="coverage-control" style="margin-top:6px;">
@@ -310,8 +310,8 @@
     <div id="recruitMap"></div>
     <div id="recruitSidebar">
       <div style="position:sticky;top:0;z-index:10;background:var(--card);padding-bottom:12px;border-bottom:2px solid var(--primary);margin-bottom:14px;">
-        <h3 style="font-size:1.1em;color:var(--primary);margin-bottom:6px;">ðŸ“ˆ Plan de recrutement par vagues</h3>
-        <p style="font-size:.75em;color:var(--text-light);margin-bottom:10px;">Carte de chaleur commune par commune. Chaque vague = 12 ISP recrutÃ©s aux casernes optimales.</p>
+        <h3 style="font-size:1.1em;color:var(--primary);margin-bottom:6px;">📈 Plan de recrutement par vagues</h3>
+        <p style="font-size:.75em;color:var(--text-light);margin-bottom:10px;">Carte de chaleur commune par commune. Chaque vague = 12 ISP recrutés aux casernes optimales.</p>
         <div id="waveBtns" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
         <div style="margin-top:10px;">
           <div class="legend-bar" id="legendBar"></div>
@@ -320,13 +320,13 @@
         <div id="recruitGlobalKpi" style="margin-top:10px;"></div>
       </div>
       <div id="waveDetails"></div>
-      <button class="export-pdf-btn" onclick="exportRecruitPDF()">ðŸ“„ Exporter le plan de recrutement en PDF</button>
+      <button class="export-pdf-btn" onclick="exportRecruitPDF()">📄 Exporter le plan de recrutement en PDF</button>
       <div class="sim-separator"></div>
       <div class="sim-section">
-        <h3>ðŸŽ¯ Simulation de recrutement</h3>
+        <h3>🎯 Simulation de recrutement</h3>
         <p style="font-size:.75em;color:var(--text-light);margin-bottom:12px;">Positionnez vos futurs ISP et visualisez l'impact sur la couverture.</p>
         <div id="simRows"></div>
-        <div id="simResults"><div style="color:var(--text-light);font-size:.82em;text-align:center;padding:12px 0;">SÃ©lectionnez au moins un CIS pour voir l'impact.</div></div>
+        <div id="simResults"><div style="color:var(--text-light);font-size:.82em;text-align:center;padding:12px 0;">Sélectionnez au moins un CIS pour voir l'impact.</div></div>
       </div>
     </div>
   </div>
@@ -343,7 +343,7 @@ google.script.run
     renderAll();
   })
   .withFailureHandler(function(e){
-    document.getElementById('loadingScreen').innerHTML='<div style="color:var(--primary);font-weight:700;font-size:1.2em;">âŒ Erreur</div><div>'+esc(e.message||e)+'</div>';
+    document.getElementById('loadingScreen').innerHTML='<div style="color:var(--primary);font-weight:700;font-size:1.2em;">❌ Erreur</div><div>'+esc(e.message||e)+'</div>';
   })
   .getPageData();
 
@@ -364,7 +364,7 @@ function renderAll(){
   renderIspTable();
 }
 
-/* â•â•â• KPI â•â•â• */
+/* ═══ KPI ═══ */
 function renderKpi(){
   var ig=DATA.interStats, t=DATA.tempsStats, d=DATA.delaiStats, av=DATA.availDept;
   document.getElementById('kpiRow').innerHTML=
@@ -376,35 +376,35 @@ function renderKpi(){
     sc(av.heuresZeroIsp+'h','Heures 0 ISP dispo','red');
 }
 
-/* â•â•â• HEURES CHARTS â•â•â• */
+/* ═══ HEURES CHARTS ═══ */
 function renderHourCharts(){
   var ig=DATA.interStats, t=DATA.tempsStats;
   mkChart('interHourChart','bar',ig.byHour.map(function(x){return x.key+'h';}),ig.byHour.map(function(x){return x.val;}),'Interventions','#e63946');
-  mkChart('tempsHourChart','bar',t.byHour.map(function(x){return x.key+'h';}),t.byHour.map(function(x){return x.val;}),'CrÃ©neaux','#457b9d');
+  mkChart('tempsHourChart','bar',t.byHour.map(function(x){return x.key+'h';}),t.byHour.map(function(x){return x.val;}),'Créneaux','#457b9d');
 }
 
-/* â•â•â• TYPE BAR + MOIS â•â•â• */
+/* ═══ TYPE BAR + MOIS ═══ */
 function renderTypeAndMonth(){
   var t=DATA.tempsStats;
-  mkChart('typeBarChart','bar',['Astreinte','DisponibilitÃ©'],[t.byType.astreinte,t.byType.disponible],'CrÃ©neaux',['#e76f51','#457b9d']);
-  mkChart('tempsMonthChart','bar',t.byMonth.map(function(x){return x.key;}),t.byMonth.map(function(x){return x.val;}),'CrÃ©neaux','#2a9d8f');
+  mkChart('typeBarChart','bar',['Astreinte','Disponibilité'],[t.byType.astreinte,t.byType.disponible],'Créneaux',['#e76f51','#457b9d']);
+  mkChart('tempsMonthChart','bar',t.byMonth.map(function(x){return x.key;}),t.byMonth.map(function(x){return x.val;}),'Créneaux','#2a9d8f');
 }
 
-/* â•â•â• COMMUNES â•â•â• */
+/* ═══ COMMUNES ═══ */
 function renderCommunes(){
   var total=DATA.interStats.total;
   document.getElementById('communeBar').innerHTML=buildBar(DATA.interStats.byCommune,'red',total);
   document.getElementById('groupBar').innerHTML=buildBar(DATA.interStats.byGroup,'blue',total);
 }
 
-/* â•â•â• COUVERTURE DÃ‰PARTEMENT â•â•â• */
+/* ═══ COUVERTURE DÉPARTEMENT ═══ */
 function renderCoverDept(){
   var av=DATA.availDept;
   document.getElementById('coverDeptKpi').innerHTML=
-    sc(av.totalHeures+'h','PÃ©riode analysÃ©e','blue')+
+    sc(av.totalHeures+'h','Période analysée','blue')+
     sc(av.heuresZeroIsp+'h','Sans aucun ISP','red')+
     sc(av.pctZeroIsp+'%','% temps sans ISP','red')+
-    sc(av.maxIsp+' max','ISP simultanÃ©s max','green');
+    sc(av.maxIsp+' max','ISP simultanés max','green');
 
   var dist=av.distribution;
   var labels=[],vals=[],colors=[];
@@ -415,7 +415,7 @@ function renderCoverDept(){
   }
   mkChart('coverDeptChart','bar',labels,vals,'% du temps',colors);
 
-  var h='<thead><tr><th>Nb ISP dispo</th><th>CrÃ©neaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
+  var h='<thead><tr><th>Nb ISP dispo</th><th>Créneaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
   for(var i=0;i<dist.length;i++){
     var d=dist[i];
     h+='<tr'+(d.ispCount===0?' style="background:var(--primary-light);font-weight:700;"':'')+'>';
@@ -425,14 +425,14 @@ function renderCoverDept(){
   document.getElementById('coverDeptTable').innerHTML=h;
 }
 
-/* â•â•â• ANNEAUX PERPIGNAN â•â•â• */
+/* ═══ ANNEAUX PERPIGNAN ═══ */
 function renderRings(){
   var rings=DATA.availRings;
-  var h='<thead><tr><th class="ring-name">Anneau (cumulatif)</th><th>Casernes</th><th>Heures 0 ISP</th><th>% sans ISP</th><th>Heures analysÃ©es</th></tr></thead><tbody>';
+  var h='<thead><tr><th class="ring-name">Anneau (cumulatif)</th><th>Casernes</th><th>Heures 0 ISP</th><th>% sans ISP</th><th>Heures analysées</th></tr></thead><tbody>';
   for(var i=0;i<rings.length;i++){
     var r=rings[i];
     h+='<tr><td class="ring-name">'+esc(r.ringLabel)+'</td>';
-    h+='<td style="font-size:0.75em;color:var(--text-light);max-width:280px;white-space:normal;line-height:1.3;">'+(r.ringCentres&&r.ringCentres.length?esc(r.ringCentres.join(', ')):'â€”')+'</td>';
+    h+='<td style="font-size:0.75em;color:var(--text-light);max-width:280px;white-space:normal;line-height:1.3;">'+(r.ringCentres&&r.ringCentres.length?esc(r.ringCentres.join(', ')):'—')+'</td>';
     h+='<td class="pct-zero">'+r.heuresZeroIsp+'h</td>';
     h+='<td class="pct-zero">'+r.pctZeroIsp+'%</td>';
     h+='<td>'+r.totalHeures+'h</td></tr>';
@@ -444,7 +444,7 @@ function renderRings(){
   var container=document.getElementById('ringChartsContainer');
   var html='<div class="chart-grid">';
   for(var i=0;i<rings.length;i++){
-    html+='<div class="chart-wrap"><div class="chart-title">ðŸ“ '+esc(rings[i].ringLabel)+'</div><canvas id="ringChart'+i+'"></canvas></div>';
+    html+='<div class="chart-wrap"><div class="chart-title">📍 '+esc(rings[i].ringLabel)+'</div><canvas id="ringChart'+i+'"></canvas></div>';
   }
   html+='</div>';
   container.innerHTML=html;
@@ -460,7 +460,7 @@ function renderRings(){
   }
 }
 
-/* â•â•â• HEURES SANS COUVERTURE PAR TRANCHE HORAIRE â•â•â• */
+/* ═══ HEURES SANS COUVERTURE PAR TRANCHE HORAIRE ═══ */
 function renderZeroCoverByHour(){
   var zc=DATA.zeroCoverageByHour;
   if(!zc||!zc.byHour||!zc.byHour.length)return;
@@ -480,7 +480,7 @@ function renderZeroCoverByHour(){
   mkChart('zeroCoverPctChart','bar',labels,pctVals,'% sans ISP',pColors);
 }
 
-/* â•â•â• HEURES AVEC 1 SEUL ISP PAR TRANCHE HORAIRE â•â•â• */
+/* ═══ HEURES AVEC 1 SEUL ISP PAR TRANCHE HORAIRE ═══ */
 function renderOneCoverByHour(){
   var oc=DATA.oneCoverageByHour;
   if(!oc||!oc.byHour||!oc.byHour.length)return;
@@ -500,7 +500,7 @@ function renderOneCoverByHour(){
   mkChart('oneCoverPctChart','bar',labels,pctVals,'% 1 ISP',pColors);
 }
 
-/* â•â•â• SIMULATEUR CUSTOM CIS â•â•â• */
+/* ═══ SIMULATEUR CUSTOM CIS ═══ */
 function renderCustomCisCheckboxes(){
   var sbc=DATA.slotsByCentre;
   if(!sbc||!sbc.centres||!sbc.centres.length)return;
@@ -513,7 +513,7 @@ function renderCustomCisCheckboxes(){
     h+='<input type="checkbox" data-centre-idx="'+i+'" onchange="computeCustomCis()" style="accent-color:var(--primary);">';
     h+='<span>'+esc(c.name)+'</span></label>';
   }
-  h+='<div style="margin-top:4px;"><a href="#" onclick="toggleAllCustomCis(true);return false;" style="font-size:.78em;color:var(--blue);margin-right:12px;">âœ… Tout cocher</a><a href="#" onclick="toggleAllCustomCis(false);return false;" style="font-size:.78em;color:var(--blue);">âŒ Tout dÃ©cocher</a></div>';
+  h+='<div style="margin-top:4px;"><a href="#" onclick="toggleAllCustomCis(true);return false;" style="font-size:.78em;color:var(--blue);margin-right:12px;">✅ Tout cocher</a><a href="#" onclick="toggleAllCustomCis(false);return false;" style="font-size:.78em;color:var(--blue);">❌ Tout décocher</a></div>';
   container.innerHTML=h;
   document.getElementById('customCisResult').innerHTML='<div style="color:var(--text-light);font-size:.88em;">Cochez des CIS ci-dessus pour voir la distribution.</div>';
 }
@@ -535,7 +535,7 @@ function computeCustomCis(){
     return;
   }
 
-  /* Calculer le nb d'ISP par slot en combinant les centres sÃ©lectionnÃ©s */
+  /* Calculer le nb d'ISP par slot en combinant les centres sélectionnés */
   var slotCounts={};
   var selectedNames=[];
   for(var i=0;i<selectedIdx.length;i++){
@@ -559,9 +559,9 @@ function computeCustomCis(){
   dist[0]=slotsZero;
 
   var slotDur=30; /* Config.SLOT_DURATION_MIN */
-  var h='<div style="font-size:.85em;margin-bottom:8px;"><strong>CIS sÃ©lectionnÃ©s :</strong> '+esc(selectedNames.join(', '))+'</div>';
-  h+='<div class="table-wrap"><table><thead><tr><th>Nb ISP dispo</th><th>CrÃ©neaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
-  var showMax=Math.min(maxIsp,10); /* montrer jusqu'Ã  10 lignes max */
+  var h='<div style="font-size:.85em;margin-bottom:8px;"><strong>CIS sélectionnés :</strong> '+esc(selectedNames.join(', '))+'</div>';
+  h+='<div class="table-wrap"><table><thead><tr><th>Nb ISP dispo</th><th>Créneaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
+  var showMax=Math.min(maxIsp,10); /* montrer jusqu'à 10 lignes max */
   for(var n=0;n<=showMax;n++){
     var count=dist[n]||0;
     var heures=Math.round(count*slotDur/60*10)/10;
@@ -587,22 +587,22 @@ function computeCustomCis(){
   h='<div class="stat-row" style="margin-bottom:12px;">'+
     sc(zeroH+'h','0 ISP ('+zeroPct+'%)','red')+
     sc(oneH+'h','1 ISP ('+onePct+'%)','orange')+
-    sc(maxIsp+' max','ISP simultanÃ©s','green')+
-    sc(selectedIdx.length,'CIS sÃ©lectionnÃ©s','blue')+
+    sc(maxIsp+' max','ISP simultanés','green')+
+    sc(selectedIdx.length,'CIS sélectionnés','blue')+
     '</div>'+h;
 
   res.innerHTML=h;
 }
 
-/* â•â•â• DISTRIBUTION PAR GROUPE DE CASERNES â•â•â• */
+/* ═══ DISTRIBUTION PAR GROUPE DE CASERNES ═══ */
 function renderGroupDist(){
   var groups=DATA.availByGroup;
   if(!groups||!groups.length)return;
   var h='';
   for(var g=0;g<groups.length;g++){
     var grp=groups[g];
-    h+='<div class="card"><div class="card-title">ðŸ¥ '+esc(grp.groupName)+' <span style="font-weight:400;font-size:.82em;color:var(--text-light);">('+esc(grp.centres.join(', '))+') â€” '+grp.pctZeroIsp+'% sans ISP, max '+grp.maxIsp+' ISP simultanÃ©s</span></div>';
-    h+='<div class="table-wrap"><table><thead><tr><th>Nb ISP dispo</th><th>CrÃ©neaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
+    h+='<div class="card"><div class="card-title">🏥 '+esc(grp.groupName)+' <span style="font-weight:400;font-size:.82em;color:var(--text-light);">('+esc(grp.centres.join(', '))+') — '+grp.pctZeroIsp+'% sans ISP, max '+grp.maxIsp+' ISP simultanés</span></div>';
+    h+='<div class="table-wrap"><table><thead><tr><th>Nb ISP dispo</th><th>Créneaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
     var dist=grp.distribution;
     for(var i=0;i<Math.min(dist.length,12);i++){
       var d=dist[i];
@@ -614,7 +614,7 @@ function renderGroupDist(){
   document.getElementById('groupDistContainer').innerHTML=h;
 }
 
-/* â•â•â• EFFECTIF â•â•â• */
+/* ═══ EFFECTIF ═══ */
 function renderEffectif(){
   var ef=DATA.effectifStats;
   document.getElementById('effectifKpi').innerHTML=
@@ -623,7 +623,7 @@ function renderEffectif(){
   document.getElementById('effectifBar').innerHTML=buildBar(ef.byCentre,'green',ef.total);
 }
 
-/* â•â•â• CENTRE TABLE â•â•â• */
+/* ═══ CENTRE TABLE ═══ */
 function renderCentreTable(){
   var arr=DATA.tempsStats.byCentre;
   var h='<thead><tr><th onclick="sortTable(\'centre\',\'centre\',0)">Centre</th><th onclick="sortTable(\'centre\',\'astreinte\',1)">Astreinte</th><th onclick="sortTable(\'centre\',\'disponible\',1)">Dispo</th><th onclick="sortTable(\'centre\',\'total\',1)">Total</th><th onclick="sortTable(\'centre\',\'pctAstreinte\',1)">% Astreinte</th><th onclick="sortTable(\'centre\',\'pctDispo\',1)">% Dispo</th></tr></thead><tbody>';
@@ -637,13 +637,13 @@ function renderCentreTable(){
   document.getElementById('centreTable').innerHTML=h;
 }
 
-/* â•â•â• ISP TABLE â•â•â• */
+/* ═══ ISP TABLE ═══ */
 function renderIspTable(){
   var arr=DATA.tempsStats.byISP;
   var h='<thead><tr>';
   h+='<th onclick="sortTable(\'isp\',\'matricule\',0)">Matricule</th>';
   h+='<th onclick="sortTable(\'isp\',\'nom\',0)">Nom</th>';
-  h+='<th onclick="sortTable(\'isp\',\'prenom\',0)">PrÃ©nom</th>';
+  h+='<th onclick="sortTable(\'isp\',\'prenom\',0)">Prénom</th>';
   h+='<th onclick="sortTable(\'isp\',\'centre\',0)">Centre</th>';
   h+='<th onclick="sortTable(\'isp\',\'astreinte\',1)">Astreinte</th>';
   h+='<th onclick="sortTable(\'isp\',\'disponible\',1)">Dispo</th>';
@@ -675,7 +675,7 @@ function filterIspTable(){
   for(var i=0;i<rows.length;i++) rows[i].style.display=rows[i].getAttribute('data-search').indexOf(q)!==-1?'':'none';
 }
 
-/* â•â•â• SORT TABLE â•â•â• */
+/* ═══ SORT TABLE ═══ */
 function sortTable(tableId, key, isNum){
   var tbl=tableId==='centre'?'centreTable':'ispTable';
   var arr=tableId==='centre'?DATA.tempsStats.byCentre:DATA.tempsStats.byISP;
@@ -697,7 +697,7 @@ function sortTable(tableId, key, isNum){
   // Highlight sorted column
   var ths=document.querySelectorAll('#'+tbl+' th');
   for(var i=0;i<ths.length;i++){ths[i].classList.remove('sort-asc','sort-desc');}
-  var idx=Array.from(document.querySelectorAll('#'+tbl+' thead th')).findIndex(function(th){return th.textContent.replace(/[â–²â–¼]/g,'').trim()===findHeaderForKey_(key);});
+  var idx=Array.from(document.querySelectorAll('#'+tbl+' thead th')).findIndex(function(th){return th.textContent.replace(/[▲▼]/g,'').trim()===findHeaderForKey_(key);});
   // Apply via onclick target
   if(event&&event.currentTarget){
     event.currentTarget.classList.add(ss.dir==='asc'?'sort-asc':'sort-desc');
@@ -705,11 +705,11 @@ function sortTable(tableId, key, isNum){
 }
 
 function findHeaderForKey_(k){
-  var map={matricule:'Matricule',nom:'Nom',prenom:'PrÃ©nom',centre:'Centre',astreinte:'Astreinte',disponible:'Dispo',total:'Total',heuresTotal:'Heures',tauxAstreinte:'% Astreinte',pctAstreinte:'% Astreinte',pctDispo:'% Dispo'};
+  var map={matricule:'Matricule',nom:'Nom',prenom:'Prénom',centre:'Centre',astreinte:'Astreinte',disponible:'Dispo',total:'Total',heuresTotal:'Heures',tauxAstreinte:'% Astreinte',pctAstreinte:'% Astreinte',pctDispo:'% Dispo'};
   return map[k]||k;
 }
 
-/* â•â•â• CHART HELPERS â•â•â• */
+/* ═══ CHART HELPERS ═══ */
 function mkChart(id,type,labels,data,label,color){
   if(charts[id])charts[id].destroy();
   var ctx=document.getElementById(id).getContext('2d');
@@ -722,11 +722,11 @@ function mkChart(id,type,labels,data,label,color){
   });
 }
 
-/* â•â•â• HTML HELPERS â•â•â• */
+/* ═══ HTML HELPERS ═══ */
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 function sc(v,l,c){return '<div class="stat-card '+c+'"><div class="stat-value">'+v+'</div><div class="stat-label">'+esc(l)+'</div></div>';}
 function buildBar(arr,color,total){
-  if(!arr||!arr.length)return '<div style="color:var(--text-light)">Aucune donnÃ©e</div>';
+  if(!arr||!arr.length)return '<div style="color:var(--text-light)">Aucune donnée</div>';
   var mx=arr[0].val,h='<div class="bar-chart">';
   for(var i=0;i<arr.length;i++){
     var pct=mx>0?(arr[i].val/mx*100):0;
@@ -738,9 +738,9 @@ function buildBar(arr,color,total){
   return h+'</div>';
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════════════
    TAB SWITCHING
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════════════ */
 function switchTab(tab){
   document.getElementById('viewStats').style.display=tab==='stats'?'':'none';
   document.getElementById('viewCarte').style.display=tab==='carte'?'':'none';
@@ -751,19 +751,19 @@ function switchTab(tab){
   if(tab==='recruit'){if(!window._recruitMapObj)setTimeout(initRecruitTab,120);else window._recruitMapObj.invalidateSize();}
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   CARTE â€” DONNÃ‰ES CIS (41 centres SDIS 66)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* ═══════════════════════════════════════════════════════
+   CARTE — DONNÉES CIS (41 centres SDIS 66)
+   ═══════════════════════════════════════════════════════ */
 var CIS=[
 {id:'agly',nom:'Agly',grp:'Nord',lat:42.7957,lng:2.6878},
 {id:'baixas',nom:'Baixas',grp:'Nord',lat:42.7546,lng:2.8103},
 {id:'canet',nom:'Canet',grp:'Nord',lat:42.7066,lng:3.0130},
-{id:'caudies',nom:'CaudiÃ¨s',grp:'Nord',lat:42.8099,lng:2.3742},
-{id:'le-barcares',nom:'Le BarcarÃ¨s',grp:'Nord',lat:42.7910,lng:3.0340},
+{id:'caudies',nom:'Caudiès',grp:'Nord',lat:42.8099,lng:2.3742},
+{id:'le-barcares',nom:'Le Barcarès',grp:'Nord',lat:42.7910,lng:3.0340},
 {id:'maury',nom:'Maury',grp:'Nord',lat:42.8329,lng:2.5878},
 {id:'millas',nom:'Millas',grp:'Nord',lat:42.6944,lng:2.6950},
 {id:'pnord',nom:'Perpignan Nord',grp:'Nord',lat:42.7200,lng:2.8950},
-{id:'riberal',nom:'RibÃ©ral',grp:'Nord',lat:42.6980,lng:2.7650},
+{id:'riberal',nom:'Ribéral',grp:'Nord',lat:42.6980,lng:2.7650},
 {id:'rivesaltes',nom:'Rivesaltes',grp:'Nord',lat:42.7702,lng:2.8770},
 {id:'salanque',nom:'Salanque',grp:'Nord',lat:42.7714,lng:2.9936},
 {id:'salses',nom:'Salses',grp:'Nord',lat:42.8367,lng:2.9208},
@@ -787,31 +787,31 @@ var CIS=[
 {id:'saint-cyprien',nom:'Saint Cyprien',grp:'Sud',lat:42.6193,lng:3.0067},
 {id:'elne',nom:'Elne',grp:'Sud',lat:42.5991,lng:2.9718},
 {id:'palau',nom:'Palau',grp:'Sud',lat:42.5711,lng:2.9609},
-{id:'argeles',nom:'ArgelÃ¨s',grp:'Sud',lat:42.5460,lng:3.0233},
+{id:'argeles',nom:'Argelès',grp:'Sud',lat:42.5460,lng:3.0233},
 {id:'boulou',nom:'Boulou',grp:'Sud',lat:42.5230,lng:2.8334},
-{id:'ceret',nom:'CÃ©ret',grp:'Sud',lat:42.4860,lng:2.7480},
+{id:'ceret',nom:'Céret',grp:'Sud',lat:42.4860,lng:2.7480},
 {id:'vallespir',nom:'Vallespir',grp:'Sud',lat:42.4581,lng:2.6313},
 {id:'st-laurent-cerdans',nom:'St Laurent de Cerdans',grp:'Sud',lat:42.3853,lng:2.6101},
 {id:'prats',nom:'Prats',grp:'Sud',lat:42.4053,lng:2.4855},
-{id:'cote-vermeille',nom:'CÃ´te Vermeille',grp:'Sud',lat:42.5170,lng:3.1040},
+{id:'cote-vermeille',nom:'Côte Vermeille',grp:'Sud',lat:42.5170,lng:3.1040},
 {id:'banyuls',nom:'Banyuls',grp:'Sud',lat:42.4830,lng:3.1290},
-{id:'cerbere',nom:'CerbÃ¨re',grp:'Sud',lat:42.4424,lng:3.1685}];
+{id:'cerbere',nom:'Cerbère',grp:'Sud',lat:42.4424,lng:3.1685}];
 
-/* â•â•â• ZONES OPÃ‰RATIONNELLES (patates) â•â•â• */
+/* ═══ ZONES OPÉRATIONNELLES (patates) ═══ */
 var CARTE_ZONES=[
 {name:'Agglo Perpignan',cis:['pnord','psud','pouest'],color:'#e63946'},
 {name:'Salanque',cis:['salanque','le-barcares','salses'],color:'#457b9d'},
-{name:'RibÃ©ral-Aspres',cis:['les-aspres','riberal','millas'],color:'#2a9d8f'},
+{name:'Ribéral-Aspres',cis:['les-aspres','riberal','millas'],color:'#2a9d8f'},
 {name:'Agly-Rivesaltes',cis:['rivesaltes','baixas','agly','vingrau','maury'],color:'#e76f51'},
-{name:'CÃ´te Sablonneuse',cis:['canet','saint-cyprien'],color:'#6c5ce7'},
+{name:'Côte Sablonneuse',cis:['canet','saint-cyprien'],color:'#6c5ce7'},
 {name:'Plaine Elne',cis:['elne','palau'],color:'#00b894'},
-{name:'CÃ´te Vermeille-AlbÃ¨res',cis:['argeles','cote-vermeille','banyuls','cerbere'],color:'#fd79a8'},
+{name:'Côte Vermeille-Albères',cis:['argeles','cote-vermeille','banyuls','cerbere'],color:'#fd79a8'},
 {name:'Vallespir',cis:['ceret','boulou','vallespir','st-laurent-cerdans','prats'],color:'#fdcb6e'},
 {name:'Conflent',cis:['prades','vernet','vinca','ille-sur-tet','olette'],color:'#0984e3'},
-{name:'FenouillÃ¨des',cis:['st-paul-fenouillet','sournia','caudies'],color:'#636e72'},
+{name:'Fenouillèdes',cis:['st-paul-fenouillet','sournia','caudies'],color:'#636e72'},
 {name:'Cerdagne-Capcir',cis:['cerdagne','saillagouse','mont-louis','font-romeu','capcir','porte'],color:'#d63031'}];
 
-/* â•â•â• GARDE (couverture garantie) â•â•â• */
+/* ═══ GARDE (couverture garantie) ═══ */
 var GARDE=[
   { zone:'Agglo Perpignan', cis:'psud', label:'Garde Perpignan Sud',
     jour:{startH:8,endH:20,mois:[1,2,3,4,5,6,7,8,9,10,11,12]},
@@ -821,9 +821,9 @@ function gardeHMois(zoneName){
   var total=0;
   for(var g=0;g<GARDE.length;g++){
     if(GARDE[g].zone!==zoneName)continue;
-    // Jour: 12h/jour Ã— nb mois/12 Ã— 30.4j
+    // Jour: 12h/jour × nb mois/12 × 30.4j
     if(GARDE[g].jour) total+=(GARDE[g].jour.endH-GARDE[g].jour.startH)*30.4*GARDE[g].jour.mois.length/12;
-    // Nuit: 12h/jour Ã— nb mois/12 Ã— 30.4j
+    // Nuit: 12h/jour × nb mois/12 × 30.4j
     if(GARDE[g].nuit) total+=((24-GARDE[g].nuit.startH)+GARDE[g].nuit.endH)*30.4*GARDE[g].nuit.mois.length/12;
   }
   return Math.round(total);
@@ -832,16 +832,16 @@ function gardeLabel(zoneName){
   for(var g=0;g<GARDE.length;g++){
     if(GARDE[g].zone!==zoneName)continue;
     var parts=[];
-    if(GARDE[g].jour) parts.push('Jour '+GARDE[g].jour.startH+'h-'+GARDE[g].jour.endH+'h toute l\'annÃ©e');
+    if(GARDE[g].jour) parts.push('Jour '+GARDE[g].jour.startH+'h-'+GARDE[g].jour.endH+'h toute l\'année');
     if(GARDE[g].nuit){
-      var mn=['','Jan','FÃ©v','Mar','Avr','Mai','Jun','Jul','AoÃ»','Sep','Oct','Nov','DÃ©c'];
+      var mn=['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
       parts.push('Nuit '+GARDE[g].nuit.startH+'h-'+GARDE[g].nuit.endH+'h ('+GARDE[g].nuit.mois.map(function(m){return mn[m];}).join('/')+')');}
     return GARDE[g].label+' : '+parts.join(' + ');
   }
   return null;
 }
 
-/* â•â•â• MAPPING LISTING â†’ CIS (noms exacts du spreadsheet) â•â•â• */
+/* ═══ MAPPING LISTING → CIS (noms exacts du spreadsheet) ═══ */
 var CENTRE_TO_CIS={
 'perpignan sud':'psud','perpignan nord':'pnord','perpignan ouest':'pouest',
 'canet':'canet','boulou':'boulou','saint cyprien':'saint-cyprien',
@@ -861,8 +861,8 @@ var CENTRE_TO_CIS={
 
 var CIS_IDX={};for(var _i=0;_i<CIS.length;_i++) CIS_IDX[CIS[_i].id]=_i;
 
-/* ═══ MATRICES TEMPS DE TRAJET OSRM (générées automatiquement) ═══ */
-/* CIS-to-CIS : TRAVEL_CIS_MIN[i][j] = minutes de trajet route réelle */
+/* === MATRICES TEMPS DE TRAJET OSRM (generees automatiquement) === */
+/* CIS-to-CIS : TRAVEL_CIS_MIN[i][j] = minutes de trajet route reelle */
 var TRAVEL_CIS_MIN=[
 [0.0,23.6,39.2,34.8,37.5,17.8,22.1,30.2,25.8,24.6,35.2,34.4,22.9,24.9,100.1,105.7,93.9,33.0,86.9,75.6,127.3,51.4,96.4,51.1,61.8,40.3,34.5,34.9,32.8,46.3,44.9,48.2,50.3,46.6,53.5,69.5,86.5,88.4,58.6,62.0,73.8],
 [23.7,0.0,24.2,48.4,23.1,31.3,21.8,15.2,13.4,10.2,20.8,20.9,36.5,37.6,95.7,101.3,89.5,28.6,82.5,71.2,122.9,47.0,92.0,57.0,57.4,35.9,14.2,19.8,26.2,31.3,29.9,33.2,35.3,31.6,38.5,54.5,71.5,73.4,43.6,47.0,58.8],
@@ -1164,49 +1164,51 @@ var COMMUNE_NEAREST=[
 {c:8,m:5.7},{c:25,m:2.7},{c:9,m:19.2},{c:3,m:45.3},{c:33,m:10.7},{c:3,m:29.7}
 ];
 
-/* â•â•â• MODÃˆLE ISP â•â•â• */
-/* 30 jours Ã— 24h = 720h/mois Ã  couvrir.
-   1 ISP = 36h/mois â†’ 20 ISP = 100% â†’ chaque ISP = 5%.
-   Si casernes proches, leurs ISP se poolent pour couvrir la mÃªme zone. */
+
+/* ═══ MODÈLE ISP ═══ */
+/* 30 jours × 24h = 720h/mois à couvrir.
+   1 ISP = 36h/mois → 20 ISP = 100% → chaque ISP = 5%.
+   Si casernes proches, leurs ISP se poolent pour couvrir la même zone. */
 var H_MOIS=720, BASE_H=36;
 function covPct(pool,gh){gh=gh||0;return Math.min(100,Math.round((pool*BASE_H+gh)/H_MOIS*1000)/10);}
 function needISP(cp,gh){gh=gh||0;var need=Math.ceil((cp/100*H_MOIS-gh)/BASE_H);return Math.max(0,need);}
 
-/* â•â•â• DISTANCE / TEMPS TRAJET ENTRE CASERNES â•â•â• */
+/* ═══ DISTANCE / TEMPS TRAJET ENTRE CASERNES (OSRM) ═══ */
 function cisDistKm(c1,c2){
   var R=6371,dLat=(c2.lat-c1.lat)*Math.PI/180,dLng=(c2.lng-c1.lng)*Math.PI/180;
   var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(c1.lat*Math.PI/180)*Math.cos(c2.lat*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 function cisDistMin(c1,c2){
-  // Route P-O : facteur sinuositÃ© 1.2, vitesse moy 65 km/h (vÃ©hicule perso)
-  var km=cisDistKm(c1,c2);
-  return Math.round(km*1.2/65*60);
+  /* Temps de trajet reel OSRM (lookup matrice pre-calculee) */
+  var i1=CIS_IDX[c1.id], i2=CIS_IDX[c2.id];
+  if(i1!==undefined && i2!==undefined) return Math.round(TRAVEL_CIS_MIN[i1][i2]);
+  return Math.round(cisDistKm(c1,c2)*1.2/65*60);
 }
 
-/* â•â•â• POPULATION ISP RÃ‰ELS DEPUIS LE LISTING â•â•â• */
+/* ═══ POPULATION ISP RÉELS DEPUIS LE LISTING ═══ */
 function populateCisIsp(){
   if(!DATA)return;
 
   // Reset
   for(var i=0;i<CIS.length;i++) CIS[i].actualIsp=0;
 
-  // Source : DATA.centres (buildCentresList_ cÃ´tÃ© serveur, gÃ¨re le 50/50)
+  // Source : DATA.centres (buildCentresList_ côté serveur, gère le 50/50)
   var src=DATA.centres||[];
   if(!src.length&&DATA.effectifStats&&DATA.effectifStats.byCentre){
     for(var j=0;j<DATA.effectifStats.byCentre.length;j++){
       var e=DATA.effectifStats.byCentre[j];
-      if(e.key&&e.key!=='Non affectÃ©') src.push({centre:e.key, nbIsp:e.val});
+      if(e.key&&e.key!=='Non affecté') src.push({centre:e.key, nbIsp:e.val});
     }
   }
 
-  // Normalise : minuscules, accents retirÃ©s, tirets â†’ espaces
+  // Normalise : minuscules, accents retirés, tirets → espaces
   var norm=function(s){
     try{s=s.normalize('NFD');}catch(e){}
     return(s||'').toLowerCase()
       .replace(/[\u0300-\u036f]/g,'')
-      .replace(/[Ã©Ã¨ÃªÃ«]/g,'e').replace(/[Ã Ã¢Ã¤]/g,'a').replace(/[Ã¹Ã»Ã¼]/g,'u')
-      .replace(/[Ã´Ã¶]/g,'o').replace(/[Ã®Ã¯]/g,'i').replace(/[Ã§]/g,'c')
+      .replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u')
+      .replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c')
       .replace(/[-_'\u2019\u2018]/g,' ').replace(/\s+/g,' ').trim();
   };
 
@@ -1214,7 +1216,7 @@ function populateCisIsp(){
   var cisById={};
   for(var i=0;i<CIS.length;i++) cisById[CIS[i].id]=i;
 
-  // Build reverse index: norm(CIS.nom) â†’ CIS.id for fuzzy fallback
+  // Build reverse index: norm(CIS.nom) → CIS.id for fuzzy fallback
   var nomToCis={};
   for(var i=0;i<CIS.length;i++) nomToCis[norm(CIS[i].nom)]=CIS[i].id;
 
@@ -1234,20 +1236,20 @@ function populateCisIsp(){
       CIS[cisById[cisId]].actualIsp+=src[j].nbIsp;
       matched++;
     } else {
-      unmatched.push(src[j].centre+'â†’['+n+']');
+      unmatched.push(src[j].centre+'→['+n+']');
     }
   }
-  console.log('ISP MATCHING: '+matched+'/'+src.length+' centres matchÃ©s');
-  if(unmatched.length) console.log('NON MATCHÃ‰S:', unmatched);
+  console.log('ISP MATCHING: '+matched+'/'+src.length+' centres matchés');
+  if(unmatched.length) console.log('NON MATCHÉS:', unmatched);
   // Debug: visible banner if 0 matched
   var total=0; for(var i=0;i<CIS.length;i++) total+=CIS[i].actualIsp;
   if(total===0 && src.length>0){
-    console.warn('âš ï¸ 0 ISP matched! src centres:', src.map(function(s){return s.centre+'('+s.nbIsp+')';}));
+    console.warn('⚠️ 0 ISP matched! src centres:', src.map(function(s){return s.centre+'('+s.nbIsp+')';}));
     console.warn('rawCentreNames:', DATA.rawCentreNames);
   }
 }
 
-/* â•â•â• CASERNES CONTRIBUANT Ã€ UNE ZONE (avec temps trajet) â•â•â• */
+/* ═══ CASERNES CONTRIBUANT À UNE ZONE (avec temps trajet) ═══ */
 function getContributingCis(zone,travelMax){
   var core=[];
   for(var i=0;i<zone.cis.length;i++){for(var j=0;j<CIS.length;j++){if(CIS[j].id===zone.cis[i]){core.push(CIS[j]);break;}}}
@@ -1262,7 +1264,7 @@ function getContributingCis(zone,travelMax){
   return CIS.filter(function(c){return inc[c.id];});
 }
 
-/* â•â•â• ZONE â†’ INTERVENTIONS/MOIS (donnÃ©es rÃ©elles) â•â•â• */
+/* ═══ ZONE → INTERVENTIONS/MOIS (données réelles) ═══ */
 function zIntMois(zo){
   if(DATA&&DATA.interStats&&DATA.interStats.byGroup){
     var nb=DATA.interStats.nbMois||12;
@@ -1273,7 +1275,7 @@ function zIntMois(zo){
   return 0;
 }
 
-/* â•â•â• GÃ‰OMÃ‰TRIE (convex hull + buffer pour patates) â•â•â• */
+/* ═══ GÉOMÉTRIE (convex hull + buffer pour patates) ═══ */
 function cross2(O,A,B){return(A[0]-O[0])*(B[1]-O[1])-(A[1]-O[1])*(B[0]-O[0]);}
 function chull(pts){
   if(pts.length<3)return pts.slice();
@@ -1309,43 +1311,43 @@ function mkZonePoly(cisIds){
 }
 function centroid(p){var x=0,y=0;for(var i=0;i<p.length;i++){x+=p[i][0];y+=p[i][1];}return[x/p.length,y/p.length];}
 
-/* â•â•â• INIT CARTE LEAFLET â•â•â• */
+/* ═══ INIT CARTE LEAFLET ═══ */
 function initCarte(){
   var map=L.map('map').setView([42.58,2.55],10);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
-    attribution:'Â© <a href="https://carto.com">CARTO</a> Â© <a href="https://osm.org">OSM</a>',maxZoom:18
+    attribution:'© <a href="https://carto.com">CARTO</a> © <a href="https://osm.org">OSM</a>',maxZoom:18
   }).addTo(map);
   window._mapObj=map;
   window._zonePolys=[];
   window._zoneLabels=[];
 
-  // CrÃ©er un pane pour les marqueurs CIS au-dessus des polygones
+  // Créer un pane pour les marqueurs CIS au-dessus des polygones
   map.createPane('cisMarkers');
   map.getPane('cisMarkers').style.zIndex=650;
 
   populateCisIsp();
 
-  // Marqueurs CIS avec tooltips rÃ©els
+  // Marqueurs CIS avec tooltips réels
   var gc={Nord:'#3498db',Ouest:'#9b59b6',Sud:'#e67e22'};
   for(var i=0;i<CIS.length;i++){var c=CIS[i];
     var isp=c.actualIsp||0;
-    var zoneName='â€”';
+    var zoneName='—';
     for(var z=0;z<CARTE_ZONES.length;z++){if(CARTE_ZONES[z].cis.indexOf(c.id)!==-1){zoneName=CARTE_ZONES[z].name;break;}}
     var tip='<strong>'+c.nom+'</strong><br>Groupement '+c.grp+'<br>Zone : '+zoneName+'<br>ISP actuels : <strong>'+isp+'</strong>';
     L.circleMarker([c.lat,c.lng],{pane:'cisMarkers',radius:Math.max(4,Math.min(12,isp*1.5+3)),fillColor:gc[c.grp]||'#333',color:'#fff',weight:2,fillOpacity:.9})
      .addTo(map).bindTooltip(tip,{direction:'top',offset:[0,-8]});
   }
 
-  // LÃ©gende
+  // Légende
   var leg=L.control({position:'bottomleft'});
   leg.onAdd=function(){
     var d=L.DomUtil.create('div','');
     d.style.cssText='background:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2);font-size:11px;line-height:1.6;max-width:280px;';
-    d.innerHTML='<strong>LÃ©gende</strong><br>'+
-      '<span style="color:#3498db;">â—</span> Grp Nord&emsp;<span style="color:#9b59b6;">â—</span> Grp Ouest&emsp;<span style="color:#e67e22;">â—</span> Grp Sud<br>'+
+    d.innerHTML='<strong>Légende</strong><br>'+
+      '<span style="color:#3498db;">●</span> Grp Nord&emsp;<span style="color:#9b59b6;">●</span> Grp Ouest&emsp;<span style="color:#e67e22;">●</span> Grp Sud<br>'+
       '<hr style="margin:4px 0;border:none;border-top:1px solid #eee;">'+
-      '<strong>ISP actuels</strong> = inscrits au listing, rattachÃ©s aux casernes<br>'+
-      '<strong>ISP requis</strong> = nb d\'ISP pour atteindre l\'objectif (heures/ISP rÃ©glable via slider)<br>'+
+      '<strong>ISP actuels</strong> = inscrits au listing, rattachés aux casernes<br>'+
+      '<strong>ISP requis</strong> = nb d\'ISP pour atteindre l\'objectif (heures/ISP réglable via slider)<br>'+
       '<strong>Taille marqueur</strong> = proportionnelle au nb d\'ISP';
     return d;
   };
@@ -1373,22 +1375,22 @@ function renderZones(){
   if(!window._cisAdj) window._cisAdj={};
   if(!window._zoneTargets) window._zoneTargets={};
 
-  /* ISP simulÃ© pour une caserne */
+  /* ISP simulé pour une caserne */
   function simIsp(cid){
     if(window._cisAdj[cid]!==undefined) return window._cisAdj[cid];
     for(var i=0;i<CIS.length;i++){if(CIS[i].id===cid) return CIS[i].actualIsp||0;}
     return 0;
   }
 
-  /* â•â• Ã‰TAPE 1 : calculer le pool et la couverture de CHAQUE CASERNE â•â• */
-  var cisPool={};  // cisId â†’ {pool:N, poolDetail:[{cis,isp,dist}], cov:X%}
+  /* ══ ÉTAPE 1 : calculer le pool et la couverture de CHAQUE CASERNE ══ */
+  var cisPool={};  // cisId → {pool:N, poolDetail:[{cis,isp,dist}], cov:X%}
   for(var i=0;i<CIS.length;i++){
     var c=CIS[i];
     var myIsp=simIsp(c.id);
     var poolTotal=myIsp;
     var detail=[{cis:c,isp:myIsp,dist:0}];
 
-    // Trouver toutes les casernes Ã  â‰¤ travelMax
+    // Trouver toutes les casernes à ≤ travelMax
     if(travelMax>0){
       for(var j=0;j<CIS.length;j++){
         if(j===i)continue;
@@ -1402,7 +1404,7 @@ function renderZones(){
       detail.sort(function(a,b){return a.dist-b.dist;});
     }
 
-    // Garde Ã©ventuelle
+    // Garde éventuelle
     var cisGh=0;
     for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===c.id) cisGh=gardeHMois(GARDE[g].zone);}
 
@@ -1410,7 +1412,7 @@ function renderZones(){
     cisPool[c.id]={pool:poolTotal,detail:detail,cov:cov,gh:cisGh};
   }
 
-  /* â”€â”€ Filtres zone â”€â”€ */
+  /* ── Filtres zone ── */
   var filDiv=document.getElementById('zoneFilters');
   if(!filDiv._built){
     var fh='';
@@ -1430,7 +1432,7 @@ function renderZones(){
   for(var i=0;i<window._zoneLabels.length;i++)map.removeLayer(window._zoneLabels[i]);
   window._zonePolys=[];window._zoneLabels=[];
 
-  /* â•â• Ã‰TAPE 2 : affichage par zone â•â• */
+  /* ══ ÉTAPE 2 : affichage par zone ══ */
   var h='',zonesOk=0,allCovSum=0,allCovN=0;
 
   for(var z=0;z<CARTE_ZONES.length;z++){
@@ -1458,9 +1460,9 @@ function renderZones(){
     var zoneOk=zoneCov>=cp;
     if(zoneOk) zonesOk++;
 
-    /* Polygone â€” inclut les casernes contributrices dans le rayon */
+    /* Polygone — inclut les casernes contributrices dans le rayon */
     if(visible){
-      /* Collecter tous les CIS IDs qui contribuent Ã  cette zone (core + voisins dans le rayon) */
+      /* Collecter tous les CIS IDs qui contribuent à cette zone (core + voisins dans le rayon) */
       var polyCisIds=zo.cis.slice();
       if(travelMax>0){
         for(var i=0;i<CIS.length;i++){
@@ -1482,10 +1484,10 @@ function renderZones(){
       }
     }
 
-    /* â•â• SIDEBAR â•â• */
+    /* ══ SIDEBAR ══ */
     h+='<div class="zone-card" data-z="'+zo.name+'" style="border-left-color:'+zo.color+';'+(visible?'':'opacity:0.4;')+'">';
 
-    /* En-tÃªte zone + objectif */
+    /* En-tête zone + objectif */
     h+='<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')">';
     h+='<span class="zn" style="color:'+zo.color+';margin:0;">'+zo.name+'</span>';
     h+='<span style="font-size:.78em;font-weight:700;color:'+(zoneOk?'var(--green)':'var(--primary)')+';">\ud83c\udfaf '+cp+'%</span>';
@@ -1504,7 +1506,7 @@ function renderZones(){
       h+='<div style="font-size:.72em;color:var(--blue);margin:2px 0;">\ud83d\udee1\ufe0f Garde : +'+gh+'h/mois \u2248 '+Math.round(gh/BASE_H)+' ISP \u00e9q.</div>';
     }
 
-    /* â”€â”€ DÃ©tail par caserne â”€â”€ */
+    /* ── Détail par caserne ── */
     for(var i=0;i<coreCis.length;i++){
       var c=coreCis[i];
       var cp_=cisPool[c.id];
@@ -1538,7 +1540,7 @@ function renderZones(){
       /* Formule */
       h+='<div style="font-size:.65em;color:var(--text-light);">'+Math.round(cp_.pool)+' ISP \u00d7 '+BASE_H+'h'+(cp_.gh>0?' + '+cp_.gh+'h garde':'')+' = '+Math.round(cp_.pool*BASE_H+cp_.gh)+'h / 720h</div>';
 
-      /* DÃ©tail du pool si >1 caserne */
+      /* Détail du pool si >1 caserne */
       if(cp_.detail.length>1){
         h+='<details style="font-size:.7em;color:var(--text-light);margin-top:2px;"><summary style="cursor:pointer;">D\u00e9tail du pool ('+cp_.detail.length+' casernes)</summary>';
         for(var d=0;d<cp_.detail.length;d++){
@@ -1551,12 +1553,12 @@ function renderZones(){
       h+='</div>'; /* fin caserne block */
     }
 
-    /* â”€â”€ RÃ©sumÃ© zone â”€â”€ */
+    /* ── Résumé zone ── */
     var scl=zoneOk?'ok':(zoneCov>=cp-15?'warn':'crit');
     var st=zoneOk?('\u2705 Couverte ('+Math.round(zoneCov)+'%)'):('\ud83d\udea8 '+Math.round(zoneCov)+'% (maillon faible : '+worstCis.nom+')');
     h+='<div class="zs '+scl+'" style="margin-top:6px;">'+st+'</div>';
 
-    /* Recommandation : sera remplie aprÃ¨s l'algo itÃ©ratif global */
+    /* Recommandation : sera remplie après l'algo itératif global */
     if(!zoneOk){
       h+='<div class="zone-reco" data-zone="'+zo.name+'" style="font-size:.72em;color:var(--orange);margin-top:3px;position:relative;cursor:pointer;" ';
       h+='onmouseenter="var p=this.querySelector(\'.reco-popup\');if(p)p.style.display=\'block\'" onmouseleave="var p=this.querySelector(\'.reco-popup\');if(p)p.style.display=\'none\'">';
@@ -1569,20 +1571,20 @@ function renderZones(){
 
   document.getElementById('zoneCards').innerHTML=h;
 
-  /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-     ALGO ITÃ‰RATIF DE RECRUTEMENT GLOBAL
-     Recruter 1 ISP Ã  la fois au pire endroit, recalculer
+  /* ══════════════════════════════════════════════════════
+     ALGO ITÉRATIF DE RECRUTEMENT GLOBAL
+     Recruter 1 ISP à la fois au pire endroit, recalculer
      tous les pools (car 1 recrue aide toutes les casernes
      voisines dans le rayon), et recommencer.
-     â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+     ══════════════════════════════════════════════════════ */
   function computeGreedyRecruitment(simIspBase, travelRadius){
-    var recruited={}; /* cisId â†’ nb recrutÃ© */
-    /* Copie des ISP simulÃ©s */
+    var recruited={}; /* cisId → nb recruté */
+    /* Copie des ISP simulés */
     var curIsp={};
     for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=simIspBase(CIS[i].id);
 
-    /* PrÃ©-calculer la matrice de voisinage (une seule fois) */
-    var neighbors={}; /* cisId â†’ [cisId voisins dans le rayon] */
+    /* Pré-calculer la matrice de voisinage (une seule fois) */
+    var neighbors={}; /* cisId → [cisId voisins dans le rayon] */
     for(var i=0;i<CIS.length;i++){
       var nb=[];
       if(travelRadius>0){
@@ -1593,7 +1595,7 @@ function renderZones(){
       neighbors[CIS[i].id]=nb;
     }
 
-    /* Fonction : pool d'une caserne avec l'Ã©tat courant */
+    /* Fonction : pool d'une caserne avec l'état courant */
     function pool(cid){
       var tot=curIsp[cid]||0;
       var nbs=neighbors[cid];
@@ -1615,7 +1617,7 @@ function renderZones(){
       zoneTarget[zn]=(window._zoneTargets[zn]!==undefined)?window._zoneTargets[zn]:defCp;
     }
 
-    /* Boucle itÃ©rative : max 400 recrutements */
+    /* Boucle itérative : max 400 recrutements */
     for(var iter=0;iter<400;iter++){
       /* Trouver le pire maillon faible parmi toutes les zones non-OK */
       var worstId=null, worstCovVal=Infinity, worstZone=null;
@@ -1631,7 +1633,7 @@ function renderZones(){
       }
       if(worstId===null) break; /* toutes les zones OK */
 
-      /* Recruter 1 ISP Ã  cette caserne */
+      /* Recruter 1 ISP à cette caserne */
       curIsp[worstId]=(curIsp[worstId]||0)+1;
       recruited[worstId]=(recruited[worstId]||0)+1;
     }
@@ -1639,18 +1641,18 @@ function renderZones(){
     return recruited;
   }
 
-  /* ExÃ©cuter l'algo avec le travel actuel */
+  /* Exécuter l'algo avec le travel actuel */
   var recruited=computeGreedyRecruitment(simIsp, travelMax);
-  /* ExÃ©cuter aussi avec travel=0 pour comparer */
+  /* Exécuter aussi avec travel=0 pour comparer */
   var recruited0=computeGreedyRecruitment(simIsp, 0);
 
   var totNeedRecruit=0; for(var cid in recruited) totNeedRecruit+=recruited[cid];
   var totNeed0=0; for(var cid in recruited0) totNeed0+=recruited0[cid];
   var econTravel=totNeed0-totNeedRecruit;
 
-  /* Construire le listing par zone Ã  partir du rÃ©sultat itÃ©ratif */
+  /* Construire le listing par zone à partir du résultat itératif */
   var recruitList=[];
-  var recruitByZone={}; /* zoneName â†’ [{caserne,manque}] */
+  var recruitByZone={}; /* zoneName → [{caserne,manque}] */
   for(var cid in recruited){
     if(recruited[cid]<=0) continue;
     var cNom='?',cZone='?',cColor='#666';
@@ -1665,7 +1667,7 @@ function renderZones(){
   }
   recruitList.sort(function(a,b){return b.manque-a.manque;});
 
-  /* Mettre Ã  jour les recommandations par zone dans les cards */
+  /* Mettre à jour les recommandations par zone dans les cards */
   var recoEls=document.querySelectorAll('.zone-reco');
   for(var i=0;i<recoEls.length;i++){
     var zName=recoEls[i].getAttribute('data-zone');
@@ -1678,7 +1680,7 @@ function renderZones(){
     var zTarget=(window._zoneTargets[zName]!==undefined)?window._zoneTargets[zName]:defCp;
     recoEls[i].querySelector('.reco-text').innerHTML='Recruter <strong>'+zTotal+' ISP</strong> pour atteindre '+zTarget+'%';
 
-    /* Popup dÃ©taillÃ©e */
+    /* Popup détaillée */
     var popup='<div class="reco-popup" style="display:none;position:absolute;left:0;bottom:100%;margin-bottom:4px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:10px 14px;z-index:999;min-width:260px;font-size:.95em;color:var(--text);">';
     popup+='<div style="font-weight:700;margin-bottom:6px;color:var(--orange);">\ud83d\udcdd Plan de recrutement \u2014 '+zName+'</div>';
     zRecs.sort(function(a,b){return b.manque-a.manque;});
@@ -1690,13 +1692,13 @@ function renderZones(){
     recoEls[i].insertAdjacentHTML('beforeend',popup);
   }
 
-  /* â•â• SYNTHÃˆSE â•â• */
+  /* ══ SYNTHÈSE ══ */
   var allSimIsp=0;
   for(var i=0;i<CIS.length;i++) allSimIsp+=simIsp(CIS[i].id);
   var listingTotal=DATA&&DATA.effectifStats?DATA.effectifStats.total:'?';
   var globalCov=allCovN>0?Math.round(allCovSum/allCovN*10)/10:0;
 
-  /* Casernes isolÃ©es */
+  /* Casernes isolées */
   var isolated=[];
   for(var i=0;i<CIS.length;i++){
     if(cisPool[CIS[i].id].cov<defCp) isolated.push({nom:CIS[i].nom,cov:cisPool[CIS[i].id].cov,pool:cisPool[CIS[i].id].pool});
@@ -1719,7 +1721,7 @@ function renderZones(){
     (travelMax===0?'<div style="font-size:.85em;color:var(--text-light);margin-top:2px;">\u2191 Augmentez le rayon d\'action pour mutualiser les pools</div>':'')+
     '</div>';
 
-  /* â•â• LISTING RECRUTEMENTS GROUPÃ‰ PAR ZONE (dÃ©pliable) â•â• */
+  /* ══ LISTING RECRUTEMENTS GROUPÉ PAR ZONE (dépliable) ══ */
   if(recruitList.length>0){
     synthHtml+='<div style="margin-top:8px;padding:8px 10px;background:var(--orange-light);border-radius:6px;border:1px solid var(--orange);">';
     synthHtml+='<div style="font-weight:700;font-size:.88em;color:var(--orange);margin-bottom:6px;">\ud83d\udcdd Recrutements \u00e0 effectuer</div>';
@@ -1769,10 +1771,10 @@ function updateCoverage(v){document.getElementById('coverTarget').textContent=v;
 function updateTravel(v){document.getElementById('travelTarget').textContent=v;renderZones();}
 function updateBaseH(v){document.getElementById('baseHTarget').textContent=v;renderZones();}
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   ONGLET 3 â€” RECRUTEMENT PAR VAGUES
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
-var COMMUNES=[{n:'L\u2019AlbÃ¨re',lat:42.4762,lng:2.897},{n:'AlÃ©nya',lat:42.6413,lng:2.9824},{n:'AmÃ©lie-les-Bains-Palalda',lat:42.4508,lng:2.687},{n:'Les Angles',lat:42.5797,lng:2.049},{n:'Angoustrine-Villeneuve-des-Escaldes',lat:42.546,lng:1.9443},{n:'Ansignan',lat:42.7646,lng:2.5233},{n:'Arboussols',lat:42.6669,lng:2.4953},{n:'ArgelÃ¨s-sur-Mer',lat:42.53,lng:3.0234},{n:'Arles-sur-Tech',lat:42.4531,lng:2.6228},{n:'AyguatÃ©bia-Talau',lat:42.5561,lng:2.1962},{n:'Bages',lat:42.6075,lng:2.8893},{n:'Baho',lat:42.7066,lng:2.8229},{n:'Baillestavy',lat:42.5682,lng:2.5266},{n:'Baixas',lat:42.744,lng:2.8079},{n:'Banyuls-dels-Aspres',lat:42.5653,lng:2.8649},{n:'Banyuls-sur-Mer',lat:42.4602,lng:3.1014},{n:'Le BarcarÃ¨s',lat:42.8118,lng:3.028},{n:'La Bastide',lat:42.5371,lng:2.5752},{n:'BÃ©lesta',lat:42.7241,lng:2.6228},{n:'BolquÃ¨re',lat:42.5225,lng:2.0614},{n:'Bompas',lat:42.7271,lng:2.9426},{n:'Boule-d\u2019Amont',lat:42.5884,lng:2.5905},{n:'BouleternÃ¨re',lat:42.6435,lng:2.5878},{n:'Le Boulou',lat:42.5267,lng:2.8328},{n:'Bourg-Madame',lat:42.438,lng:1.9608},{n:'Brouilla',lat:42.5759,lng:2.8927},{n:'La Cabanasse',lat:42.501,lng:2.1056},{n:'Cabestany',lat:42.6804,lng:2.9507},{n:'Caixas',lat:42.6031,lng:2.6633},{n:'Calce',lat:42.7477,lng:2.7545},{n:'Calmeilles',lat:42.5507,lng:2.6735},{n:'CamÃ©las',lat:42.6404,lng:2.6911},{n:'CampÃ´me',lat:42.6506,lng:2.3826},{n:'Campoussy',lat:42.6978,lng:2.452},{n:'Canaveilles',lat:42.5348,lng:2.2179},{n:'Canet-en-Roussillon',lat:42.6809,lng:3.002},{n:'CanohÃ¨s',lat:42.6514,lng:2.8294},{n:'Caramany',lat:42.7388,lng:2.5572},{n:'Casefabre',lat:42.6156,lng:2.6127},{n:'Cases-de-PÃ¨ne',lat:42.7931,lng:2.7771},{n:'Cassagnes',lat:42.7415,lng:2.626},{n:'Casteil',lat:42.5035,lng:2.4229},{n:'Castelnou',lat:42.6247,lng:2.7046},{n:'Catllar',lat:42.6407,lng:2.4186},{n:'CaudiÃ¨s-de-FenouillÃ¨des',lat:42.8213,lng:2.3781},{n:'CaudiÃ¨s-de-Conflent',lat:42.5623,lng:2.1451},{n:'CerbÃ¨re',lat:42.4471,lng:3.1493},{n:'CÃ©ret',lat:42.473,lng:2.7565},{n:'Claira',lat:42.7626,lng:2.9458},{n:'Clara-Villerach',lat:42.5831,lng:2.4489},{n:'Codalet',lat:42.6015,lng:2.4169},{n:'Collioure',lat:42.5087,lng:3.0744},{n:'Conat',lat:42.6203,lng:2.3426},{n:'CorbÃ¨re',lat:42.6515,lng:2.6614},{n:'CorbÃ¨re-les-Cabanes',lat:42.66,lng:2.6837},{n:'Corneilla-de-Conflent',lat:42.5786,lng:2.382},{n:'Corneilla-la-RiviÃ¨re',lat:42.7098,lng:2.7247},{n:'Corneilla-del-Vercol',lat:42.6228,lng:2.9512},{n:'Corsavy',lat:42.483,lng:2.541},{n:'Coustouges',lat:42.3602,lng:2.632},{n:'Dorres',lat:42.5125,lng:1.9224},{n:'Les Cluses',lat:42.4847,lng:2.8437},{n:'Ã‰gat',lat:42.5008,lng:2.0195},{n:'Elne',lat:42.6083,lng:2.978},{n:'Enveitg',lat:42.491,lng:1.8922},{n:'Err',lat:42.4131,lng:2.0678},{n:'Escaro',lat:42.5337,lng:2.319},{n:'Espira-de-l\u2019Agly',lat:42.7987,lng:2.8231},{n:'Espira-de-Conflent',lat:42.6168,lng:2.4923},{n:'Estagel',lat:42.7642,lng:2.7077},{n:'Estavar',lat:42.4764,lng:2.0121},{n:'Estoher',lat:42.5695,lng:2.4829},{n:'Eus',lat:42.6552,lng:2.4478},{n:'Eyne',lat:42.4544,lng:2.111},{n:'Feilluns',lat:42.7613,lng:2.4877},{n:'Fenouillet',lat:42.7786,lng:2.382},{n:'Fillols',lat:42.5587,lng:2.4257},{n:'Finestret',lat:42.6068,lng:2.5194},{n:'FontpÃ©drouse',lat:42.4718,lng:2.202},{n:'Fontrabiouse',lat:42.6413,lng:2.0514},{n:'FormiguÃ¨res',lat:42.6227,lng:2.0629},{n:'Fosse',lat:42.7842,lng:2.4335},{n:'Fourques',lat:42.5845,lng:2.7759},{n:'Fuilla',lat:42.5673,lng:2.3549},{n:'Glorianes',lat:42.5904,lng:2.5528},{n:'Ille-sur-TÃªt',lat:42.6746,lng:2.6167},{n:'Joch',lat:42.6151,lng:2.5244},{n:'Jujols',lat:42.5852,lng:2.2823},{n:'LamanÃ¨re',lat:42.3628,lng:2.5191},{n:'Lansac',lat:42.7685,lng:2.5651},{n:'Laroque-des-AlbÃ¨res',lat:42.5179,lng:2.9314},{n:'Latour-Bas-Elne',lat:42.6041,lng:3.0067},{n:'Latour-de-Carol',lat:42.4746,lng:1.8736},{n:'Latour-de-France',lat:42.7701,lng:2.6498},{n:'Lesquerde',lat:42.7927,lng:2.5381},{n:'La Llagonne',lat:42.5401,lng:2.083},{n:'Llauro',lat:42.5458,lng:2.7494},{n:'Llo',lat:42.4358,lng:2.0895},{n:'Llupia',lat:42.6275,lng:2.7827},{n:'Mantet',lat:42.4555,lng:2.2922},{n:'Marquixanes',lat:42.6344,lng:2.4848},{n:'Los Masos',lat:42.6145,lng:2.4593},{n:'Matemale',lat:42.5788,lng:2.1154},{n:'Maureillas-las-Illas',lat:42.4635,lng:2.7999},{n:'Maury',lat:42.816,lng:2.6194},{n:'Millas',lat:42.6966,lng:2.6865},{n:'Molitg-les-Bains',lat:42.6624,lng:2.3955},{n:'Montalba-le-ChÃ¢teau',lat:42.699,lng:2.5658},{n:'Montauriol',lat:42.5777,lng:2.725},{n:'Montbolo',lat:42.4924,lng:2.6265},{n:'Montescot',lat:42.6158,lng:2.9188},{n:'Montesquieu-des-AlbÃ¨res',lat:42.5206,lng:2.8685},{n:'Montferrer',lat:42.4415,lng:2.567},{n:'Mont-Louis',lat:42.5098,lng:2.1197},{n:'Montner',lat:42.7439,lng:2.6946},{n:'Mosset',lat:42.6719,lng:2.2848},{n:'Nahuja',lat:42.4243,lng:1.9995},{n:'NÃ©fiach',lat:42.696,lng:2.6566},{n:'NohÃ¨des',lat:42.6256,lng:2.2547},{n:'Nyer',lat:42.4957,lng:2.2764},{n:'Font-Romeu-Odeillo-Via',lat:42.5145,lng:2.0212},{n:'Olette',lat:42.5938,lng:2.2449},{n:'Oms',lat:42.5319,lng:2.7102},{n:'Opoul-PÃ©rillos',lat:42.8817,lng:2.8601},{n:'Oreilla',lat:42.5788,lng:2.2272},{n:'Ortaffa',lat:42.5855,lng:2.9191},{n:'OssÃ©ja',lat:42.3923,lng:2.0006},{n:'Palau-de-Cerdagne',lat:42.3864,lng:1.9818},{n:'Palau-del-Vidre',lat:42.5662,lng:2.9595},{n:'Passa',lat:42.5674,lng:2.804},{n:'Perpignan',lat:42.699,lng:2.9045},{n:'Le Perthus',lat:42.4664,lng:2.8639},{n:'Peyrestortes',lat:42.7484,lng:2.8471},{n:'PÃ©zilla-de-Conflent',lat:42.7356,lng:2.4884},{n:'PÃ©zilla-la-RiviÃ¨re',lat:42.7089,lng:2.76},{n:'Pia',lat:42.7506,lng:2.9172},{n:'PlanÃ¨s',lat:42.4701,lng:2.1444},{n:'PlanÃ¨zes',lat:42.7736,lng:2.6215},{n:'Pollestres',lat:42.6373,lng:2.8736},{n:'Ponteilla',lat:42.6347,lng:2.8288},{n:'Porta',lat:42.5212,lng:1.7935},{n:'PortÃ©-Puymorens',lat:42.5546,lng:1.8381},{n:'Port-Vendres',lat:42.5034,lng:3.1048},{n:'Prades',lat:42.6107,lng:2.4276},{n:'Prats-de-Mollo-la-Preste',lat:42.4174,lng:2.4229},{n:'Prats-de-Sournia',lat:42.7399,lng:2.4535},{n:'Prugnanes',lat:42.8254,lng:2.435},{n:'Prunet-et-Belpuig',lat:42.5655,lng:2.6373},{n:'Puyvalador',lat:42.6488,lng:2.1097},{n:'Py',lat:42.4683,lng:2.3635},{n:'Rabouillet',lat:42.7265,lng:2.3646},{n:'Railleu',lat:42.5923,lng:2.1619},{n:'RasiguÃ¨res',lat:42.7732,lng:2.5979},{n:'RÃ©al',lat:42.64,lng:2.1488},{n:'ReynÃ¨s',lat:42.466,lng:2.6971},{n:'Ria-Sirach',lat:42.6101,lng:2.3828},{n:'Rigarda',lat:42.6292,lng:2.5375},{n:'Rivesaltes',lat:42.7761,lng:2.8769},{n:'RodÃ¨s',lat:42.6563,lng:2.5485},{n:'Sahorre',lat:42.5255,lng:2.3565},{n:'Saillagouse',lat:42.4564,lng:2.0382},{n:'Saint-AndrÃ©',lat:42.5541,lng:2.9794},{n:'Saint-Arnac',lat:42.7737,lng:2.5343},{n:'Sainte-Colombe-de-la-Commanderie',lat:42.6161,lng:2.7421},{n:'Saint-Cyprien',lat:42.6205,lng:3.0139},{n:'Saint-EstÃ¨ve',lat:42.7154,lng:2.8445},{n:'Saint-FÃ©liu-d\u2019Amont',lat:42.6752,lng:2.7166},{n:'Saint-FÃ©liu-d\u2019Avall',lat:42.6733,lng:2.7498},{n:'Saint-GÃ©nis-des-Fontaines',lat:42.5488,lng:2.9221},{n:'Saint-Hippolyte',lat:42.8104,lng:2.9754},{n:'Saint-Jean-Lasseille',lat:42.5863,lng:2.8646},{n:'Saint-Jean-Pla-de-Corts',lat:42.5183,lng:2.7938},{n:'Saint-Laurent-de-Cerdans',lat:42.3944,lng:2.6222},{n:'Saint-Laurent-de-la-Salanque',lat:42.8073,lng:2.9993},{n:'Sainte-LÃ©ocadie',lat:42.4298,lng:2.0057},{n:'Sainte-Marie-la-Mer',lat:42.7262,lng:3.0168},{n:'Saint-Marsal',lat:42.5256,lng:2.6182},{n:'Saint-Martin-de-Fenouillet',lat:42.7848,lng:2.4777},{n:'Saint-Michel-de-Llotes',lat:42.6465,lng:2.6268},{n:'Saint-Nazaire',lat:42.6619,lng:2.9895},{n:'Saint-Paul-de-Fenouillet',lat:42.8229,lng:2.5025},{n:'Saint-Pierre-dels-Forcats',lat:42.4778,lng:2.114},{n:'Saleilles',lat:42.6553,lng:2.947},{n:'Salses-le-ChÃ¢teau',lat:42.8359,lng:2.9134},{n:'Sansa',lat:42.6189,lng:2.1788},{n:'Sauto',lat:42.5166,lng:2.1461},{n:'Serdinya',lat:42.5736,lng:2.324},{n:'Serralongue',lat:42.3846,lng:2.5559},{n:'Le Soler',lat:42.6756,lng:2.7999},{n:'SorÃ¨de',lat:42.5083,lng:2.988},{n:'Souanyas',lat:42.5493,lng:2.2826},{n:'Sournia',lat:42.7138,lng:2.4171},{n:'Taillet',lat:42.5191,lng:2.6808},{n:'Tarerach',lat:42.6816,lng:2.5081},{n:'Targasonne',lat:42.5014,lng:1.9877},{n:'Taulis',lat:42.5149,lng:2.6145},{n:'Taurinya',lat:42.555,lng:2.4408},{n:'Tautavel',lat:42.8163,lng:2.7161},{n:'Le Tech',lat:42.4439,lng:2.5154},{n:'Terrats',lat:42.6046,lng:2.7584},{n:'ThÃ©za',lat:42.6403,lng:2.947},{n:'ThuÃ¨s-Entre-Valls',lat:42.5006,lng:2.2317},{n:'Thuir',lat:42.6384,lng:2.7618},{n:'TordÃ¨res',lat:42.5653,lng:2.7619},{n:'Torreilles',lat:42.7571,lng:3.0059},{n:'Toulouges',lat:42.6723,lng:2.8234},{n:'Tresserre',lat:42.5559,lng:2.842},{n:'TrÃ©villach',lat:42.7091,lng:2.5105},{n:'Trilla',lat:42.7369,lng:2.5229},{n:'Trouillas',lat:42.6055,lng:2.8235},{n:'Ur',lat:42.4594,lng:1.9382},{n:'Urbanya',lat:42.6429,lng:2.2964},{n:'ValcebollÃ¨re',lat:42.382,lng:2.0472},{n:'Valmanya',lat:42.5251,lng:2.5089},{n:'Vernet-les-Bains',lat:42.5363,lng:2.4152},{n:'Villefranche-de-Conflent',lat:42.5955,lng:2.3575},{n:'Villelongue-de-la-Salanque',lat:42.7261,lng:2.977},{n:'Villelongue-dels-Monts',lat:42.5238,lng:2.8979},{n:'Villemolaque',lat:42.5976,lng:2.848},{n:'Villeneuve-de-la-Raho',lat:42.6402,lng:2.909},{n:'Villeneuve-la-RiviÃ¨re',lat:42.7046,lng:2.7964},{n:'VinÃ§a',lat:42.6431,lng:2.5225},{n:'Vingrau',lat:42.8588,lng:2.7904},{n:'Vira',lat:42.7653,lng:2.3899},{n:'VivÃ¨s',lat:42.5303,lng:2.766},{n:'Le Vivier',lat:42.7637,lng:2.4423}];
+/* ═══════════════════════════════════════════════════════
+   ONGLET 3 — RECRUTEMENT PAR VAGUES
+   ═══════════════════════════════════════════════════════ */
+var COMMUNES=[{n:'L\u2019Albère',lat:42.4762,lng:2.897},{n:'Alénya',lat:42.6413,lng:2.9824},{n:'Amélie-les-Bains-Palalda',lat:42.4508,lng:2.687},{n:'Les Angles',lat:42.5797,lng:2.049},{n:'Angoustrine-Villeneuve-des-Escaldes',lat:42.546,lng:1.9443},{n:'Ansignan',lat:42.7646,lng:2.5233},{n:'Arboussols',lat:42.6669,lng:2.4953},{n:'Argelès-sur-Mer',lat:42.53,lng:3.0234},{n:'Arles-sur-Tech',lat:42.4531,lng:2.6228},{n:'Ayguatébia-Talau',lat:42.5561,lng:2.1962},{n:'Bages',lat:42.6075,lng:2.8893},{n:'Baho',lat:42.7066,lng:2.8229},{n:'Baillestavy',lat:42.5682,lng:2.5266},{n:'Baixas',lat:42.744,lng:2.8079},{n:'Banyuls-dels-Aspres',lat:42.5653,lng:2.8649},{n:'Banyuls-sur-Mer',lat:42.4602,lng:3.1014},{n:'Le Barcarès',lat:42.8118,lng:3.028},{n:'La Bastide',lat:42.5371,lng:2.5752},{n:'Bélesta',lat:42.7241,lng:2.6228},{n:'Bolquère',lat:42.5225,lng:2.0614},{n:'Bompas',lat:42.7271,lng:2.9426},{n:'Boule-d\u2019Amont',lat:42.5884,lng:2.5905},{n:'Bouleternère',lat:42.6435,lng:2.5878},{n:'Le Boulou',lat:42.5267,lng:2.8328},{n:'Bourg-Madame',lat:42.438,lng:1.9608},{n:'Brouilla',lat:42.5759,lng:2.8927},{n:'La Cabanasse',lat:42.501,lng:2.1056},{n:'Cabestany',lat:42.6804,lng:2.9507},{n:'Caixas',lat:42.6031,lng:2.6633},{n:'Calce',lat:42.7477,lng:2.7545},{n:'Calmeilles',lat:42.5507,lng:2.6735},{n:'Camélas',lat:42.6404,lng:2.6911},{n:'Campôme',lat:42.6506,lng:2.3826},{n:'Campoussy',lat:42.6978,lng:2.452},{n:'Canaveilles',lat:42.5348,lng:2.2179},{n:'Canet-en-Roussillon',lat:42.6809,lng:3.002},{n:'Canohès',lat:42.6514,lng:2.8294},{n:'Caramany',lat:42.7388,lng:2.5572},{n:'Casefabre',lat:42.6156,lng:2.6127},{n:'Cases-de-Pène',lat:42.7931,lng:2.7771},{n:'Cassagnes',lat:42.7415,lng:2.626},{n:'Casteil',lat:42.5035,lng:2.4229},{n:'Castelnou',lat:42.6247,lng:2.7046},{n:'Catllar',lat:42.6407,lng:2.4186},{n:'Caudiès-de-Fenouillèdes',lat:42.8213,lng:2.3781},{n:'Caudiès-de-Conflent',lat:42.5623,lng:2.1451},{n:'Cerbère',lat:42.4471,lng:3.1493},{n:'Céret',lat:42.473,lng:2.7565},{n:'Claira',lat:42.7626,lng:2.9458},{n:'Clara-Villerach',lat:42.5831,lng:2.4489},{n:'Codalet',lat:42.6015,lng:2.4169},{n:'Collioure',lat:42.5087,lng:3.0744},{n:'Conat',lat:42.6203,lng:2.3426},{n:'Corbère',lat:42.6515,lng:2.6614},{n:'Corbère-les-Cabanes',lat:42.66,lng:2.6837},{n:'Corneilla-de-Conflent',lat:42.5786,lng:2.382},{n:'Corneilla-la-Rivière',lat:42.7098,lng:2.7247},{n:'Corneilla-del-Vercol',lat:42.6228,lng:2.9512},{n:'Corsavy',lat:42.483,lng:2.541},{n:'Coustouges',lat:42.3602,lng:2.632},{n:'Dorres',lat:42.5125,lng:1.9224},{n:'Les Cluses',lat:42.4847,lng:2.8437},{n:'Égat',lat:42.5008,lng:2.0195},{n:'Elne',lat:42.6083,lng:2.978},{n:'Enveitg',lat:42.491,lng:1.8922},{n:'Err',lat:42.4131,lng:2.0678},{n:'Escaro',lat:42.5337,lng:2.319},{n:'Espira-de-l\u2019Agly',lat:42.7987,lng:2.8231},{n:'Espira-de-Conflent',lat:42.6168,lng:2.4923},{n:'Estagel',lat:42.7642,lng:2.7077},{n:'Estavar',lat:42.4764,lng:2.0121},{n:'Estoher',lat:42.5695,lng:2.4829},{n:'Eus',lat:42.6552,lng:2.4478},{n:'Eyne',lat:42.4544,lng:2.111},{n:'Feilluns',lat:42.7613,lng:2.4877},{n:'Fenouillet',lat:42.7786,lng:2.382},{n:'Fillols',lat:42.5587,lng:2.4257},{n:'Finestret',lat:42.6068,lng:2.5194},{n:'Fontpédrouse',lat:42.4718,lng:2.202},{n:'Fontrabiouse',lat:42.6413,lng:2.0514},{n:'Formiguères',lat:42.6227,lng:2.0629},{n:'Fosse',lat:42.7842,lng:2.4335},{n:'Fourques',lat:42.5845,lng:2.7759},{n:'Fuilla',lat:42.5673,lng:2.3549},{n:'Glorianes',lat:42.5904,lng:2.5528},{n:'Ille-sur-Têt',lat:42.6746,lng:2.6167},{n:'Joch',lat:42.6151,lng:2.5244},{n:'Jujols',lat:42.5852,lng:2.2823},{n:'Lamanère',lat:42.3628,lng:2.5191},{n:'Lansac',lat:42.7685,lng:2.5651},{n:'Laroque-des-Albères',lat:42.5179,lng:2.9314},{n:'Latour-Bas-Elne',lat:42.6041,lng:3.0067},{n:'Latour-de-Carol',lat:42.4746,lng:1.8736},{n:'Latour-de-France',lat:42.7701,lng:2.6498},{n:'Lesquerde',lat:42.7927,lng:2.5381},{n:'La Llagonne',lat:42.5401,lng:2.083},{n:'Llauro',lat:42.5458,lng:2.7494},{n:'Llo',lat:42.4358,lng:2.0895},{n:'Llupia',lat:42.6275,lng:2.7827},{n:'Mantet',lat:42.4555,lng:2.2922},{n:'Marquixanes',lat:42.6344,lng:2.4848},{n:'Los Masos',lat:42.6145,lng:2.4593},{n:'Matemale',lat:42.5788,lng:2.1154},{n:'Maureillas-las-Illas',lat:42.4635,lng:2.7999},{n:'Maury',lat:42.816,lng:2.6194},{n:'Millas',lat:42.6966,lng:2.6865},{n:'Molitg-les-Bains',lat:42.6624,lng:2.3955},{n:'Montalba-le-Château',lat:42.699,lng:2.5658},{n:'Montauriol',lat:42.5777,lng:2.725},{n:'Montbolo',lat:42.4924,lng:2.6265},{n:'Montescot',lat:42.6158,lng:2.9188},{n:'Montesquieu-des-Albères',lat:42.5206,lng:2.8685},{n:'Montferrer',lat:42.4415,lng:2.567},{n:'Mont-Louis',lat:42.5098,lng:2.1197},{n:'Montner',lat:42.7439,lng:2.6946},{n:'Mosset',lat:42.6719,lng:2.2848},{n:'Nahuja',lat:42.4243,lng:1.9995},{n:'Néfiach',lat:42.696,lng:2.6566},{n:'Nohèdes',lat:42.6256,lng:2.2547},{n:'Nyer',lat:42.4957,lng:2.2764},{n:'Font-Romeu-Odeillo-Via',lat:42.5145,lng:2.0212},{n:'Olette',lat:42.5938,lng:2.2449},{n:'Oms',lat:42.5319,lng:2.7102},{n:'Opoul-Périllos',lat:42.8817,lng:2.8601},{n:'Oreilla',lat:42.5788,lng:2.2272},{n:'Ortaffa',lat:42.5855,lng:2.9191},{n:'Osséja',lat:42.3923,lng:2.0006},{n:'Palau-de-Cerdagne',lat:42.3864,lng:1.9818},{n:'Palau-del-Vidre',lat:42.5662,lng:2.9595},{n:'Passa',lat:42.5674,lng:2.804},{n:'Perpignan',lat:42.699,lng:2.9045},{n:'Le Perthus',lat:42.4664,lng:2.8639},{n:'Peyrestortes',lat:42.7484,lng:2.8471},{n:'Pézilla-de-Conflent',lat:42.7356,lng:2.4884},{n:'Pézilla-la-Rivière',lat:42.7089,lng:2.76},{n:'Pia',lat:42.7506,lng:2.9172},{n:'Planès',lat:42.4701,lng:2.1444},{n:'Planèzes',lat:42.7736,lng:2.6215},{n:'Pollestres',lat:42.6373,lng:2.8736},{n:'Ponteilla',lat:42.6347,lng:2.8288},{n:'Porta',lat:42.5212,lng:1.7935},{n:'Porté-Puymorens',lat:42.5546,lng:1.8381},{n:'Port-Vendres',lat:42.5034,lng:3.1048},{n:'Prades',lat:42.6107,lng:2.4276},{n:'Prats-de-Mollo-la-Preste',lat:42.4174,lng:2.4229},{n:'Prats-de-Sournia',lat:42.7399,lng:2.4535},{n:'Prugnanes',lat:42.8254,lng:2.435},{n:'Prunet-et-Belpuig',lat:42.5655,lng:2.6373},{n:'Puyvalador',lat:42.6488,lng:2.1097},{n:'Py',lat:42.4683,lng:2.3635},{n:'Rabouillet',lat:42.7265,lng:2.3646},{n:'Railleu',lat:42.5923,lng:2.1619},{n:'Rasiguères',lat:42.7732,lng:2.5979},{n:'Réal',lat:42.64,lng:2.1488},{n:'Reynès',lat:42.466,lng:2.6971},{n:'Ria-Sirach',lat:42.6101,lng:2.3828},{n:'Rigarda',lat:42.6292,lng:2.5375},{n:'Rivesaltes',lat:42.7761,lng:2.8769},{n:'Rodès',lat:42.6563,lng:2.5485},{n:'Sahorre',lat:42.5255,lng:2.3565},{n:'Saillagouse',lat:42.4564,lng:2.0382},{n:'Saint-André',lat:42.5541,lng:2.9794},{n:'Saint-Arnac',lat:42.7737,lng:2.5343},{n:'Sainte-Colombe-de-la-Commanderie',lat:42.6161,lng:2.7421},{n:'Saint-Cyprien',lat:42.6205,lng:3.0139},{n:'Saint-Estève',lat:42.7154,lng:2.8445},{n:'Saint-Féliu-d\u2019Amont',lat:42.6752,lng:2.7166},{n:'Saint-Féliu-d\u2019Avall',lat:42.6733,lng:2.7498},{n:'Saint-Génis-des-Fontaines',lat:42.5488,lng:2.9221},{n:'Saint-Hippolyte',lat:42.8104,lng:2.9754},{n:'Saint-Jean-Lasseille',lat:42.5863,lng:2.8646},{n:'Saint-Jean-Pla-de-Corts',lat:42.5183,lng:2.7938},{n:'Saint-Laurent-de-Cerdans',lat:42.3944,lng:2.6222},{n:'Saint-Laurent-de-la-Salanque',lat:42.8073,lng:2.9993},{n:'Sainte-Léocadie',lat:42.4298,lng:2.0057},{n:'Sainte-Marie-la-Mer',lat:42.7262,lng:3.0168},{n:'Saint-Marsal',lat:42.5256,lng:2.6182},{n:'Saint-Martin-de-Fenouillet',lat:42.7848,lng:2.4777},{n:'Saint-Michel-de-Llotes',lat:42.6465,lng:2.6268},{n:'Saint-Nazaire',lat:42.6619,lng:2.9895},{n:'Saint-Paul-de-Fenouillet',lat:42.8229,lng:2.5025},{n:'Saint-Pierre-dels-Forcats',lat:42.4778,lng:2.114},{n:'Saleilles',lat:42.6553,lng:2.947},{n:'Salses-le-Château',lat:42.8359,lng:2.9134},{n:'Sansa',lat:42.6189,lng:2.1788},{n:'Sauto',lat:42.5166,lng:2.1461},{n:'Serdinya',lat:42.5736,lng:2.324},{n:'Serralongue',lat:42.3846,lng:2.5559},{n:'Le Soler',lat:42.6756,lng:2.7999},{n:'Sorède',lat:42.5083,lng:2.988},{n:'Souanyas',lat:42.5493,lng:2.2826},{n:'Sournia',lat:42.7138,lng:2.4171},{n:'Taillet',lat:42.5191,lng:2.6808},{n:'Tarerach',lat:42.6816,lng:2.5081},{n:'Targasonne',lat:42.5014,lng:1.9877},{n:'Taulis',lat:42.5149,lng:2.6145},{n:'Taurinya',lat:42.555,lng:2.4408},{n:'Tautavel',lat:42.8163,lng:2.7161},{n:'Le Tech',lat:42.4439,lng:2.5154},{n:'Terrats',lat:42.6046,lng:2.7584},{n:'Théza',lat:42.6403,lng:2.947},{n:'Thuès-Entre-Valls',lat:42.5006,lng:2.2317},{n:'Thuir',lat:42.6384,lng:2.7618},{n:'Tordères',lat:42.5653,lng:2.7619},{n:'Torreilles',lat:42.7571,lng:3.0059},{n:'Toulouges',lat:42.6723,lng:2.8234},{n:'Tresserre',lat:42.5559,lng:2.842},{n:'Trévillach',lat:42.7091,lng:2.5105},{n:'Trilla',lat:42.7369,lng:2.5229},{n:'Trouillas',lat:42.6055,lng:2.8235},{n:'Ur',lat:42.4594,lng:1.9382},{n:'Urbanya',lat:42.6429,lng:2.2964},{n:'Valcebollère',lat:42.382,lng:2.0472},{n:'Valmanya',lat:42.5251,lng:2.5089},{n:'Vernet-les-Bains',lat:42.5363,lng:2.4152},{n:'Villefranche-de-Conflent',lat:42.5955,lng:2.3575},{n:'Villelongue-de-la-Salanque',lat:42.7261,lng:2.977},{n:'Villelongue-dels-Monts',lat:42.5238,lng:2.8979},{n:'Villemolaque',lat:42.5976,lng:2.848},{n:'Villeneuve-de-la-Raho',lat:42.6402,lng:2.909},{n:'Villeneuve-la-Rivière',lat:42.7046,lng:2.7964},{n:'Vinça',lat:42.6431,lng:2.5225},{n:'Vingrau',lat:42.8588,lng:2.7904},{n:'Vira',lat:42.7653,lng:2.3899},{n:'Vivès',lat:42.5303,lng:2.766},{n:'Le Vivier',lat:42.7637,lng:2.4423}];
 
 /* Couleur chaleur couverture */
 function covColor(pct){
@@ -1795,17 +1797,17 @@ function nearestCis(lat,lng){
   return best;
 }
 
-/* Calculer la couverture de chaque commune selon un Ã©tat ISP donnÃ© */
+/* Calculer la couverture de chaque commune selon un état ISP donné */
 function computeCommuneCoverage(ispState){
   /* Isochrones OSRM : COMMUNE_NEAREST donne le CIS le plus proche,
-     TRAVEL_CIS_MIN donne les temps rÃ©els entre CIS pour le pool */
+     TRAVEL_CIS_MIN donne les temps reels entre CIS pour le pool */
   var TRAVEL_RADIUS=20;
   var result=[];
   for(var i=0;i<COMMUNES.length;i++){
     var c=COMMUNES[i];
     var cn=COMMUNE_NEAREST[i];
     var cis=CIS[cn.c];
-    /* Pool de ce CIS + CIS voisins (temps rÃ©el OSRM) */
+    /* Pool de ce CIS + CIS voisins (temps reel OSRM) */
     var pool=ispState[cis.id]||0;
     for(var j=0;j<CIS.length;j++){
       if(j!==cn.c && TRAVEL_CIS_MIN[j][cn.c]<=TRAVEL_RADIUS){
@@ -1823,12 +1825,12 @@ function computeCommuneCoverage(ispState){
 /* Algo greedy par vagues de 12 ISP */
 function computeRecruitWaves(){
   populateCisIsp();
-  /* Ã‰tat ISP de dÃ©part */
+  /* État ISP de départ */
   var curIsp={};
   for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=CIS[i].actualIsp||0;
 
   var TRAVEL_RADIUS=20;
-  /* PrÃ©-calculer la matrice de voisinage (temps OSRM rÃ©els) */
+  /* Pré-calculer la matrice de voisinage */
   var neighbors={};
   for(var i=0;i<CIS.length;i++){
     var nb=[];
@@ -1855,12 +1857,12 @@ function computeRecruitWaves(){
   var snap0={}; for(var k in curIsp) snap0[k]=curIsp[k];
   waves.push({label:'Situation actuelle',snap:snap0,recruited:{}});
 
-  /* 5 vagues de 12 ISP â€” Algo Ã  impact global marginal
+  /* 5 vagues de 12 ISP — Algo à impact global marginal
      Pour chaque recrutement, on simule +1 ISP dans CHAQUE caserne
      et on retient celle qui maximise le gain TOTAL de couverture
-     sur l'ensemble du dÃ©partement (toutes casernes confondues).
-     Ainsi, un ISP placÃ© en B peut couvrir B ET renforcer C via le rayon,
-     avec un meilleur impact global qu'un ISP isolÃ© en C. */
+     sur l'ensemble du département (toutes casernes confondues).
+     Ainsi, un ISP placé en B peut couvrir B ET renforcer C via le rayon,
+     avec un meilleur impact global qu'un ISP isolé en C. */
   function totalCovScore(){
     var s=0;
     for(var i=0;i<CIS.length;i++) s+=cisCov(CIS[i].id);
@@ -1877,7 +1879,7 @@ function computeRecruitWaves(){
         /* Simuler +1 ISP ici */
         curIsp[cid]=(curIsp[cid]||0)+1;
         var gain=totalCovScore()-baseCov;
-        /* Bonus : si cette caserne ou un voisin est sous 50%, favoriser lÃ©gÃ¨rement */
+        /* Bonus : si cette caserne ou un voisin est sous 50%, favoriser légèrement */
         var lowBonus=0;
         if(cisCov(cid)<50) lowBonus=0.5;
         else{
@@ -1906,7 +1908,7 @@ function initRecruitTab(){
   /* Init map */
   var map=L.map('recruitMap').setView([42.58,2.55],10);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
-    attribution:'Â© CARTO Â© OSM',maxZoom:18
+    attribution:'© CARTO © OSM',maxZoom:18
   }).addTo(map);
   window._recruitMapObj=map;
 
@@ -1917,7 +1919,7 @@ function initRecruitTab(){
       .addTo(map);
   }
 
-  /* LÃ©gende couleur */
+  /* Légende couleur */
   var cols=['#d73027','#f46d43','#fdae61','#ffffbf','#a6d96a','#1a9641'];
   var lb=''; for(var i=0;i<cols.length;i++) lb+='<div style="flex:1;background:'+cols[i]+';"></div>';
   document.getElementById('legendBar').innerHTML=lb;
@@ -1928,15 +1930,15 @@ function initRecruitTab(){
   /* Boutons vagues */
   var btnHtml='';
   for(var w=0;w<_recruitWaves.length;w++){
-    var lbl=w===0?'ðŸ  Actuel':'ðŸ”„ Vague '+w+' (+'+12*w+')';
+    var lbl=w===0?'🏠 Actuel':'🔄 Vague '+w+' (+'+12*w+')';
     btnHtml+='<button class="wave-btn'+(w===0?' active':'')+'" data-wave="'+w+'" onclick="showWave('+w+')">'+lbl+'</button>';
   }
   document.getElementById('waveBtns').innerHTML=btnHtml;
 
-  /* Afficher les dÃ©tails de toutes les vagues dans la sidebar */
+  /* Afficher les détails de toutes les vagues dans la sidebar */
   renderWaveSidebar();
 
-  /* Afficher vague 0 par dÃ©faut */
+  /* Afficher vague 0 par défaut */
   showWave(0);
 
   /* Init dropdowns simulation */
@@ -1982,7 +1984,7 @@ function showWave(wIdx){
     '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+
     '<div style="flex:1;min-width:100px;background:var(--blue-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--blue);">'+totIsp+'</div><div style="font-size:.7em;color:var(--text-light);">ISP total</div></div>'+
     '<div style="flex:1;min-width:100px;background:'+(avgCov>=75?'var(--green-light)':'var(--primary-light)')+';border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:'+(avgCov>=75?'var(--green)':'var(--primary)')+';">'+avgCov+'%</div><div style="font-size:.7em;color:var(--text-light);">Couv. moyenne</div></div>'+
-    '<div style="flex:1;min-width:100px;background:var(--green-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--green);">'+above75+'</div><div style="font-size:.7em;color:var(--text-light);">Communes â‰¥75%</div></div>'+
+    '<div style="flex:1;min-width:100px;background:var(--green-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--green);">'+above75+'</div><div style="font-size:.7em;color:var(--text-light);">Communes ≥75%</div></div>'+
     '<div style="flex:1;min-width:100px;background:var(--primary-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--primary);">'+below50+'</div><div style="font-size:.7em;color:var(--text-light);">Communes <50%</div></div>'+
     '</div>';
 
@@ -2021,7 +2023,7 @@ function renderWaveSidebar(){
       html+='<summary><span>\ud83c\udfe0 Situation actuelle</span><span style="color:var(--blue);font-size:.85em;">'+totIsp+' ISP \u2014 '+avgCov+'% moy.</span></summary>';
       html+='<div style="padding:8px 0 4px;font-size:.82em;color:var(--text-light);">\u00c9tat des lieux avec l\u2019effectif actuel du listing ISP.</div>';
 
-      /* â”€â”€ Top communes les moins couvertes (paginÃ© par 10) â”€â”€ */
+      /* ── Top communes les moins couvertes (paginé par 10) ── */
       covData.sort(function(a,b){return a.cov-b.cov;});
       html+='<div style="margin-top:6px;font-size:.78em;"><strong style="color:var(--primary);">\ud83d\udea8 Communes les moins couvertes :</strong>';
       html+='<div id="worstCommunesList">';
@@ -2034,15 +2036,15 @@ function renderWaveSidebar(){
       }
       html+='</div>';
 
-      /* â”€â”€ Top 10 grosses villes les mieux couvertes â”€â”€ */
-      var GROSSES_VILLES=['Perpignan','Canet-en-Roussillon','Saint-EstÃ¨ve','Cabestany','ArgelÃ¨s-sur-Mer','Saint-Cyprien','Elne','Rivesaltes','Thuir','CÃ©ret','Prades','Ille-sur-TÃªt','Le Boulou','Bompas','Pia','Claira','Toulouges','Pollestres','CanohÃ¨s','Saleilles','Saint-Laurent-de-la-Salanque','Le BarcarÃ¨s','Banyuls-sur-Mer','Collioure','Port-Vendres','Font-Romeu-Odeillo-Via','Saillagouse','Millas','AmÃ©lie-les-Bains-Palalda','Le Soler'];
+      /* ── Top 10 grosses villes les mieux couvertes ── */
+      var GROSSES_VILLES=['Perpignan','Canet-en-Roussillon','Saint-Estève','Cabestany','Argelès-sur-Mer','Saint-Cyprien','Elne','Rivesaltes','Thuir','Céret','Prades','Ille-sur-Têt','Le Boulou','Bompas','Pia','Claira','Toulouges','Pollestres','Canohès','Saleilles','Saint-Laurent-de-la-Salanque','Le Barcarès','Banyuls-sur-Mer','Collioure','Port-Vendres','Font-Romeu-Odeillo-Via','Saillagouse','Millas','Amélie-les-Bains-Palalda','Le Soler'];
       var bigCities=[];
       for(var i=0;i<covData.length;i++){
         if(GROSSES_VILLES.indexOf(covData[i].nom)!==-1) bigCities.push(covData[i]);
       }
       bigCities.sort(function(a,b){return b.cov-a.cov;});
       if(bigCities.length>0){
-        html+='<div style="margin-top:10px;font-size:.78em;"><strong style="color:var(--blue);">\ud83c\udfd9\ufe0f Grosses villes â€” couverture :</strong>';
+        html+='<div style="margin-top:10px;font-size:.78em;"><strong style="color:var(--blue);">\ud83c\udfd9\ufe0f Grosses villes — couverture :</strong>';
         for(var i=0;i<Math.min(15,bigCities.length);i++){
           html+='<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f0f0f0;"><span>'+bigCities[i].nom+'</span><strong style="color:'+covColor(bigCities[i].cov)+';">'+bigCities[i].cov+'%</strong></div>';
         }
@@ -2050,8 +2052,8 @@ function renderWaveSidebar(){
       }
     } else {
       /* Vague de recrutement */
-      html+='<summary onclick="showWave('+w+')" style="cursor:pointer;"><span>ðŸ”„ Vague '+w+' â€” +12 ISP</span><span style="color:var(--green);font-size:.85em;">â†’ '+avgCov+'% moy.</span></summary>';
-      /* DÃ©tail : oÃ¹ recruter */
+      html+='<summary onclick="showWave('+w+')" style="cursor:pointer;"><span>🔄 Vague '+w+' — +12 ISP</span><span style="color:var(--green);font-size:.85em;">→ '+avgCov+'% moy.</span></summary>';
+      /* Détail : où recruter */
       var recs=[];
       for(var cid in wave.recruited){
         if(wave.recruited[cid]>0){
@@ -2067,7 +2069,7 @@ function renderWaveSidebar(){
       }
       recs.sort(function(a,b){return b.nb-a.nb;});
       html+='<table style="width:100%;font-size:.78em;border-collapse:collapse;margin:6px 0;">';
-      html+='<tr style="background:var(--bg);"><th style="text-align:left;padding:3px 6px;">Caserne</th><th style="text-align:left;padding:3px 6px;">Zone</th><th style="text-align:center;padding:3px 6px;">Ã€ recruter</th></tr>';
+      html+='<tr style="background:var(--bg);"><th style="text-align:left;padding:3px 6px;">Caserne</th><th style="text-align:left;padding:3px 6px;">Zone</th><th style="text-align:center;padding:3px 6px;">À recruter</th></tr>';
       for(var j=0;j<recs.length;j++){
         html+='<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 6px;font-weight:600;">'+recs[j].caserne+'</td><td style="padding:3px 6px;"><span style="color:'+recs[j].color+';font-weight:600;">'+recs[j].zone+'</span></td><td style="text-align:center;padding:3px 6px;font-weight:700;color:var(--primary);">+'+recs[j].nb+'</td></tr>';
       }
@@ -2077,14 +2079,14 @@ function renderWaveSidebar(){
       var prevSum=0; for(var i=0;i<prevCov.length;i++) prevSum+=prevCov[i].cov;
       var prevAvg=prevCov.length>0?Math.round(prevSum/prevCov.length*10)/10:0;
       var delta=Math.round((avgCov-prevAvg)*10)/10;
-      html+='<div style="margin-top:4px;padding:4px 8px;background:var(--green-light);border-radius:4px;font-size:.8em;">ðŸ“ˆ Impact : couverture moyenne <strong>'+prevAvg+'% â†’ '+avgCov+'%</strong> (+'+delta+' pts)</div>';
+      html+='<div style="margin-top:4px;padding:4px 8px;background:var(--green-light);border-radius:4px;font-size:.8em;">📈 Impact : couverture moyenne <strong>'+prevAvg+'% → '+avgCov+'%</strong> (+'+delta+' pts)</div>';
     }
     html+='</details>';
   }
   document.getElementById('waveDetails').innerHTML=html;
 }
 
-/* â•â•â• SIMULATION DE RECRUTEMENT â•â•â• */
+/* ═══ SIMULATION DE RECRUTEMENT ═══ */
 function initSimDropdowns(){
   var sorted=CIS.slice().sort(function(a,b){return a.nom.localeCompare(b.nom);});
   /* Grouper par zone pour le optgroup */
@@ -2100,7 +2102,7 @@ function initSimDropdowns(){
       }
     }
   }
-  var optionsHtml='<option value="">â€” Choisir un CIS â€”</option>';
+  var optionsHtml='<option value="">— Choisir un CIS —</option>';
   for(var z=0;z<CARTE_ZONES.length;z++){
     var zn=CARTE_ZONES[z].name;
     if(!zoneMap[zn]||zoneMap[zn].length===0) continue;
@@ -2134,7 +2136,7 @@ function updateSimulation(){
 
   var rd=document.getElementById('simResults');
   if(nbSelected===0){
-    rd.innerHTML='<div style="color:var(--text-light);font-size:.82em;text-align:center;padding:12px 0;">SÃ©lectionnez au moins un CIS pour voir l\'impact.</div>';
+    rd.innerHTML='<div style="color:var(--text-light);font-size:.82em;text-align:center;padding:12px 0;">Sélectionnez au moins un CIS pour voir l\'impact.</div>';
     return;
   }
 
@@ -2174,18 +2176,18 @@ function updateSimulation(){
 
   var h='<div class="sim-result-box">';
   h+='<div class="sim-result-global">';
-  h+='<span style="font-size:.82em;font-weight:600;">ðŸŒ Couverture globale</span>';
-  h+='<div style="font-size:1.3em;font-weight:800;margin-top:4px;">'+avgB+'% <span style="font-size:1em;color:var(--text-light);">â†’</span> <span style="color:var(--green);">'+avgA+'%</span> <span style="font-size:.7em;color:var(--green);">(+'+dG+' pts)</span></div>';
+  h+='<span style="font-size:.82em;font-weight:600;">🌐 Couverture globale</span>';
+  h+='<div style="font-size:1.3em;font-weight:800;margin-top:4px;">'+avgB+'% <span style="font-size:1em;color:var(--text-light);">→</span> <span style="color:var(--green);">'+avgA+'%</span> <span style="font-size:.7em;color:var(--green);">(+'+dG+' pts)</span></div>';
   h+='</div>';
 
   if(impacted.length>0){
     h+='<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">';
-    h+='<div style="font-size:.82em;font-weight:600;color:var(--text);margin-bottom:6px;">ðŸ“ Secteurs impactÃ©s :</div>';
+    h+='<div style="font-size:.82em;font-weight:600;color:var(--text);margin-bottom:6px;">📍 Secteurs impactés :</div>';
     for(var i=0;i<impacted.length;i++){
       var iz=impacted[i];
       h+='<div class="sim-zone-row">';
       h+='<span style="color:'+iz.color+';font-weight:600;">'+iz.name+'</span>';
-      h+='<span>'+iz.before+'% â†’ <strong style="color:var(--green);">'+iz.after+'%</strong> <span style="font-size:.8em;color:var(--green);">(+'+iz.delta+')</span></span>';
+      h+='<span>'+iz.before+'% → <strong style="color:var(--green);">'+iz.after+'%</strong> <span style="font-size:.8em;color:var(--green);">(+'+iz.delta+')</span></span>';
       h+='</div>';
     }
     h+='</div>';
@@ -2194,9 +2196,9 @@ function updateSimulation(){
   rd.innerHTML=h;
 }
 
-/* â•â•â• EXPORT PDF â•â•â• */
+/* ═══ EXPORT PDF ═══ */
 function exportRecruitPDF(){
-  if(!_recruitWaves||_recruitWaves.length===0){alert('Aucune donnÃ©e Ã  exporter.');return;}
+  if(!_recruitWaves||_recruitWaves.length===0){alert('Aucune donnée à exporter.');return;}
   var jsPDF=window.jspdf.jsPDF;
   var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   var W=210,M=15,CW=W-2*M;
@@ -2205,28 +2207,28 @@ function exportRecruitPDF(){
   function addPage(){doc.addPage();y=M;}
   function checkPage(need){if(y+need>280){addPage();return true;}return false;}
 
-  /* â”€â”€ Couleurs â”€â”€ */
+  /* ── Couleurs ── */
   var RED=[230,57,70],BLUE=[69,123,157],GREEN=[26,154,65],GRAY=[100,100,100],BLACK=[30,30,30];
 
-  /* â•â•â•â•â•â• EN-TÃŠTE â•â•â•â•â•â• */
+  /* ══════ EN-TÊTE ══════ */
   doc.setFillColor(RED[0],RED[1],RED[2]);
   doc.rect(0,0,W,38,'F');
   doc.setTextColor(255,255,255);
   doc.setFontSize(20);doc.setFont('helvetica','bold');
-  doc.text('SDIS 66 â€” Plan de recrutement ISP',W/2,16,{align:'center'});
+  doc.text('SDIS 66 — Plan de recrutement ISP',W/2,16,{align:'center'});
   doc.setFontSize(10);doc.setFont('helvetica','normal');
-  doc.text('Aide Ã  la dÃ©cision â€” Dimensionnement ISP par caserne',W/2,24,{align:'center'});
+  doc.text('Aide à la décision — Dimensionnement ISP par caserne',W/2,24,{align:'center'});
   var now=new Date();
-  doc.text('GÃ©nÃ©rÃ© le '+now.toLocaleDateString('fr-FR')+' Ã  '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),W/2,31,{align:'center'});
+  doc.text('Généré le '+now.toLocaleDateString('fr-FR')+' à '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),W/2,31,{align:'center'});
   y=46;
 
-  /* â”€â”€ ParamÃ¨tres du modÃ¨le â”€â”€ */
+  /* ── Paramètres du modèle ── */
   doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
   doc.setFontSize(8);doc.setFont('helvetica','italic');
-  doc.text('ModÃ¨le : '+H_MOIS+'h/mois Ã  couvrir â€” '+BASE_H+'h/ISP/mois â€” Rayon de renfort : 20 min',M,y);
+  doc.text('Modèle : '+H_MOIS+'h/mois à couvrir — '+BASE_H+'h/ISP/mois — Rayon de renfort : 20 min',M,y);
   y+=8;
 
-  /* â•â•â•â•â•â• SITUATION ACTUELLE â•â•â•â•â•â• */
+  /* ══════ SITUATION ACTUELLE ══════ */
   var w0=_recruitWaves[0];
   var cov0=computeCommuneCoverage(w0.snap);
   var s0=0;for(var i=0;i<cov0.length;i++)s0+=cov0[i].cov;
@@ -2241,11 +2243,11 @@ function exportRecruitPDF(){
   doc.text('Situation actuelle',M+5,y+8);
   doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
   doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text(tot0+' ISP â€” Couverture moyenne : '+avg0+'%',M+5,y+15);
-  doc.text('Communes â‰¥75% : '+a750+' | Communes <50% : '+b500,M+5,y+20);
+  doc.text(tot0+' ISP — Couverture moyenne : '+avg0+'%',M+5,y+15);
+  doc.text('Communes ≥75% : '+a750+' | Communes <50% : '+b500,M+5,y+20);
   y+=28;
 
-  /* â•â•â•â•â•â• VAGUES 1-5 â•â•â•â•â•â• */
+  /* ══════ VAGUES 1-5 ══════ */
   var prevAvg=avg0;
   for(var w=1;w<_recruitWaves.length;w++){
     var wave=_recruitWaves[w];
@@ -2269,7 +2271,7 @@ function exportRecruitPDF(){
     }
     recs.sort(function(a,b){return b.nb-a.nb;});
 
-    /* Espace nÃ©cessaire : titre(16) + table header(6) + rows(5 each) + impact(10) + marge(6) */
+    /* Espace nécessaire : titre(16) + table header(6) + rows(5 each) + impact(10) + marge(6) */
     var blockH=16+6+recs.length*5+10+6;
     checkPage(blockH);
 
@@ -2280,7 +2282,7 @@ function exportRecruitPDF(){
     doc.roundedRect(M,y,CW,10,2,2,'F');
     doc.setTextColor(255,255,255);
     doc.setFontSize(11);doc.setFont('helvetica','bold');
-    doc.text('Vague '+w+' â€” +12 ISP (total : '+(12*w)+' recrutÃ©s)',M+5,y+7);
+    doc.text('Vague '+w+' — +12 ISP (total : '+(12*w)+' recrutés)',M+5,y+7);
     y+=14;
 
     /* Tableau recrutements */
@@ -2290,7 +2292,7 @@ function exportRecruitPDF(){
     doc.setFontSize(7.5);doc.setFont('helvetica','bold');
     doc.text('Caserne',M+3,y+3.5);
     doc.text('Zone',M+60,y+3.5);
-    doc.text('Ã€ recruter',M+CW-25,y+3.5);
+    doc.text('À recruter',M+CW-25,y+3.5);
     y+=5;
 
     doc.setFont('helvetica','normal');
@@ -2315,13 +2317,13 @@ function exportRecruitPDF(){
     doc.roundedRect(M,y,CW,8,2,2,'F');
     doc.setFontSize(8);doc.setFont('helvetica','bold');
     doc.setTextColor(GREEN[0],GREEN[1],GREEN[2]);
-    doc.text('Impact : '+prevAvg+'% â†’ '+avgW+'% (+'+deltaW+' pts) â€” '+totW+' ISP total â€” '+a75w+' communes â‰¥75% â€” '+b50w+' communes <50%',M+4,y+5.5);
+    doc.text('Impact : '+prevAvg+'% → '+avgW+'% (+'+deltaW+' pts) — '+totW+' ISP total — '+a75w+' communes ≥75% — '+b50w+' communes <50%',M+4,y+5.5);
     y+=14;
 
     prevAvg=avgW;
   }
 
-  /* â•â•â•â•â•â• RÃ‰CAP FINAL â•â•â•â•â•â• */
+  /* ══════ RÉCAP FINAL ══════ */
   checkPage(35);
   var lastW=_recruitWaves[_recruitWaves.length-1];
   var covF=computeCommuneCoverage(lastW.snap);
@@ -2334,17 +2336,17 @@ function exportRecruitPDF(){
   doc.roundedRect(M,y,CW,24,3,3,'F');
   doc.setTextColor(255,255,255);
   doc.setFontSize(12);doc.setFont('helvetica','bold');
-  doc.text('RÃ©capitulatif aprÃ¨s 5 vagues (+60 ISP)',M+5,y+8);
+  doc.text('Récapitulatif après 5 vagues (+60 ISP)',M+5,y+8);
   doc.setFontSize(9);doc.setFont('helvetica','normal');
-  doc.text('Effectif total : '+totF+' ISP â€” Couverture moyenne : '+avg0+'% â†’ '+avgF+'%',M+5,y+15);
-  doc.text('Communes â‰¥75% : '+a75f+' â€” Communes <50% : '+b50f,M+5,y+21);
+  doc.text('Effectif total : '+totF+' ISP — Couverture moyenne : '+avg0+'% → '+avgF+'%',M+5,y+15);
+  doc.text('Communes ≥75% : '+a75f+' — Communes <50% : '+b50f,M+5,y+21);
   y+=30;
 
-  /* â•â•â•â•â•â• COUVERTURE PAR ZONE FINALE â•â•â•â•â•â• */
+  /* ══════ COUVERTURE PAR ZONE FINALE ══════ */
   checkPage(10+CARTE_ZONES.length*5+6);
   doc.setTextColor(BLUE[0],BLUE[1],BLUE[2]);
   doc.setFontSize(11);doc.setFont('helvetica','bold');
-  doc.text('Couverture par secteur (aprÃ¨s 5 vagues)',M,y+5);
+  doc.text('Couverture par secteur (après 5 vagues)',M,y+5);
   y+=10;
 
   function cisToZone(cid){
@@ -2358,14 +2360,14 @@ function exportRecruitPDF(){
     if(zi>=0){z0B[zi]+=cov0[i].cov;z0A[zi]+=covF[i].cov;zC[zi]++;}
   }
 
-  /* En-tÃªte tableau */
+  /* En-tête tableau */
   doc.setFillColor(245,245,248);
   doc.rect(M,y,CW,5,'F');
   doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
   doc.setFontSize(7.5);doc.setFont('helvetica','bold');
   doc.text('Secteur',M+3,y+3.5);
   doc.text('Avant',M+90,y+3.5);
-  doc.text('AprÃ¨s',M+110,y+3.5);
+  doc.text('Après',M+110,y+3.5);
   doc.text('Gain',M+CW-18,y+3.5);
   y+=5;
 
@@ -2388,7 +2390,7 @@ function exportRecruitPDF(){
   }
   y+=6;
 
-  /* â•â•â•â•â•â• SIMULATION PERSO (si remplie) â•â•â•â•â•â• */
+  /* ══════ SIMULATION PERSO (si remplie) ══════ */
   var selects=document.querySelectorAll('.sim-select');
   var simRecs=[];
   for(var i=0;i<selects.length;i++){
@@ -2404,19 +2406,19 @@ function exportRecruitPDF(){
     doc.roundedRect(M,y,CW,10,2,2,'F');
     doc.setTextColor(255,255,255);
     doc.setFontSize(11);doc.setFont('helvetica','bold');
-    doc.text('Simulation personnalisÃ©e ('+simRecs.length+' ISP)',M+5,y+7);
+    doc.text('Simulation personnalisée ('+simRecs.length+' ISP)',M+5,y+7);
     y+=14;
 
     var simSnap={};
     for(var k in w0.snap) simSnap[k]=w0.snap[k];
     for(var i=0;i<simRecs.length;i++) simSnap[simRecs[i].cid]=(simSnap[simRecs[i].cid]||0)+1;
 
-    /* Liste ISP simulÃ©s */
+    /* Liste ISP simulés */
     for(var i=0;i<simRecs.length;i++){
       if(i%2===0){doc.setFillColor(245,248,252);doc.rect(M,y,CW,5,'F');}
       doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
       doc.setFontSize(8);doc.setFont('helvetica','normal');
-      doc.text('Nouvel ISP '+simRecs[i].idx+' â†’ '+simRecs[i].nom,M+3,y+3.5);
+      doc.text('Nouvel ISP '+simRecs[i].idx+' → '+simRecs[i].nom,M+3,y+3.5);
       y+=5;
     }
     y+=4;
@@ -2435,10 +2437,10 @@ function exportRecruitPDF(){
     doc.roundedRect(M,y,CW,8,2,2,'F');
     doc.setFontSize(9);doc.setFont('helvetica','bold');
     doc.setTextColor(GREEN[0],GREEN[1],GREEN[2]);
-    doc.text('Couverture globale : '+avgSB+'% â†’ '+avgSA+'% (+'+dS+' pts)',M+4,y+5.5);
+    doc.text('Couverture globale : '+avgSB+'% → '+avgSA+'% (+'+dS+' pts)',M+4,y+5.5);
     y+=12;
 
-    /* Secteurs impactÃ©s */
+    /* Secteurs impactés */
     var zsB={},zsA={},zsC={};
     for(var z=0;z<CARTE_ZONES.length;z++){zsB[z]=0;zsA[z]=0;zsC[z]=0;}
     for(var i=0;i<covSB.length;i++){
@@ -2455,7 +2457,7 @@ function exportRecruitPDF(){
     if(simImpact.length>0){
       doc.setTextColor(BLUE[0],BLUE[1],BLUE[2]);
       doc.setFontSize(9);doc.setFont('helvetica','bold');
-      doc.text('Secteurs impactÃ©s :',M,y+4);
+      doc.text('Secteurs impactés :',M,y+4);
       y+=8;
       for(var i=0;i<simImpact.length;i++){
         if(i%2===0){doc.setFillColor(245,248,252);doc.rect(M,y,CW,5,'F');}
@@ -2463,19 +2465,19 @@ function exportRecruitPDF(){
         doc.setFontSize(8);doc.setFont('helvetica','bold');
         doc.text(simImpact[i].name,M+3,y+3.5);
         doc.setFont('helvetica','normal');
-        doc.text(simImpact[i].before+'% â†’ '+simImpact[i].after+'% (+'+simImpact[i].delta+' pts)',M+70,y+3.5);
+        doc.text(simImpact[i].before+'% → '+simImpact[i].after+'% (+'+simImpact[i].delta+' pts)',M+70,y+3.5);
         y+=5;
       }
     }
   }
 
-  /* â”€â”€ Pied de page â”€â”€ */
+  /* ── Pied de page ── */
   var pc=doc.internal.getNumberOfPages();
   for(var p=1;p<=pc;p++){
     doc.setPage(p);
     doc.setFontSize(7);doc.setFont('helvetica','italic');
     doc.setTextColor(170,170,170);
-    doc.text('SDIS 66 â€” Plan de recrutement ISP â€” Page '+p+'/'+pc,W/2,292,{align:'center'});
+    doc.text('SDIS 66 — Plan de recrutement ISP — Page '+p+'/'+pc,W/2,292,{align:'center'});
   }
 
   doc.save('Plan_Recrutement_ISP_SDIS66_'+now.toISOString().slice(0,10)+'.pdf');
