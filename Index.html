@@ -117,6 +117,27 @@
   .zone-totals{margin-top:16px;padding:14px;background:var(--bg);border-radius:8px;}
   .zone-totals .tr{display:flex;justify-content:space-between;padding:3px 0;font-size:0.88em;}
   @media(max-width:900px){.carte-layout{flex-direction:column;}#carteSidebar{width:100%;max-height:45vh;}}
+
+  /* Recruitment Plan */
+  .recruit-wave{background:var(--card);border-radius:12px;margin-bottom:24px;overflow:hidden;box-shadow:var(--shadow);}
+  .wave-header{color:#fff;font-weight:800;font-size:1.05em;padding:14px 20px;border-radius:0;}
+  .recruit-table{width:100%;border-collapse:collapse;font-size:.88em;}
+  .recruit-table th{background:var(--bg);padding:10px 12px;text-align:left;font-weight:700;color:var(--text-light);font-size:.85em;text-transform:uppercase;letter-spacing:.5px;}
+  .recruit-table td{padding:8px 12px;border-bottom:1px solid var(--border);}
+  .recruit-table tr:hover td{background:var(--bg);}
+  .bilan-header{font-weight:800;font-size:.95em;padding:16px 20px 8px;color:var(--text);}
+  .bilan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:0 20px 16px;}
+  .bilan-card{background:var(--bg);border-radius:8px;padding:12px 14px;border-left:4px solid transparent;}
+  .bilan-card.ok{background:#f0faf8;}
+  .bilan-card.warn{background:#fef8f5;}
+  .bilan-card.crit{background:#fef2f3;}
+  .bilan-zone{font-weight:700;font-size:.92em;margin-bottom:6px;}
+  .bilan-row{display:flex;justify-content:space-between;font-size:.82em;color:var(--text-light);padding:2px 0;}
+  .bilan-row strong{color:var(--text);}
+  .bilan-global{margin:0 20px 20px;padding:14px 18px;border-radius:8px;font-size:.92em;}
+  .bilan-global.ok{background:#e6f5f3;color:#2a9d8f;}
+  .bilan-global.warn{background:#fdf0ec;color:#e76f51;}
+  .bilan-global.crit{background:#fde8ea;color:#e63946;}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -279,6 +300,7 @@
     <div class="card-title">🏥 Listing des casernes — Effectif actuel vs Cible opérationnelle</div>
     <div class="table-wrap" id="resultatTable"></div>
   </div>
+  <div id="recruitmentPlan" style="margin-top:24px;"></div>
 </div>
 </div>
 
@@ -893,6 +915,222 @@ function renderResultat(){
   h+='</tbody></table>';
 
   document.getElementById('resultatTable').innerHTML=h;
+  renderRecruitmentPlan();
+}
+
+/* ═══════════════════════════════════════════════════════
+   PLAN DE RECRUTEMENT — Algorithme glouton priorisé
+   Priorité 1 : casernes sans ISP
+   Priorité 2 : casernes sous la cible
+   Priorité 3 : amélioration marginale couverture inter-zones
+   ═══════════════════════════════════════════════════════ */
+function renderRecruitmentPlan(){
+  if(!DATA) return;
+  var centres=DATA.centres||[];
+
+  function nrm(s){return(s||'').toUpperCase().replace(/[ÉÈÊË]/g,'E').replace(/[ÀÂÄÃ]/g,'A').replace(/[ÎÏ]/g,'I').replace(/[ÔÖ]/g,'O').replace(/[ÙÛÜÚ]/g,'U').replace(/[Ç]/g,'C').replace(/[-_'()]/g,' ').replace(/\s+/g,' ').trim();}
+
+  var al={
+    'pnord':['PNORD','PERPIGNAN NORD'],'psud':['PSUD','PERPIGNAN SUD'],'pouest':['POUEST','PERPIGNAN OUEST'],
+    'les-aspres':['ASPRES','THUIR','LES ASPRES'],'le-barcares':['BARCARES','LE BARCARES'],
+    'saint-cyprien':['ST CYPRIEN','SAINT CYPRIEN'],'vallespir':['AMELIE','VALLESPIR'],
+    'porte':['PORTE PUYMORENS','PORTE'],'boulou':['LE BOULOU','BOULOU'],
+    'cote-vermeille':['COTE VERMEILLE'],'st-laurent-cerdans':['ST LAURENT DE CERDANS','SAINT LAURENT'],
+    'st-paul-fenouillet':['ST PAUL DE FENOUILLET','SAINT PAUL'],'prats':['PRATS DE MOLLO','PRATS'],
+    'cerdagne':['CERDAGNE','BOURG MADAME'],'font-romeu':['FONT ROMEU'],'ille-sur-tet':['ILLE SUR TET','ILLE'],
+    'mont-louis':['MONT LOUIS'],'capcir':['CAPCIR','FORMIGUERES'],'caudies':['CAUDIES'],
+    'argeles':['ARGELES'],'ceret':['CERET'],'vinca':['VINCA'],'salses':['SALSES'],
+    'maury':['MAURY'],'vingrau':['VINGRAU'],'canet':['CANET'],'rivesaltes':['RIVESALTES'],
+    'salanque':['SALANQUE'],'baixas':['BAIXAS'],'millas':['MILLAS'],'riberal':['RIBERAL'],
+    'elne':['ELNE'],'palau':['PALAU'],'agly':['AGLY'],'olette':['OLETTE'],
+    'sournia':['SOURNIA'],'vernet':['VERNET'],'prades':['PRADES'],'saillagouse':['SAILLAGOUSE'],
+    'cerbere':['CERBERE'],'banyuls':['BANYULS']
+  };
+
+  function getISP(id,nom){
+    var names=[nrm(nom)];
+    if(al[id]) for(var a=0;a<al[id].length;a++) names.push(nrm(al[id][a]));
+    for(var i=0;i<centres.length;i++){
+      var cn=nrm(centres[i].centre);
+      for(var j=0;j<names.length;j++){
+        if(cn===names[j]||(names[j].length>3&&cn.indexOf(names[j])!==-1)||(cn.length>3&&names[j].indexOf(cn)!==-1)) return centres[i].nbIsp;
+      }
+    }
+    return 0;
+  }
+
+  function zoneOf(cisId){
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(CARTE_ZONES[z].cis.indexOf(cisId)!==-1) return CARTE_ZONES[z];
+    }
+    return null;
+  }
+
+  /* ─── État initial : ISP par CIS ─── */
+  var curISP={};
+  for(var i=0;i<CIS.length;i++) curISP[CIS[i].id]=getISP(CIS[i].id,CIS[i].nom);
+
+  /* ─── Matrice couverture inter-zones : chaque CIS peut couvrir ses voisins ≤30min ─── */
+  var MAX_RENFORT=30;
+  var cisCov={};
+  for(var i=0;i<CIS.length;i++){
+    var c=CIS[i]; cisCov[c.id]=[];
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zo=CARTE_ZONES[z];
+      if(zo.cis.indexOf(c.id)!==-1){
+        cisCov[c.id].push({zo:zo,t:0,w:1.0});
+      } else {
+        var zc=zoneCentroid(zo);
+        var t=Math.round(haversineKm(c.lat,c.lng,zc.lat,zc.lng)*1.3/50*60);
+        if(t<=MAX_RENFORT) cisCov[c.id].push({zo:zo,t:t,w:Math.max(0.2,1-t/MAX_RENFORT*0.8)});
+      }
+    }
+  }
+
+  /* ─── Calcul couverture par zone depuis un état ISP ─── */
+  function zCov(st){
+    var res={};
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zo=CARTE_ZONES[z], eff=0, near=999, tSum=0, tCnt=0;
+      for(var i=0;i<CIS.length;i++){
+        var c=CIS[i], n=st[c.id]||0;
+        if(n<=0) continue;
+        for(var j=0;j<cisCov[c.id].length;j++){
+          var cv=cisCov[c.id][j];
+          if(cv.zo.name===zo.name){
+            eff+=n*cv.w;
+            var zc=zoneCentroid(zo);
+            var tt=Math.round(haversineKm(c.lat,c.lng,zc.lat,zc.lng)*1.3/50*60);
+            if(tt<near) near=tt;
+            tSum+=tt*n; tCnt+=n;
+            break;
+          }
+        }
+      }
+      var im=zIntMois(zo);
+      res[zo.name]={eff:Math.round(eff*10)/10,cov:covPct(Math.round(eff),im),near:near<999?near:0,avg:tCnt>0?Math.round(tSum/tCnt):0,im:im};
+    }
+    return res;
+  }
+
+  /* ─── Algorithme glouton de recrutement ─── */
+  function recruit(st0,num){
+    var plan=[], st={};
+    for(var p in st0) st[p]=st0[p];
+
+    for(var r=0;r<num;r++){
+      var best=null, bScore=-Infinity, bReason='';
+      var bef=zCov(st);
+
+      for(var i=0;i<CIS.length;i++){
+        var c=CIS[i], cur=st[c.id]||0, score=0, reason='';
+
+        /* P1 — CIS sans ISP (priorité absolue demandée) */
+        if(cur===0){
+          score+=1000; reason='CIS sans ISP';
+          var zo=zoneOf(c.id);
+          if(zo){
+            var zISP=0;
+            for(var j=0;j<zo.cis.length;j++) zISP+=(st[zo.cis[j]]||0);
+            if(zISP===0){score+=500; reason='Zone sans aucun ISP';}
+          }
+        }
+
+        /* P2 — Sous la cible */
+        var delta=c.cible-cur;
+        if(delta>0){score+=delta*50; if(!reason) reason='Besoin : \u2212'+delta+' vs cible';}
+
+        /* P3 — Amélioration marginale couverture (toutes zones) */
+        var sim={};
+        for(var q in st) sim[q]=st[q];
+        sim[c.id]=(sim[c.id]||0)+1;
+        var aft=zCov(sim);
+        var imp=0;
+        for(var z=0;z<CARTE_ZONES.length;z++){
+          var zName=CARTE_ZONES[z].name;
+          imp+=(aft[zName].cov-bef[zName].cov)*aft[zName].im;
+        }
+        score+=imp;
+
+        /* Pénalité si déjà au-dessus de la cible */
+        if(cur>=c.cible) score-=200;
+        if(!reason) reason='Renfort couverture';
+
+        if(score>bScore){bScore=score; best=c; bReason=reason;}
+      }
+
+      if(best){
+        var zo2=zoneOf(best.id);
+        plan.push({
+          rank:r+1, id:best.id, nom:best.nom,
+          zone:zo2?zo2.name:'\u2014', color:zo2?zo2.color:'#999',
+          before:st[best.id]||0, after:(st[best.id]||0)+1,
+          cible:best.cible, reason:bReason
+        });
+        st[best.id]=(st[best.id]||0)+1;
+      }
+    }
+    return {plan:plan, state:st};
+  }
+
+  /* ─── Exécution des 2 vagues ─── */
+  var cv0=zCov(curISP);
+  var w1=recruit(curISP,12), cv1=zCov(w1.state);
+  var w2=recruit(w1.state,12), cv2=zCov(w2.state);
+
+  var totCur=0; for(var k in curISP) totCur+=curISP[k];
+
+  /* ─── Génération HTML ─── */
+  var html='';
+  html+='<div class="wave-header" style="background:var(--text);margin-bottom:16px;border-radius:8px;">\ud83d\udccb Plan de Recrutement \u2014 Priorisation intelligente</div>';
+  html+='<p style="color:var(--text-light);font-size:.85em;margin:0 0 20px 0;">Algorithme glouton : priorit\u00e9 casernes sans ISP, puis casernes sous la cible, couverture inter-zones (ISP couvrant secteurs voisins \u2264'+MAX_RENFORT+' min). Mod\u00e8le : '+getBaseH()+'h/mois par ISP.</p>';
+  html+=waveHTML('Vague 1 \u2014 Recrutement prioritaire',w1.plan,cv0,cv1,'#1d4ed8',totCur,totCur+12);
+  html+=waveHTML('Vague 2 \u2014 Consolidation',w2.plan,cv1,cv2,'#059669',totCur+12,totCur+24);
+
+  document.getElementById('recruitmentPlan').innerHTML=html;
+
+  /* ─── Render une vague ─── */
+  function waveHTML(title,plan,cvBef,cvAft,col,ispBef,ispAft){
+    var w='<div class="recruit-wave">';
+    w+='<div class="wave-header" style="background:'+col+';">\ud83c\udfaf '+title+' ('+ispBef+' \u2192 '+ispAft+' ISP)</div>';
+    w+='<table class="recruit-table"><thead><tr><th>#</th><th>Caserne</th><th>Secteur</th><th>Avant</th><th>Apr\u00e8s</th><th>Cible</th><th>Motif de priorisation</th></tr></thead><tbody>';
+    for(var i=0;i<plan.length;i++){
+      var p=plan[i];
+      w+='<tr><td><strong>'+p.rank+'</strong></td>';
+      w+='<td><strong>'+esc(p.nom)+'</strong></td>';
+      w+='<td><span style="color:'+p.color+';font-weight:700;">\u25cf</span> '+esc(p.zone)+'</td>';
+      w+='<td>'+p.before+'</td><td><strong>'+p.after+'</strong></td><td>'+p.cible+'</td>';
+      w+='<td style="font-size:.85em;color:var(--text-light);">'+esc(p.reason)+'</td></tr>';
+    }
+    w+='</tbody></table>';
+
+    /* Bilan couverture par secteur */
+    w+='<div class="bilan-header">\ud83d\udcca Bilan couverture apr\u00e8s '+title.split('\u2014')[0].trim()+'</div>';
+    w+='<div class="bilan-grid">';
+    var wBef=0,wAft=0,wIm=0;
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zo=CARTE_ZONES[z], b=cvBef[zo.name], a=cvAft[zo.name];
+      var d=a.cov-b.cov, cls=a.cov>=75?'ok':(a.cov>=50?'warn':'crit');
+      w+='<div class="bilan-card '+cls+'" style="border-left-color:'+zo.color+';">';
+      w+='<div class="bilan-zone" style="color:'+zo.color+';">'+zo.name+'</div>';
+      w+='<div class="bilan-row"><span>Couverture</span><strong class="res-cov '+cls+'">'+a.cov+'%</strong></div>';
+      if(d>0) w+='<div class="bilan-row"><span>\u00c9volution</span><strong style="color:var(--green);">+'+Math.round(d*10)/10+'%</strong></div>';
+      w+='<div class="bilan-row"><span>ISP effectifs</span><strong>'+a.eff+'</strong></div>';
+      w+='<div class="bilan-row"><span>\ud83d\ude97 Temps trajet</span><strong>~'+a.avg+' min</strong></div>';
+      w+='<div class="bilan-row"><span>\ud83d\ude97 ISP le plus proche</span><strong>~'+a.near+' min</strong></div>';
+      w+='</div>';
+      wBef+=b.cov*b.im; wAft+=a.cov*a.im; wIm+=a.im;
+    }
+    w+='</div>';
+
+    /* Synthèse globale */
+    var mBef=wIm>0?Math.round(wBef/wIm*10)/10:0, mAft=wIm>0?Math.round(wAft/wIm*10)/10:0;
+    var gCls=mAft>=75?'ok':(mAft>=50?'warn':'crit');
+    w+='<div class="bilan-global '+gCls+'"><strong>\ud83c\udfe2 Couverture d\u00e9partement :</strong> '+mBef+'% \u2192 <strong>'+mAft+'%</strong>';
+    if(mAft>mBef) w+=' <span style="color:var(--green);">(+'+Math.round((mAft-mBef)*10)/10+'%)</span>';
+    w+='</div></div>';
+    return w;
+  }
 }
 </script>
 </body>
