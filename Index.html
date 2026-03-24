@@ -73,6 +73,22 @@
   @media(max-width:768px){.chart-grid{grid-template-columns:1fr;}.stat-row{grid-template-columns:repeat(2,1fr);}.bar-label{width:100px;}.container{padding:12px;}}
   @media print{.topbar{position:static;}.card{break-inside:avoid;box-shadow:none;border:1px solid #ddd;}}
 
+  /* Résultat final */
+  .res-table{width:100%;border-collapse:collapse;font-size:0.85em;}
+  .res-table th{background:var(--bg);font-weight:700;padding:10px 14px;border-bottom:2px solid var(--border);text-align:center;}
+  .res-table th:first-child{text-align:left;}
+  .res-table td{padding:8px 14px;border-bottom:1px solid var(--border);text-align:center;}
+  .res-table td:first-child{text-align:left;}
+  .res-zone-header td{background:linear-gradient(90deg,var(--zone-color) 4px,#f8f9fb 4px);font-weight:800;font-size:0.95em;padding:12px 14px 12px 16px;border-bottom:2px solid var(--border);}
+  .res-subtotal td{background:#f0f2f5;font-weight:700;border-top:2px solid var(--border);}
+  .res-grandtotal td{background:var(--text);color:#fff;font-weight:800;font-size:0.95em;padding:12px 14px;}
+  .res-delta-pos{color:var(--green);font-weight:700;}
+  .res-delta-neg{color:var(--primary);font-weight:700;}
+  .res-cov{font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;font-size:0.85em;}
+  .res-cov.ok{background:#e6f5f3;color:#2a9d8f;}
+  .res-cov.warn{background:#fdf0ec;color:#e76f51;}
+  .res-cov.crit{background:#fde8ea;color:#e63946;}
+
   /* Tab Bar */
   .tab-bar{display:flex;gap:8px;margin-top:10px;}
   .tab-btn{background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);color:#fff;padding:7px 20px;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.9em;transition:all .2s;font-family:inherit;}
@@ -114,6 +130,7 @@
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="stats" onclick="switchTab('stats')">📊 Statistiques</button>
     <button class="tab-btn" data-tab="carte" onclick="switchTab('carte')">🗺️ Carte</button>
+    <button class="tab-btn" data-tab="resultat" onclick="switchTab('resultat')">🎯 Résultat</button>
   </div>
 </div>
 
@@ -244,6 +261,17 @@
   </div>
 </div>
 
+<div id="viewResultat" style="display:none;">
+<div class="container">
+  <div class="section-sep">🎯 Résultat final — ISP actuels vs Cible pour 75% de couverture</div>
+  <div class="stat-row" id="resultatKpi"></div>
+  <div class="card">
+    <div class="card-title">🏥 Listing des casernes — Effectif actuel vs Cible opérationnelle</div>
+    <div class="table-wrap" id="resultatTable"></div>
+  </div>
+</div>
+</div>
+
 <script>
 var DATA=null, charts={}, sortStates={};
 
@@ -271,6 +299,7 @@ function renderAll(){
   renderEffectif();
   renderCentreTable();
   renderIspTable();
+  renderResultat();
 }
 
 /* ═══ KPI ═══ */
@@ -516,6 +545,7 @@ function buildBar(arr,color){
 function switchTab(tab){
   document.getElementById('viewStats').style.display=tab==='stats'?'':'none';
   document.getElementById('viewCarte').style.display=tab==='carte'?'':'none';
+  document.getElementById('viewResultat').style.display=tab==='resultat'?'':'none';
   var btns=document.querySelectorAll('.tab-btn');
   for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',btns[i].getAttribute('data-tab')===tab);
   if(tab==='carte'){if(!window._mapObj)setTimeout(initCarte,120);else window._mapObj.invalidateSize();}
@@ -718,6 +748,90 @@ function renderZones(){
 }
 
 function updateCoverage(v){document.getElementById('coverTarget').textContent=v;renderZones();}
+
+/* ═══ RÉSULTAT FINAL ═══ */
+function renderResultat(){
+  if(!DATA)return;
+  var centres=DATA.centres||[];
+
+  function nrm(s){return(s||'').toUpperCase().replace(/[ÉÈÊË]/g,'E').replace(/[ÀÂÄÃ]/g,'A').replace(/[ÎÏ]/g,'I').replace(/[ÔÖ]/g,'O').replace(/[ÙÛÜÚ]/g,'U').replace(/[Ç]/g,'C').replace(/[-_'()]/g,' ').replace(/\s+/g,' ').trim();}
+
+  var alias={
+    'pnord':['PNORD','PERPIGNAN NORD'],'psud':['PSUD','PERPIGNAN SUD'],'pouest':['POUEST','PERPIGNAN OUEST'],
+    'les-aspres':['ASPRES','THUIR','LES ASPRES'],'le-barcares':['BARCARES','LE BARCARES'],
+    'saint-cyprien':['ST CYPRIEN','SAINT CYPRIEN'],'vallespir':['AMELIE','VALLESPIR'],
+    'porte':['PORTE PUYMORENS','PORTE'],'boulou':['LE BOULOU','BOULOU'],
+    'cote-vermeille':['COTE VERMEILLE'],'st-laurent-cerdans':['ST LAURENT DE CERDANS','SAINT LAURENT'],
+    'st-paul-fenouillet':['ST PAUL DE FENOUILLET','SAINT PAUL'],'prats':['PRATS DE MOLLO','PRATS'],
+    'cerdagne':['CERDAGNE','BOURG MADAME'],'font-romeu':['FONT ROMEU'],'ille-sur-tet':['ILLE SUR TET','ILLE'],
+    'mont-louis':['MONT LOUIS'],'capcir':['CAPCIR','FORMIGUERES'],'caudies':['CAUDIES'],
+    'argeles':['ARGELES'],'ceret':['CERET'],'vinca':['VINCA'],'salses':['SALSES'],
+    'maury':['MAURY'],'vingrau':['VINGRAU'],'canet':['CANET'],'rivesaltes':['RIVESALTES'],
+    'salanque':['SALANQUE'],'baixas':['BAIXAS'],'millas':['MILLAS'],'riberal':['RIBERAL'],
+    'elne':['ELNE'],'palau':['PALAU'],'agly':['AGLY'],'olette':['OLETTE'],
+    'sournia':['SOURNIA'],'vernet':['VERNET'],'prades':['PRADES'],'saillagouse':['SAILLAGOUSE'],
+    'cerbere':['CERBERE'],'banyuls':['BANYULS']
+  };
+
+  function findISP(id,nom){
+    var names=[nrm(nom)];
+    if(alias[id]) for(var a=0;a<alias[id].length;a++) names.push(nrm(alias[id][a]));
+    for(var i=0;i<centres.length;i++){
+      var cn=nrm(centres[i].centre);
+      for(var j=0;j<names.length;j++){
+        if(cn===names[j]||(names[j].length>3&&cn.indexOf(names[j])!==-1)||(cn.length>3&&names[j].indexOf(cn)!==-1)) return centres[i].nbIsp;
+      }
+    }
+    return 0;
+  }
+
+  var zoneRows=[],gCur=0,gCib=0;
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    var zo=CARTE_ZONES[z],im=zIntMois(zo),rows=[],zCur=0,zCib=0;
+    for(var c=0;c<zo.cis.length;c++){
+      var obj=null;for(var k=0;k<CIS.length;k++){if(CIS[k].id===zo.cis[c]){obj=CIS[k];break;}}
+      if(!obj)continue;
+      var cur=findISP(obj.id,obj.nom);
+      rows.push({nom:obj.nom,cur:cur,cib:obj.cible,delta:cur-obj.cible});
+      zCur+=cur;zCib+=obj.cible;
+    }
+    var cov=covPct(zCur,im);
+    zoneRows.push({zone:zo,rows:rows,zCur:zCur,zCib:zCib,zDelta:zCur-zCib,cov:cov,im:im});
+    gCur+=zCur;gCib+=zCib;
+  }
+
+  var gD=gCur-gCib;
+  var wSum=0,wTot=0;
+  for(var z=0;z<zoneRows.length;z++){wSum+=zoneRows[z].cov*zoneRows[z].im;wTot+=zoneRows[z].im;}
+  var gCov=wTot>0?Math.round(wSum/wTot*10)/10:0;
+  var gCovCls=gCov>=75?'ok':(gCov>=50?'warn':'crit');
+
+  document.getElementById('resultatKpi').innerHTML=
+    sc(gCur,'ISP actuels','blue')+
+    sc(gCib,'ISP cible (75%)','green')+
+    sc((gD>=0?'+':'')+gD,'Écart global',gD>=0?'green':'red')+
+    sc(gCov+'%','Couverture moy. pondérée',gCov>=75?'green':'red');
+
+  var h='<table class="res-table"><thead><tr><th>Caserne</th><th>ISP actuels</th><th>ISP cible</th><th>Écart</th><th>Couverture zone</th></tr></thead><tbody>';
+
+  for(var z=0;z<zoneRows.length;z++){
+    var zd=zoneRows[z],co=zd.zone.color;
+    var covCls=zd.cov>=75?'ok':(zd.cov>=50?'warn':'crit');
+    h+='<tr class="res-zone-header" style="--zone-color:'+co+';"><td colspan="5">'+esc(zd.zone.name)+' <span style="font-weight:400;font-size:.82em;color:var(--text-light);">('+zd.rows.length+' CIS \u2022 ~'+zd.im+' inter/mois)</span></td></tr>';
+    for(var r=0;r<zd.rows.length;r++){
+      var rw=zd.rows[r],dc=rw.delta>=0?'res-delta-pos':'res-delta-neg';
+      h+='<tr><td style="padding-left:24px;">'+esc(rw.nom)+'</td><td>'+rw.cur+'</td><td>'+rw.cib+'</td><td class="'+dc+'">'+(rw.delta>=0?'+':'')+rw.delta+'</td><td></td></tr>';
+    }
+    var dc2=zd.zDelta>=0?'res-delta-pos':'res-delta-neg';
+    h+='<tr class="res-subtotal"><td>Sous-total</td><td>'+zd.zCur+'</td><td>'+zd.zCib+'</td><td class="'+dc2+'">'+(zd.zDelta>=0?'+':'')+zd.zDelta+'</td><td><span class="res-cov '+covCls+'">'+zd.cov+'%</span></td></tr>';
+  }
+
+  var gDCls=gD>=0?'res-delta-pos':'res-delta-neg';
+  h+='<tr class="res-grandtotal"><td>TOTAL DÉPARTEMENT</td><td>'+gCur+'</td><td>'+gCib+'</td><td class="'+gDCls+'">'+(gD>=0?'+':'')+gD+'</td><td><span class="res-cov '+gCovCls+'">'+gCov+'%</span></td></tr>';
+  h+='</tbody></table>';
+
+  document.getElementById('resultatTable').innerHTML=h;
+}
 </script>
 </body>
 </html>
