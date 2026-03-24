@@ -249,7 +249,7 @@
     <div id="carteSidebar">
       <div class="sidebar-header">
         <h3>🥔 Zones opérationnelles ISP</h3>
-        <p style="font-size:0.8em;color:var(--text-light);margin-bottom:8px;">Modèle : 36h/mois par ISP, 1 sur 5 fait 72h. Cliquez sur une zone pour zoomer.</p>
+        <p style="font-size:0.8em;color:var(--text-light);margin-bottom:8px;" id="modelDesc">Modèle : 36h/mois par ISP, 1 sur 5 fait le double. Cliquez sur une zone pour zoomer.</p>
         <div class="coverage-control">
           <label>Objectif couverture : <strong id="coverTarget">75</strong>%</label>
           <input type="range" id="coverSlider" min="50" max="100" value="75" oninput="updateCoverage(this.value)">
@@ -258,6 +258,11 @@
           <label>🚗 Temps de trajet max : <strong id="trajetTarget">0</strong> min</label>
           <input type="range" id="trajetSlider" min="0" max="45" value="0" step="5" oninput="updateTrajet(this.value)">
           <p style="font-size:0.72em;color:var(--text-light);margin-top:2px;">0 = ISP du secteur uniquement. Augmenter pour inclure les ISP des CIS voisins accessibles.</p>
+        </div>
+        <div class="coverage-control" style="margin-top:8px;">
+          <label>⏱️ Heures mensuelles par ISP : <strong id="heuresTarget">36</strong>h</label>
+          <input type="range" id="heuresSlider" min="12" max="48" value="36" step="2" oninput="updateHeures(this.value)">
+          <p style="font-size:0.72em;color:var(--text-light);margin-top:2px;">Base de temps mensuel effectué par chaque ISP (1 sur 5 fait le double).</p>
         </div>
       </div>
       <div id="zoneCards"></div>
@@ -618,7 +623,8 @@ var CARTE_ZONES=[
 
 /* ═══ MODÈLE ISP ═══ */
 var H_MOIS=730,BASE_H=36,DUREE_INTER=2;
-function ispH(n){return n*BASE_H+Math.floor(n/5)*BASE_H;}
+function getBaseH(){var el=document.getElementById('heuresSlider');return el?parseInt(el.value)||36:BASE_H;}
+function ispH(n){var bh=getBaseH();return n*bh+Math.floor(n/5)*bh;}
 function needISP(cp,im){for(var n=0;n<=300;n++){if(ispH(n)>=(cp/100)*(H_MOIS+im*DUREE_INTER))return n;}return 300;}
 function covPct(n,im){var d=H_MOIS+im*DUREE_INTER;return d>0?Math.min(100,Math.round(ispH(n)/d*1000)/10):100;}
 
@@ -803,6 +809,7 @@ function renderZones(){
 
 function updateCoverage(v){document.getElementById('coverTarget').textContent=v;renderZones();}
 function updateTrajet(v){document.getElementById('trajetTarget').textContent=v;renderZones();}
+function updateHeures(v){document.getElementById('heuresTarget').textContent=v;document.getElementById('modelDesc').textContent='Modèle : '+v+'h/mois par ISP, 1 sur 5 fait '+(v*2)+'h. Cliquez sur une zone pour zoomer.';renderZones();}
 
 /* ═══ RÉSULTAT FINAL ═══ */
 function renderResultat(){
