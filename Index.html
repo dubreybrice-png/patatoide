@@ -254,6 +254,11 @@
           <label>Objectif couverture : <strong id="coverTarget">75</strong>%</label>
           <input type="range" id="coverSlider" min="50" max="100" value="75" oninput="updateCoverage(this.value)">
         </div>
+        <div class="coverage-control" style="margin-top:8px;">
+          <label>🚗 Temps de trajet max : <strong id="trajetTarget">0</strong> min</label>
+          <input type="range" id="trajetSlider" min="0" max="45" value="0" step="5" oninput="updateTrajet(this.value)">
+          <p style="font-size:0.72em;color:var(--text-light);margin-top:2px;">0 = ISP du secteur uniquement. Augmenter pour inclure les ISP des CIS voisins accessibles.</p>
+        </div>
       </div>
       <div id="zoneCards"></div>
       <div id="zoneTotals"></div>
@@ -716,19 +721,68 @@ function zIntMois(zo){
 }
 function zCible(zo){var t=0;for(var i=0;i<zo.cis.length;i++){for(var j=0;j<CIS.length;j++){if(CIS[j].id===zo.cis[i]){t+=CIS[j].cible;break;}}}return t;}
 
+/* ═══ DISTANCE & TEMPS DE TRAJET ENTRE CIS ═══ */
+function haversineKm(lat1,lng1,lat2,lng2){
+  var R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+// Temps de trajet estimé en minutes (vitesse moyenne ~50 km/h en montagne/rural, facteur sinuosité 1.3)
+function trajetMin(c1,c2){return Math.round(haversineKm(c1.lat,c1.lng,c2.lat,c2.lng)*1.3/50*60);}
+
+// Trouver le centroïde d'une zone (moyenne lat/lng de ses CIS)
+function zoneCentroid(zo){
+  var lat=0,lng=0,n=0;
+  for(var i=0;i<zo.cis.length;i++){
+    for(var j=0;j<CIS.length;j++){
+      if(CIS[j].id===zo.cis[i]){lat+=CIS[j].lat;lng+=CIS[j].lng;n++;break;}
+    }
+  }
+  return n>0?{lat:lat/n,lng:lng/n}:{lat:0,lng:0};
+}
+
+// Calculer les ISP effectifs pour une zone en incluant les CIS voisins accessibles
+function zCibleWithTrajet(zo, maxMinutes){
+  var base = zCible(zo);
+  if(maxMinutes <= 0) return base;
+
+  // Trouver les CIS de cette zone
+  var zoneCisSet = {};
+  for(var i=0;i<zo.cis.length;i++) zoneCisSet[zo.cis[i]] = true;
+
+  // Centroid de la zone cible
+  var zc = zoneCentroid(zo);
+
+  // Chercher tous les CIS hors zone dont le trajet vers le centroïde de la zone <= maxMinutes
+  var extra = 0;
+  for(var i=0;i<CIS.length;i++){
+    if(zoneCisSet[CIS[i].id]) continue;
+    var t = Math.round(haversineKm(CIS[i].lat,CIS[i].lng,zc.lat,zc.lng)*1.3/50*60);
+    if(t <= maxMinutes){
+      // On compte une fraction des ISP de ce CIS voisin (plus c'est loin, moins on compte)
+      var ratio = Math.max(0, 1 - t/maxMinutes * 0.5); // de 100% à 50% selon distance
+      extra += Math.round(CIS[i].cible * ratio * 10) / 10;
+    }
+  }
+  return Math.round((base + extra) * 10) / 10;
+}
+
 function renderZones(){
-  var cp=parseInt(document.getElementById('coverSlider').value)||75,h='',tc=0,tn=0,ti=0;
+  var cp=parseInt(document.getElementById('coverSlider').value)||75;
+  var trajet=parseInt(document.getElementById('trajetSlider').value)||0;
+  var h='',tc=0,tn=0,ti=0;
   for(var z=0;z<CARTE_ZONES.length;z++){
-    var zo=CARTE_ZONES[z],im=zIntMois(zo),cbl=zCible(zo),nd=needISP(cp,im),cv=covPct(cbl,im),df=cbl-nd;
+    var zo=CARTE_ZONES[z],im=zIntMois(zo),cbl=zCibleWithTrajet(zo,trajet),nd=needISP(cp,im),cv=covPct(cbl,im),df=Math.round((cbl-nd)*10)/10;
     var st,sc;
     if(df>=0){st='✅ OK (+'+df+')';sc='ok';}
     else if(df>=-3){st='⚠️ −'+Math.abs(df)+' ISP';sc='warn';}
     else{st='🚨 −'+Math.abs(df)+' ISP';sc='crit';}
     tc+=cbl;tn+=nd;ti+=im;
+    var extraLabel = trajet>0 ? ' <span style="font-size:.75em;color:var(--blue);">(+voisins ≤'+trajet+'min)</span>' : '';
     h+='<div class="zone-card" data-z="'+zo.name+'" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')" style="border-left-color:'+zo.color+';">';
     h+='<div class="zn" style="color:'+zo.color+';">'+zo.name+' <span style="font-weight:400;font-size:.82em;color:var(--text-light);">('+zo.cis.length+' CIS)</span></div>';
     h+='<div class="zr"><span>Inter/mois</span><strong>~'+im+'</strong></div>';
-    h+='<div class="zr"><span>ISP cible</span><strong>'+cbl+'</strong></div>';
+    h+='<div class="zr"><span>ISP effectifs'+extraLabel+'</span><strong>'+cbl+'</strong></div>';
     h+='<div class="zr"><span>ISP nécessaires ('+cp+'%)</span><strong>'+nd+'</strong></div>';
     h+='<div class="zr"><span>Couverture actuelle</span><strong>'+cv+'%</strong></div>';
     h+='<div class="zs '+sc+'">'+st+'</div></div>';
@@ -748,6 +802,7 @@ function renderZones(){
 }
 
 function updateCoverage(v){document.getElementById('coverTarget').textContent=v;renderZones();}
+function updateTrajet(v){document.getElementById('trajetTarget').textContent=v;renderZones();}
 
 /* ═══ RÉSULTAT FINAL ═══ */
 function renderResultat(){
