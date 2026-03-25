@@ -39,8 +39,23 @@ var Config = {
   PERPIGNAN_RINGS: [
     { name: 'Perpignan', keywords: ['PERPIGNAN'] },
     { name: '+ ~10 min', keywords: ['CANET','RIVESALTES','RIBERAL'] },
-    { name: '+ ~20 min', keywords: ['ELNE','SALANQUE','MILLAS','SAINT CYPRIEN','ASPRES','BAIXAS','PALAU','VINGRAU'] },
-    { name: '+ ~30 min', keywords: ['ARGELES','BOULOU','ILLE SUR','CERET','COTE VERMEILLE','AGLY','VINCA','BANYULS'] },
+    { name: '+ ~20 min', keywords: ['ELNE','SALANQUE','MILLAS','SAINT CYPRIEN','ASPRES','BAIXAS','PALAU'] },
+    { name: '+ ~30 min', keywords: ['ARGELES','BOULOU','ILLE SUR','CERET','COTE VERMEILLE','AGLY','VINCA','BANYULS','VINGRAU'] },
     { name: '+ ~45 min+', keywords: ['VALLESPIR','PRATS','SAINT PAUL','PRADES','OLETTE','SAILLAGOUSE','PORTE'] }
+  ],
+
+  /* ═══ Groupes de casernes (centres ISP du sheet temps travail) pour distribution par zone ═══ */
+  CENTRE_GROUPS: [
+    { name: 'Agglo Perpignan', keywords: ['PERPIGNAN'] },
+    { name: 'Salanque', keywords: ['SALANQUE','BARCARES'] },
+    { name: 'Ribéral-Aspres', keywords: ['RIBERAL','ASPRES','MILLAS'] },
+    { name: 'Agly-Rivesaltes', keywords: ['RIVESALTES','BAIXAS','AGLY','VINGRAU','MAURY'] },
+    { name: 'Côte Sablonneuse', keywords: ['CANET','SAINT CYPRIEN'] },
+    { name: 'Plaine Elne', keywords: ['ELNE','PALAU'] },
+    { name: 'Côte Vermeille-Albères', keywords: ['ARGELES','COTE VERMEILLE','BANYULS'] },
+    { name: 'Vallespir', keywords: ['CERET','BOULOU','VALLESPIR','PRATS'] },
+    { name: 'Conflent', keywords: ['PRADES','ILLE SUR','VINCA','OLETTE'] },
+    { name: 'Fenouillèdes', keywords: ['SAINT PAUL DE FENOUILLET'] },
+    { name: 'Cerdagne-Capcir', keywords: ['SAILLAGOUSE','PORTE','FONT ROMEU'] }
   ]
 };

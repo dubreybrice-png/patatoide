@@ -140,9 +140,24 @@ function getPageData() {
     delaiStats:       buildDelaiAvg_(delais),
     availDept:        buildAvailability_(deduped, null),
     availRings:       buildRingAvailability_(deduped),
+    availByGroup:     buildAvailByGroup_(deduped),
     zeroCoverageByHour: buildZeroCoverageByHour_(deduped),
-    centres:          buildCentresList_(listing)
+    oneCoverageByHour: buildOneCoverageByHour_(deduped),
+    slotsByCentre:    buildSlotsByCentre_(deduped),
+    centres:          buildCentresList_(listing),
+    rawCentreNames:   buildRawCentreNames_(listing)
   };
+}
+
+function buildRawCentreNames_(listing) {
+  var names = {};
+  for (var i = 0; i < listing.length; i++) {
+    var cp = (listing[i].centrePrincipal || '').trim();
+    var cs = (listing[i].centreSecondaire || '').trim();
+    if (cp) names[cp] = (names[cp] || 0) + 1;
+    if (cs) names['[S] ' + cs] = (names['[S] ' + cs] || 0) + 1;
+  }
+  return names;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -177,7 +192,7 @@ function deduplicateTemps_(rows) {
    ═══════════════════════════════════════════════════════ */
 function buildInterStats_(rows) {
   var total = rows.length;
-  var byCommune = {}, byHour = {}, byGroup = {};
+  var byCommune = {}, byHour = {}, byGroup = {}, distinctMonths = {};
 
   for (var i=0; i<rows.length; i++) {
     var r = rows[i];
@@ -185,18 +200,26 @@ function buildInterStats_(rows) {
     byCommune[com] = (byCommune[com]||0) + 1;
 
     var dp = parseDateParts_(r.debut);
-    if (dp) byHour[dp.hour] = (byHour[dp.hour]||0) + 1;
+    if (dp) {
+      byHour[dp.hour] = (byHour[dp.hour]||0) + 1;
+      distinctMonths[dp.date.getFullYear() + '-' + dp.month] = true;
+    }
 
     // Groupe géographique
     var gName = findCommuneGroup_(com);
     byGroup[gName] = (byGroup[gName]||0) + 1;
   }
 
+  var nbMois = 0;
+  for (var k in distinctMonths) nbMois++;
+  if (nbMois < 1) nbMois = 1;
+
   var hourArr = [];
   for (var h=0;h<24;h++) hourArr.push({key:h, val:byHour[h]||0});
 
   return {
     total: total,
+    nbMois: nbMois,
     byCommune: objToSorted_(byCommune).slice(0,30),
     byGroup: objToSorted_(byGroup),
     byHour: hourArr
@@ -303,11 +326,18 @@ function buildEffectifStats_(listing) {
 function buildCentresList_(listing) {
   var set = {};
   for (var i=0;i<listing.length;i++) {
-    var c = listing[i].centrePrincipal;
-    if (c) set[c] = (set[c]||0) + 1;
+    var cp = (listing[i].centrePrincipal || '').trim();
+    var cs = (listing[i].centreSecondaire || '').trim();
+    if (cp && cs) {
+      // ISP réparti 50/50 entre ses 2 centres
+      set[cp] = (set[cp]||0) + 0.5;
+      set[cs] = (set[cs]||0) + 0.5;
+    } else if (cp) {
+      set[cp] = (set[cp]||0) + 1;
+    }
   }
   var r = [];
-  for (var k in set) r.push({centre:k,nbIsp:set[k]});
+  for (var k in set) r.push({centre:k, nbIsp:Math.round(set[k]*10)/10});
   r.sort(function(a,b){return b.nbIsp-a.nbIsp;});
   return r;
 }
@@ -420,13 +450,94 @@ function buildRingAvailability_(deduped) {
       cumulKeywords.push(rings[r].keywords[k]);
     }
     var avail = buildAvailability_(deduped, cumulKeywords.slice());
+
+    // Trouver les centres qui matchent cet anneau (non-cumulatif)
+    var ringCentres = {};
+    for (var i = 0; i < deduped.length; i++) {
+      if (deduped[i].type === 'garde') continue;
+      if (matchKeywords_(deduped[i].centre, rings[r].keywords)) {
+        ringCentres[deduped[i].centre] = true;
+      }
+    }
+
     results.push({
       ringName: rings[r].name,
       ringLabel: r === 0 ? rings[r].name : rings.slice(0, r+1).map(function(x){return x.name;}).join(' → '),
+      ringCentres: Object.keys(ringCentres).sort(),
       heuresZeroIsp: avail.heuresZeroIsp,
       pctZeroIsp: avail.pctZeroIsp,
       distribution: avail.distribution,
       totalHeures: avail.totalHeures
+    });
+  }
+  return results;
+}
+
+/* ═══════════════════════════════════════════════════════
+   DISTRIBUTION PAR GROUPE DE CASERNES
+   ═══════════════════════════════════════════════════════ */
+function buildAvailByGroup_(deduped) {
+  var groups = Config.CENTRE_GROUPS;
+  if (!groups || !groups.length) return [];
+
+  // Min/max timestamps globaux
+  var minTs = Infinity, maxTs = -Infinity;
+  for (var i = 0; i < deduped.length; i++) {
+    var ts = deduped[i].slotTs;
+    if (ts < minTs) minTs = ts;
+    if (ts > maxTs) maxTs = ts;
+  }
+  var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
+  var totalSlots = 0;
+  if (minTs < Infinity && maxTs > -Infinity) {
+    totalSlots = Math.floor((maxTs - minTs) / slotMs) + 1;
+  }
+
+  var results = [];
+  for (var g = 0; g < groups.length; g++) {
+    var slotCounts = {};
+    var matchedCentres = {};
+    var slotsWithIsp = 0;
+    var maxIsp = 0;
+
+    for (var i = 0; i < deduped.length; i++) {
+      var r = deduped[i];
+      if (r.type === 'garde') continue;
+      if (!matchKeywords_(r.centre, groups[g].keywords)) continue;
+      matchedCentres[r.centre] = true;
+      slotCounts[r.slotTs] = (slotCounts[r.slotTs] || 0) + 1;
+    }
+
+    for (var ts in slotCounts) {
+      var n = slotCounts[ts];
+      slotsWithIsp++;
+      if (n > maxIsp) maxIsp = n;
+    }
+
+    var dist = {};
+    for (var ts in slotCounts) dist[slotCounts[ts]] = (dist[slotCounts[ts]] || 0) + 1;
+    var slotsZero = totalSlots - slotsWithIsp;
+    if (slotsZero < 0) slotsZero = 0;
+    dist[0] = slotsZero;
+
+    var distArr = [];
+    for (var n = 0; n <= maxIsp; n++) {
+      var count = dist[n] || 0;
+      var pct = totalSlots > 0 ? Math.round(count / totalSlots * 1000) / 10 : 0;
+      distArr.push({ ispCount: n, slots: count, pct: pct, heures: Math.round(count * Config.SLOT_DURATION_MIN / 60 * 10) / 10 });
+    }
+
+    var heuresZero = Math.round(slotsZero * Config.SLOT_DURATION_MIN / 60 * 10) / 10;
+    var pctZero = totalSlots > 0 ? Math.round(slotsZero / totalSlots * 1000) / 10 : 0;
+
+    results.push({
+      groupName: groups[g].name,
+      centres: Object.keys(matchedCentres).sort(),
+      heuresZeroIsp: heuresZero,
+      pctZeroIsp: pctZero,
+      distribution: distArr,
+      totalHeures: Math.round(totalSlots * Config.SLOT_DURATION_MIN / 60),
+      maxIsp: maxIsp
     });
   }
   return results;
@@ -480,4 +591,80 @@ function buildZeroCoverageByHour_(deduped) {
   }
 
   return { byHour: byHour, totalZeroSlots: totalZeroSlots };
+}
+
+/* ═══════════════════════════════════════════════════════
+   HEURES AVEC 1 SEUL ISP — PAR TRANCHE HORAIRE
+   ═══════════════════════════════════════════════════════ */
+function buildOneCoverageByHour_(deduped) {
+  var slotCounts = {};
+  for (var i = 0; i < deduped.length; i++) {
+    var r = deduped[i];
+    if (r.type === 'garde') continue;
+    slotCounts[r.slotTs] = (slotCounts[r.slotTs] || 0) + 1;
+  }
+
+  var minTs = Infinity, maxTs = -Infinity;
+  for (var i = 0; i < deduped.length; i++) {
+    var ts = deduped[i].slotTs;
+    if (ts < minTs) minTs = ts;
+    if (ts > maxTs) maxTs = ts;
+  }
+  if (minTs >= Infinity) return { byHour: [], totalOneSlots: 0 };
+
+  var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
+  var oneByHour = {};
+  var totalByHour = {};
+  var totalOneSlots = 0;
+  for (var h = 0; h < 24; h++) { oneByHour[h] = 0; totalByHour[h] = 0; }
+
+  for (var ts = minTs; ts <= maxTs; ts += slotMs) {
+    var d = new Date(ts);
+    var h = d.getHours();
+    totalByHour[h]++;
+    if ((slotCounts[ts] || 0) === 1) {
+      oneByHour[h]++;
+      totalOneSlots++;
+    }
+  }
+
+  var byHour = [];
+  for (var h = 0; h < 24; h++) {
+    var pct = totalByHour[h] > 0 ? Math.round(oneByHour[h] / totalByHour[h] * 1000) / 10 : 0;
+    byHour.push({ hour: h, oneSlots: oneByHour[h], totalSlots: totalByHour[h], pct: pct, heures: Math.round(oneByHour[h] * Config.SLOT_DURATION_MIN / 60 * 10) / 10 });
+  }
+  return { byHour: byHour, totalOneSlots: totalOneSlots };
+}
+
+/* ═══════════════════════════════════════════════════════
+   SLOTS PAR CENTRE — pour le simulateur custom côté client
+   Retourne {centres:[{name, slots:{slotTs:count,...}}], totalSlots, minTs, maxTs}
+   ═══════════════════════════════════════════════════════ */
+function buildSlotsByCentre_(deduped) {
+  var byCentre = {};
+  var minTs = Infinity, maxTs = -Infinity;
+
+  for (var i = 0; i < deduped.length; i++) {
+    var r = deduped[i];
+    if (r.type === 'garde') continue;
+    var c = r.centre || 'Inconnu';
+    if (!byCentre[c]) byCentre[c] = {};
+    byCentre[c][r.slotTs] = (byCentre[c][r.slotTs] || 0) + 1;
+    if (r.slotTs < minTs) minTs = r.slotTs;
+    if (r.slotTs > maxTs) maxTs = r.slotTs;
+  }
+
+  var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
+  var totalSlots = 0;
+  if (minTs < Infinity && maxTs > -Infinity) {
+    totalSlots = Math.floor((maxTs - minTs) / slotMs) + 1;
+  }
+
+  var centres = [];
+  for (var name in byCentre) {
+    centres.push({ name: name, slots: byCentre[name] });
+  }
+  centres.sort(function(a, b) { return a.name.localeCompare(b.name); });
+
+  return { centres: centres, totalSlots: totalSlots, slotMs: slotMs, minTs: minTs, maxTs: maxTs };
 }

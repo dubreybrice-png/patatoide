@@ -55,7 +55,7 @@
   .bar-fill.red{background:var(--primary);} .bar-fill.blue{background:var(--blue);}
   .bar-fill.green{background:var(--green);} .bar-fill.orange{background:var(--orange);}
   .bar-fill.purple{background:var(--purple);}
-  .bar-val{font-size:0.76em;font-weight:600;color:var(--text-light);width:55px;}
+  .bar-val{font-size:0.76em;font-weight:600;color:var(--text-light);width:95px;}
 
   .search-box{width:100%;padding:9px 14px;border:2px solid var(--border);border-radius:8px;font-size:0.88em;margin-bottom:10px;}
   .search-box:focus{outline:none;border-color:var(--primary);}
@@ -73,22 +73,6 @@
   @media(max-width:768px){.chart-grid{grid-template-columns:1fr;}.stat-row{grid-template-columns:repeat(2,1fr);}.bar-label{width:100px;}.container{padding:12px;}}
   @media print{.topbar{position:static;}.card{break-inside:avoid;box-shadow:none;border:1px solid #ddd;}}
 
-  /* Résultat final */
-  .res-table{width:100%;border-collapse:collapse;font-size:0.85em;}
-  .res-table th{background:var(--bg);font-weight:700;padding:10px 14px;border-bottom:2px solid var(--border);text-align:center;}
-  .res-table th:first-child{text-align:left;}
-  .res-table td{padding:8px 14px;border-bottom:1px solid var(--border);text-align:center;}
-  .res-table td:first-child{text-align:left;}
-  .res-zone-header td{background:linear-gradient(90deg,var(--zone-color) 4px,#f8f9fb 4px);font-weight:800;font-size:0.95em;padding:12px 14px 12px 16px;border-bottom:2px solid var(--border);}
-  .res-subtotal td{background:#f0f2f5;font-weight:700;border-top:2px solid var(--border);}
-  .res-grandtotal td{background:var(--text);color:#fff;font-weight:800;font-size:0.95em;padding:12px 14px;}
-  .res-delta-pos{color:var(--green);font-weight:700;}
-  .res-delta-neg{color:var(--primary);font-weight:700;}
-  .res-cov{font-weight:700;padding:3px 10px;border-radius:6px;display:inline-block;font-size:0.85em;}
-  .res-cov.ok{background:#e6f5f3;color:#2a9d8f;}
-  .res-cov.warn{background:#fdf0ec;color:#e76f51;}
-  .res-cov.crit{background:#fde8ea;color:#e63946;}
-
   /* Tab Bar */
   .tab-bar{display:flex;gap:8px;margin-top:10px;}
   .tab-btn{background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);color:#fff;padding:7px 20px;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.9em;transition:all .2s;font-family:inherit;}
@@ -98,8 +82,8 @@
   /* Carte */
   .carte-layout{display:flex;height:calc(100vh - 100px);}
   #map{flex:1;z-index:1;}
-  #carteSidebar{width:400px;overflow-y:auto;background:var(--card);padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,.1);z-index:2;}
-  .sidebar-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--primary);}
+  #carteSidebar{width:550px;overflow-y:auto;background:var(--card);padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,.1);z-index:2;}
+  .sidebar-header{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--primary);position:sticky;top:0;z-index:10;background:var(--card);}
   .sidebar-header h3{font-size:1.1em;color:var(--primary);margin-bottom:6px;}
   .coverage-control{margin-top:8px;}
   .coverage-control label{font-size:0.85em;color:var(--text);}
@@ -118,30 +102,35 @@
   .zone-totals .tr{display:flex;justify-content:space-between;padding:3px 0;font-size:0.88em;}
   @media(max-width:900px){.carte-layout{flex-direction:column;}#carteSidebar{width:100%;max-height:45vh;}}
 
-  /* Recruitment Plan */
-  .recruit-wave{background:var(--card);border-radius:12px;margin-bottom:24px;overflow:hidden;box-shadow:var(--shadow);}
-  .wave-header{color:#fff;font-weight:800;font-size:1.05em;padding:14px 20px;border-radius:0;}
-  .recruit-table{width:100%;border-collapse:collapse;font-size:.88em;}
-  .recruit-table th{background:var(--bg);padding:10px 12px;text-align:left;font-weight:700;color:var(--text-light);font-size:.85em;text-transform:uppercase;letter-spacing:.5px;}
-  .recruit-table td{padding:8px 12px;border-bottom:1px solid var(--border);}
-  .recruit-table tr:hover td{background:var(--bg);}
-  .bilan-header{font-weight:800;font-size:.95em;padding:16px 20px 8px;color:var(--text);}
-  .bilan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:0 20px 16px;}
-  .bilan-card{background:var(--bg);border-radius:8px;padding:12px 14px;border-left:4px solid transparent;}
-  .bilan-card.ok{background:#f0faf8;}
-  .bilan-card.warn{background:#fef8f5;}
-  .bilan-card.crit{background:#fef2f3;}
-  .bilan-zone{font-weight:700;font-size:.92em;margin-bottom:6px;}
-  .bilan-row{display:flex;justify-content:space-between;font-size:.82em;color:var(--text-light);padding:2px 0;}
-  .bilan-row strong{color:var(--text);}
-  .bilan-global{margin:0 20px 20px;padding:14px 18px;border-radius:8px;font-size:.92em;}
-  .bilan-global.ok{background:#e6f5f3;color:#2a9d8f;}
-  .bilan-global.warn{background:#fdf0ec;color:#e76f51;}
-  .bilan-global.crit{background:#fde8ea;color:#e63946;}
+  /* Recrutement tab */
+  .recruit-layout{display:flex;height:calc(100vh - 100px);}
+  #recruitMap{flex:1;z-index:1;}
+  #recruitSidebar{width:550px;overflow-y:auto;background:var(--card);padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,.1);z-index:2;}
+  .wave-btn{padding:8px 14px;border:2px solid var(--border);border-radius:8px;cursor:pointer;font-weight:700;font-size:.82em;background:var(--card);color:var(--text);transition:all .2s;font-family:inherit;}
+  .wave-btn:hover{border-color:var(--primary);color:var(--primary);}
+  .wave-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .legend-bar{display:flex;border-radius:6px;overflow:hidden;height:18px;margin:8px 0;}
+  .legend-labels{display:flex;justify-content:space-between;font-size:.7em;color:var(--text-light);}
+  .wave-detail{background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+  .wave-detail summary{cursor:pointer;font-weight:700;font-size:.92em;display:flex;justify-content:space-between;align-items:center;}
+  .export-pdf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 0;margin:20px 0 4px;background:linear-gradient(135deg,var(--primary),#c0392b);color:#fff;border:none;border-radius:8px;font-size:.95em;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px rgba(230,57,70,.3);transition:all .2s;}
+  .export-pdf-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(230,57,70,.4);}
+  .export-pdf-btn:active{transform:translateY(0);}
+  .sim-separator{height:4px;background:linear-gradient(90deg,var(--primary),var(--blue));border-radius:4px;margin:28px 0 20px;}
+  .sim-section h3{font-size:1.1em;color:var(--primary);margin-bottom:4px;}
+  .sim-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+  .sim-label{font-size:.82em;font-weight:600;min-width:95px;color:var(--text);}
+  .sim-select{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:.8em;font-family:inherit;background:var(--card);color:var(--text);cursor:pointer;}
+  .sim-select:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 2px rgba(230,57,70,.15);}
+  .sim-result-box{margin-top:14px;padding:12px 14px;background:var(--bg);border-radius:8px;border:2px solid var(--primary);}
+  .sim-result-global{padding:6px 0;}
+  .sim-zone-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #eee;font-size:.82em;}
+  @media(max-width:900px){.recruit-layout{flex-direction:column;}#recruitSidebar{width:100%;max-height:45vh;}}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -151,7 +140,7 @@
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="stats" onclick="switchTab('stats')">📊 Statistiques</button>
     <button class="tab-btn" data-tab="carte" onclick="switchTab('carte')">🗺️ Carte</button>
-    <button class="tab-btn" data-tab="resultat" onclick="switchTab('resultat')">🎯 Résultat</button>
+    <button class="tab-btn" data-tab="recruit" onclick="switchTab('recruit')">📈 Recrutement</button>
   </div>
 </div>
 
@@ -218,6 +207,10 @@
     </div>
   </div>
 
+  <!-- ═══ DISTRIBUTION PAR GROUPE DE CASERNES ═══ -->
+  <div class="section-sep">📊 Distribution ISP par groupe de casernes</div>
+  <div id="groupDistContainer"></div>
+
   <!-- ═══ COUVERTURE PAR ANNEAUX PERPIGNAN ═══ -->
   <div class="section-sep">🎯 Couverture ISP — Anneaux concentriques depuis Perpignan</div>
   <div class="card">
@@ -237,6 +230,27 @@
       <div class="chart-title">📊 % du temps sans ISP, par tranche horaire</div>
       <canvas id="zeroCoverPctChart"></canvas>
     </div>
+  </div>
+
+  <!-- ═══ HEURES AVEC 1 SEUL ISP PAR TRANCHE HORAIRE ═══ -->
+  <div class="section-sep">🕐 Heures avec 1 seul ISP — Quand se produisent-elles ?</div>
+  <div class="chart-grid">
+    <div class="chart-wrap">
+      <div class="chart-title">⚠️ Heures avec exactement 1 ISP disponible, par tranche horaire</div>
+      <canvas id="oneCoverHourChart"></canvas>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">📊 % du temps avec 1 seul ISP, par tranche horaire</div>
+      <canvas id="oneCoverPctChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ═══ SIMULATEUR CUSTOM CIS ═══ -->
+  <div class="section-sep">🔧 Simulateur — Couverture par sélection de CIS</div>
+  <div class="card">
+    <div class="card-title">☑️ Cochez les CIS pour calculer la couverture combinée</div>
+    <div id="customCisCheckboxes" style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:14px;"></div>
+    <div id="customCisResult"></div>
   </div>
 
   <!-- ═══ EFFECTIF & CENTRES ═══ -->
@@ -269,39 +283,53 @@
     <div id="map"></div>
     <div id="carteSidebar">
       <div class="sidebar-header">
-        <h3>🥔 Zones opérationnelles ISP</h3>
-        <p style="font-size:0.8em;color:var(--text-light);margin-bottom:8px;" id="modelDesc">Modèle : 36h/mois par ISP, 1 sur 5 fait le double. Cliquez sur une zone pour zoomer.</p>
+        <h3>🥔 Aide à la décision — Recrutement ISP</h3>
+        <p style="font-size:0.75em;color:var(--text-light);margin-bottom:6px;">Ajustez les ISP <strong>par caserne</strong>, le temps de trajet et les heures/ISP.<br>Objectif personnalisable par zone (🎯).</p>
         <div class="coverage-control">
-          <label>Objectif couverture : <strong id="coverTarget">75</strong>%</label>
-          <input type="range" id="coverSlider" min="50" max="100" value="75" oninput="updateCoverage(this.value)">
+          <label>Objectif couverture par défaut : <strong id="coverTarget">75</strong>%</label>
+          <input type="range" id="coverSlider" min="50" max="100" value="75" oninput="document.getElementById('coverTarget').textContent=this.value" onchange="updateCoverage(this.value)">
         </div>
-        <div class="coverage-control" style="margin-top:8px;">
-          <label>🚗 Temps de trajet max : <strong id="trajetTarget">0</strong> min</label>
-          <input type="range" id="trajetSlider" min="0" max="45" value="0" step="5" oninput="updateTrajet(this.value)">
-          <p style="font-size:0.72em;color:var(--text-light);margin-top:2px;">0 = ISP du secteur uniquement. Augmenter pour inclure les ISP des CIS voisins accessibles.</p>
+        <div class="coverage-control" style="margin-top:6px;">
+          <label>Temps de trajet max (rayon d'action) : <strong id="travelTarget">0</strong> min</label>
+          <input type="range" id="travelSlider" min="0" max="60" step="5" value="0" oninput="document.getElementById('travelTarget').textContent=this.value" onchange="updateTravel(this.value)">
         </div>
-        <div class="coverage-control" style="margin-top:8px;">
-          <label>⏱️ Heures mensuelles par ISP : <strong id="heuresTarget">36</strong>h</label>
-          <input type="range" id="heuresSlider" min="12" max="48" value="36" step="2" oninput="updateHeures(this.value)">
-          <p style="font-size:0.72em;color:var(--text-light);margin-top:2px;">Base de temps mensuel effectué par chaque ISP (1 sur 5 fait le double).</p>
+        <div class="coverage-control" style="margin-top:6px;">
+          <label>Heures / ISP / mois : <strong id="baseHTarget">36</strong>h</label>
+          <input type="range" id="baseHSlider" min="12" max="72" step="2" value="36" oninput="document.getElementById('baseHTarget').textContent=this.value" onchange="updateBaseH(this.value)">
         </div>
+        <div id="zoneFilters" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 8px;"></div>
       </div>
-      <div id="zoneCards"></div>
       <div id="zoneTotals"></div>
+      <div id="zoneCards"></div>
     </div>
   </div>
 </div>
 
-<div id="viewResultat" style="display:none;">
-<div class="container">
-  <div class="section-sep">🎯 Résultat final — ISP actuels vs Cible pour 75% de couverture</div>
-  <div class="stat-row" id="resultatKpi"></div>
-  <div class="card">
-    <div class="card-title">🏥 Listing des casernes — Effectif actuel vs Cible opérationnelle</div>
-    <div class="table-wrap" id="resultatTable"></div>
+<div id="viewRecruit" style="display:none;">
+  <div class="recruit-layout">
+    <div id="recruitMap"></div>
+    <div id="recruitSidebar">
+      <div style="position:sticky;top:0;z-index:10;background:var(--card);padding-bottom:12px;border-bottom:2px solid var(--primary);margin-bottom:14px;">
+        <h3 style="font-size:1.1em;color:var(--primary);margin-bottom:6px;">📈 Plan de recrutement par vagues</h3>
+        <p style="font-size:.75em;color:var(--text-light);margin-bottom:10px;">Carte de chaleur commune par commune. Chaque vague = 12 ISP recrutés aux casernes optimales.</p>
+        <div id="waveBtns" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        <div style="margin-top:10px;">
+          <div class="legend-bar" id="legendBar"></div>
+          <div class="legend-labels"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+        </div>
+        <div id="recruitGlobalKpi" style="margin-top:10px;"></div>
+      </div>
+      <div id="waveDetails"></div>
+      <button class="export-pdf-btn" onclick="exportRecruitPDF()">📄 Exporter le plan de recrutement en PDF</button>
+      <div class="sim-separator"></div>
+      <div class="sim-section">
+        <h3>🎯 Simulation de recrutement</h3>
+        <p style="font-size:.75em;color:var(--text-light);margin-bottom:12px;">Positionnez vos futurs ISP et visualisez l'impact sur la couverture.</p>
+        <div id="simRows"></div>
+        <div id="simResults"><div style="color:var(--text-light);font-size:.82em;text-align:center;padding:12px 0;">Sélectionnez au moins un CIS pour voir l'impact.</div></div>
+      </div>
+    </div>
   </div>
-  <div id="recruitmentPlan" style="margin-top:24px;"></div>
-</div>
 </div>
 
 <script>
@@ -326,12 +354,14 @@ function renderAll(){
   renderTypeAndMonth();
   renderCommunes();
   renderCoverDept();
+  renderGroupDist();
   renderRings();
   renderZeroCoverByHour();
+  renderOneCoverByHour();
+  renderCustomCisCheckboxes();
   renderEffectif();
   renderCentreTable();
   renderIspTable();
-  renderResultat();
 }
 
 /* ═══ KPI ═══ */
@@ -362,8 +392,9 @@ function renderTypeAndMonth(){
 
 /* ═══ COMMUNES ═══ */
 function renderCommunes(){
-  document.getElementById('communeBar').innerHTML=buildBar(DATA.interStats.byCommune,'red');
-  document.getElementById('groupBar').innerHTML=buildBar(DATA.interStats.byGroup,'blue');
+  var total=DATA.interStats.total;
+  document.getElementById('communeBar').innerHTML=buildBar(DATA.interStats.byCommune,'red',total);
+  document.getElementById('groupBar').innerHTML=buildBar(DATA.interStats.byGroup,'blue',total);
 }
 
 /* ═══ COUVERTURE DÉPARTEMENT ═══ */
@@ -397,10 +428,11 @@ function renderCoverDept(){
 /* ═══ ANNEAUX PERPIGNAN ═══ */
 function renderRings(){
   var rings=DATA.availRings;
-  var h='<thead><tr><th class="ring-name">Anneau (cumulatif)</th><th>Heures 0 ISP</th><th>% sans ISP</th><th>Heures analysées</th></tr></thead><tbody>';
+  var h='<thead><tr><th class="ring-name">Anneau (cumulatif)</th><th>Casernes</th><th>Heures 0 ISP</th><th>% sans ISP</th><th>Heures analysées</th></tr></thead><tbody>';
   for(var i=0;i<rings.length;i++){
     var r=rings[i];
     h+='<tr><td class="ring-name">'+esc(r.ringLabel)+'</td>';
+    h+='<td style="font-size:0.75em;color:var(--text-light);max-width:280px;white-space:normal;line-height:1.3;">'+(r.ringCentres&&r.ringCentres.length?esc(r.ringCentres.join(', ')):'—')+'</td>';
     h+='<td class="pct-zero">'+r.heuresZeroIsp+'h</td>';
     h+='<td class="pct-zero">'+r.pctZeroIsp+'%</td>';
     h+='<td>'+r.totalHeures+'h</td></tr>';
@@ -448,13 +480,147 @@ function renderZeroCoverByHour(){
   mkChart('zeroCoverPctChart','bar',labels,pctVals,'% sans ISP',pColors);
 }
 
+/* ═══ HEURES AVEC 1 SEUL ISP PAR TRANCHE HORAIRE ═══ */
+function renderOneCoverByHour(){
+  var oc=DATA.oneCoverageByHour;
+  if(!oc||!oc.byHour||!oc.byHour.length)return;
+
+  var labels=[],hVals=[],pctVals=[],hColors=[],pColors=[];
+  for(var i=0;i<oc.byHour.length;i++){
+    var h=oc.byHour[i];
+    labels.push(h.hour+'h');
+    hVals.push(h.heures);
+    pctVals.push(h.pct);
+    var isHigh=h.pct>40;
+    hColors.push(isHigh?'#e76f51':'#fdcb6e');
+    pColors.push(isHigh?'#e76f51CC':'#fdcb6eCC');
+  }
+
+  mkChart('oneCoverHourChart','bar',labels,hVals,'Heures 1 ISP',hColors);
+  mkChart('oneCoverPctChart','bar',labels,pctVals,'% 1 ISP',pColors);
+}
+
+/* ═══ SIMULATEUR CUSTOM CIS ═══ */
+function renderCustomCisCheckboxes(){
+  var sbc=DATA.slotsByCentre;
+  if(!sbc||!sbc.centres||!sbc.centres.length)return;
+
+  var container=document.getElementById('customCisCheckboxes');
+  var h='';
+  for(var i=0;i<sbc.centres.length;i++){
+    var c=sbc.centres[i];
+    h+='<label style="font-size:.82em;cursor:pointer;display:flex;align-items:center;gap:3px;min-width:140px;">';
+    h+='<input type="checkbox" data-centre-idx="'+i+'" onchange="computeCustomCis()" style="accent-color:var(--primary);">';
+    h+='<span>'+esc(c.name)+'</span></label>';
+  }
+  h+='<div style="margin-top:4px;"><a href="#" onclick="toggleAllCustomCis(true);return false;" style="font-size:.78em;color:var(--blue);margin-right:12px;">✅ Tout cocher</a><a href="#" onclick="toggleAllCustomCis(false);return false;" style="font-size:.78em;color:var(--blue);">❌ Tout décocher</a></div>';
+  container.innerHTML=h;
+  document.getElementById('customCisResult').innerHTML='<div style="color:var(--text-light);font-size:.88em;">Cochez des CIS ci-dessus pour voir la distribution.</div>';
+}
+function toggleAllCustomCis(state){
+  var cbs=document.querySelectorAll('#customCisCheckboxes input[type=checkbox]');
+  for(var i=0;i<cbs.length;i++) cbs[i].checked=state;
+  computeCustomCis();
+}
+function computeCustomCis(){
+  var sbc=DATA.slotsByCentre;
+  if(!sbc)return;
+  var cbs=document.querySelectorAll('#customCisCheckboxes input[type=checkbox]');
+  var selectedIdx=[];
+  for(var i=0;i<cbs.length;i++){if(cbs[i].checked) selectedIdx.push(parseInt(cbs[i].getAttribute('data-centre-idx')));}
+
+  var res=document.getElementById('customCisResult');
+  if(selectedIdx.length===0){
+    res.innerHTML='<div style="color:var(--text-light);font-size:.88em;">Cochez des CIS ci-dessus pour voir la distribution.</div>';
+    return;
+  }
+
+  /* Calculer le nb d'ISP par slot en combinant les centres sélectionnés */
+  var slotCounts={};
+  var selectedNames=[];
+  for(var i=0;i<selectedIdx.length;i++){
+    var c=sbc.centres[selectedIdx[i]];
+    selectedNames.push(c.name);
+    for(var ts in c.slots){
+      slotCounts[ts]=(slotCounts[ts]||0)+c.slots[ts];
+    }
+  }
+
+  /* Distribution */
+  var dist={}, slotsWithIsp=0, maxIsp=0;
+  for(var ts in slotCounts){
+    var n=slotCounts[ts];
+    dist[n]=(dist[n]||0)+1;
+    slotsWithIsp++;
+    if(n>maxIsp) maxIsp=n;
+  }
+  var slotsZero=sbc.totalSlots-slotsWithIsp;
+  if(slotsZero<0)slotsZero=0;
+  dist[0]=slotsZero;
+
+  var slotDur=30; /* Config.SLOT_DURATION_MIN */
+  var h='<div style="font-size:.85em;margin-bottom:8px;"><strong>CIS sélectionnés :</strong> '+esc(selectedNames.join(', '))+'</div>';
+  h+='<div class="table-wrap"><table><thead><tr><th>Nb ISP dispo</th><th>Créneaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
+  var showMax=Math.min(maxIsp,10); /* montrer jusqu'à 10 lignes max */
+  for(var n=0;n<=showMax;n++){
+    var count=dist[n]||0;
+    var heures=Math.round(count*slotDur/60*10)/10;
+    var pct=sbc.totalSlots>0?Math.round(count/sbc.totalSlots*1000)/10:0;
+    var highlight=n<=1&&count>0;
+    h+='<tr'+(n===0?' style="background:var(--primary-light);font-weight:700;"':(n===1?' style="background:#fdf0ec;"':''))+'>';
+    h+='<td>'+n+' ISP</td><td>'+count+'</td><td>'+heures+'h</td><td>'+pct+'%</td></tr>';
+  }
+  if(maxIsp>showMax){
+    var restCount=0;
+    for(var n=showMax+1;n<=maxIsp;n++) restCount+=(dist[n]||0);
+    var restH=Math.round(restCount*slotDur/60*10)/10;
+    var restPct=sbc.totalSlots>0?Math.round(restCount/sbc.totalSlots*1000)/10:0;
+    h+='<tr><td>'+(showMax+1)+'+ ISP</td><td>'+restCount+'</td><td>'+restH+'h</td><td>'+restPct+'%</td></tr>';
+  }
+  h+='</tbody></table></div>';
+
+  /* KPIs rapides */
+  var zeroH=Math.round((dist[0]||0)*slotDur/60*10)/10;
+  var zeroPct=sbc.totalSlots>0?Math.round((dist[0]||0)/sbc.totalSlots*1000)/10:0;
+  var oneH=Math.round((dist[1]||0)*slotDur/60*10)/10;
+  var onePct=sbc.totalSlots>0?Math.round((dist[1]||0)/sbc.totalSlots*1000)/10:0;
+  h='<div class="stat-row" style="margin-bottom:12px;">'+
+    sc(zeroH+'h','0 ISP ('+zeroPct+'%)','red')+
+    sc(oneH+'h','1 ISP ('+onePct+'%)','orange')+
+    sc(maxIsp+' max','ISP simultanés','green')+
+    sc(selectedIdx.length,'CIS sélectionnés','blue')+
+    '</div>'+h;
+
+  res.innerHTML=h;
+}
+
+/* ═══ DISTRIBUTION PAR GROUPE DE CASERNES ═══ */
+function renderGroupDist(){
+  var groups=DATA.availByGroup;
+  if(!groups||!groups.length)return;
+  var h='';
+  for(var g=0;g<groups.length;g++){
+    var grp=groups[g];
+    h+='<div class="card"><div class="card-title">🏥 '+esc(grp.groupName)+' <span style="font-weight:400;font-size:.82em;color:var(--text-light);">('+esc(grp.centres.join(', '))+') — '+grp.pctZeroIsp+'% sans ISP, max '+grp.maxIsp+' ISP simultanés</span></div>';
+    h+='<div class="table-wrap"><table><thead><tr><th>Nb ISP dispo</th><th>Créneaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
+    var dist=grp.distribution;
+    for(var i=0;i<Math.min(dist.length,12);i++){
+      var d=dist[i];
+      h+='<tr'+(d.ispCount===0?' style="background:var(--primary-light);font-weight:700;"':'')+'>';
+      h+='<td>'+d.ispCount+' ISP</td><td>'+d.slots+'</td><td>'+d.heures+'h</td><td>'+d.pct+'%</td></tr>';
+    }
+    h+='</tbody></table></div></div>';
+  }
+  document.getElementById('groupDistContainer').innerHTML=h;
+}
+
 /* ═══ EFFECTIF ═══ */
 function renderEffectif(){
   var ef=DATA.effectifStats;
   document.getElementById('effectifKpi').innerHTML=
     sc(ef.total,'ISP total','green')+
     sc(ef.byCentre.length,'Centres distincts','blue');
-  document.getElementById('effectifBar').innerHTML=buildBar(ef.byCentre,'green');
+  document.getElementById('effectifBar').innerHTML=buildBar(ef.byCentre,'green',ef.total);
 }
 
 /* ═══ CENTRE TABLE ═══ */
@@ -559,14 +725,15 @@ function mkChart(id,type,labels,data,label,color){
 /* ═══ HTML HELPERS ═══ */
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 function sc(v,l,c){return '<div class="stat-card '+c+'"><div class="stat-value">'+v+'</div><div class="stat-label">'+esc(l)+'</div></div>';}
-function buildBar(arr,color){
+function buildBar(arr,color,total){
   if(!arr||!arr.length)return '<div style="color:var(--text-light)">Aucune donnée</div>';
   var mx=arr[0].val,h='<div class="bar-chart">';
   for(var i=0;i<arr.length;i++){
     var pct=mx>0?(arr[i].val/mx*100):0;
+    var pctTot=total>0?' <span style="color:#999;font-size:.85em;">('+Math.round(arr[i].val/total*1000)/10+'%)</span>':'';
     h+='<div class="bar-row"><div class="bar-label" title="'+esc(arr[i].key)+'">'+esc(arr[i].key)+'</div>';
     h+='<div class="bar-track"><div class="bar-fill '+color+'" style="width:'+pct+'%"></div></div>';
-    h+='<div class="bar-val">'+arr[i].val+'</div></div>';
+    h+='<div class="bar-val">'+arr[i].val+pctTot+'</div></div>';
   }
   return h+'</div>';
 }
@@ -577,78 +744,536 @@ function buildBar(arr,color){
 function switchTab(tab){
   document.getElementById('viewStats').style.display=tab==='stats'?'':'none';
   document.getElementById('viewCarte').style.display=tab==='carte'?'':'none';
-  document.getElementById('viewResultat').style.display=tab==='resultat'?'':'none';
+  document.getElementById('viewRecruit').style.display=tab==='recruit'?'':'none';
   var btns=document.querySelectorAll('.tab-btn');
   for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',btns[i].getAttribute('data-tab')===tab);
   if(tab==='carte'){if(!window._mapObj)setTimeout(initCarte,120);else window._mapObj.invalidateSize();}
+  if(tab==='recruit'){if(!window._recruitMapObj)setTimeout(initRecruitTab,120);else window._recruitMapObj.invalidateSize();}
 }
 
 /* ═══════════════════════════════════════════════════════
    CARTE — DONNÉES CIS (41 centres SDIS 66)
    ═══════════════════════════════════════════════════════ */
 var CIS=[
-{id:'agly',nom:'Agly',grp:'Nord',lat:42.7957,lng:2.6878,cible:4},
-{id:'baixas',nom:'Baixas',grp:'Nord',lat:42.7546,lng:2.8103,cible:3},
-{id:'canet',nom:'Canet',grp:'Nord',lat:42.7066,lng:3.0130,cible:7},
-{id:'caudies',nom:'Caudiès',grp:'Nord',lat:42.8099,lng:2.3742,cible:3},
-{id:'le-barcares',nom:'Le Barcarès',grp:'Nord',lat:42.7910,lng:3.0340,cible:5},
-{id:'maury',nom:'Maury',grp:'Nord',lat:42.8329,lng:2.5878,cible:3},
-{id:'millas',nom:'Millas',grp:'Nord',lat:42.6944,lng:2.6950,cible:5},
-{id:'pnord',nom:'Perpignan Nord',grp:'Nord',lat:42.7200,lng:2.8950,cible:10},
-{id:'riberal',nom:'Ribéral',grp:'Nord',lat:42.6980,lng:2.7650,cible:4},
-{id:'rivesaltes',nom:'Rivesaltes',grp:'Nord',lat:42.7702,lng:2.8770,cible:6},
-{id:'salanque',nom:'Salanque',grp:'Nord',lat:42.7714,lng:2.9936,cible:6},
-{id:'salses',nom:'Salses',grp:'Nord',lat:42.8367,lng:2.9208,cible:4},
-{id:'st-paul-fenouillet',nom:'St Paul de Fenouillet',grp:'Nord',lat:42.8109,lng:2.5030,cible:3},
-{id:'vingrau',nom:'Vingrau',grp:'Nord',lat:42.8591,lng:2.7382,cible:3},
-{id:'capcir',nom:'Capcir',grp:'Ouest',lat:42.5718,lng:2.0695,cible:3},
-{id:'cerdagne',nom:'Cerdagne',grp:'Ouest',lat:42.4323,lng:1.9485,cible:4},
-{id:'font-romeu',nom:'Font Romeu',grp:'Ouest',lat:42.5044,lng:2.0370,cible:4},
-{id:'ille-sur-tet',nom:'Ille Sur Tet',grp:'Ouest',lat:42.6710,lng:2.6210,cible:5},
-{id:'mont-louis',nom:'Mont Louis',grp:'Ouest',lat:42.5106,lng:2.1213,cible:3},
-{id:'olette',nom:'Olette',grp:'Ouest',lat:42.5430,lng:2.2750,cible:3},
-{id:'porte',nom:'Porte',grp:'Ouest',lat:42.5472,lng:1.8312,cible:3},
-{id:'prades',nom:'Prades',grp:'Ouest',lat:42.6177,lng:2.4216,cible:6},
-{id:'saillagouse',nom:'Saillagouse',grp:'Ouest',lat:42.4590,lng:2.0370,cible:3},
-{id:'sournia',nom:'Sournia',grp:'Ouest',lat:42.7316,lng:2.4317,cible:3},
-{id:'vernet',nom:'Vernet',grp:'Ouest',lat:42.5458,lng:2.3870,cible:3},
-{id:'vinca',nom:'Vinca',grp:'Ouest',lat:42.6438,lng:2.5277,cible:4},
-{id:'pouest',nom:'Perpignan Ouest',grp:'Sud',lat:42.6980,lng:2.8400,cible:6},
-{id:'psud',nom:'Perpignan Sud',grp:'Sud',lat:42.6770,lng:2.8950,cible:10},
-{id:'les-aspres',nom:'Les Aspres',grp:'Sud',lat:42.6336,lng:2.7553,cible:6},
-{id:'saint-cyprien',nom:'Saint Cyprien',grp:'Sud',lat:42.6193,lng:3.0067,cible:6},
-{id:'elne',nom:'Elne',grp:'Sud',lat:42.5991,lng:2.9718,cible:6},
-{id:'palau',nom:'Palau',grp:'Sud',lat:42.5711,lng:2.9609,cible:4},
-{id:'argeles',nom:'Argelès',grp:'Sud',lat:42.5460,lng:3.0233,cible:7},
-{id:'boulou',nom:'Boulou',grp:'Sud',lat:42.5230,lng:2.8334,cible:6},
-{id:'ceret',nom:'Céret',grp:'Sud',lat:42.4860,lng:2.7480,cible:5},
-{id:'vallespir',nom:'Vallespir',grp:'Sud',lat:42.4581,lng:2.6313,cible:5},
-{id:'st-laurent-cerdans',nom:'St Laurent de Cerdans',grp:'Sud',lat:42.3853,lng:2.6101,cible:3},
-{id:'prats',nom:'Prats',grp:'Sud',lat:42.4053,lng:2.4855,cible:3},
-{id:'cote-vermeille',nom:'Côte Vermeille',grp:'Sud',lat:42.5170,lng:3.1040,cible:5},
-{id:'banyuls',nom:'Banyuls',grp:'Sud',lat:42.4830,lng:3.1290,cible:4},
-{id:'cerbere',nom:'Cerbère',grp:'Sud',lat:42.4424,lng:3.1685,cible:3}];
+{id:'agly',nom:'Agly',grp:'Nord',lat:42.7957,lng:2.6878},
+{id:'baixas',nom:'Baixas',grp:'Nord',lat:42.7546,lng:2.8103},
+{id:'canet',nom:'Canet',grp:'Nord',lat:42.7066,lng:3.0130},
+{id:'caudies',nom:'Caudiès',grp:'Nord',lat:42.8099,lng:2.3742},
+{id:'le-barcares',nom:'Le Barcarès',grp:'Nord',lat:42.7910,lng:3.0340},
+{id:'maury',nom:'Maury',grp:'Nord',lat:42.8329,lng:2.5878},
+{id:'millas',nom:'Millas',grp:'Nord',lat:42.6944,lng:2.6950},
+{id:'pnord',nom:'Perpignan Nord',grp:'Nord',lat:42.7200,lng:2.8950},
+{id:'riberal',nom:'Ribéral',grp:'Nord',lat:42.6980,lng:2.7650},
+{id:'rivesaltes',nom:'Rivesaltes',grp:'Nord',lat:42.7702,lng:2.8770},
+{id:'salanque',nom:'Salanque',grp:'Nord',lat:42.7714,lng:2.9936},
+{id:'salses',nom:'Salses',grp:'Nord',lat:42.8367,lng:2.9208},
+{id:'st-paul-fenouillet',nom:'St Paul de Fenouillet',grp:'Nord',lat:42.8109,lng:2.5030},
+{id:'vingrau',nom:'Vingrau',grp:'Nord',lat:42.8591,lng:2.7382},
+{id:'capcir',nom:'Capcir',grp:'Ouest',lat:42.5718,lng:2.0695},
+{id:'cerdagne',nom:'Cerdagne',grp:'Ouest',lat:42.4323,lng:1.9485},
+{id:'font-romeu',nom:'Font Romeu',grp:'Ouest',lat:42.5044,lng:2.0370},
+{id:'ille-sur-tet',nom:'Ille Sur Tet',grp:'Ouest',lat:42.6710,lng:2.6210},
+{id:'mont-louis',nom:'Mont Louis',grp:'Ouest',lat:42.5106,lng:2.1213},
+{id:'olette',nom:'Olette',grp:'Ouest',lat:42.5430,lng:2.2750},
+{id:'porte',nom:'Porte',grp:'Ouest',lat:42.5472,lng:1.8312},
+{id:'prades',nom:'Prades',grp:'Ouest',lat:42.6177,lng:2.4216},
+{id:'saillagouse',nom:'Saillagouse',grp:'Ouest',lat:42.4590,lng:2.0370},
+{id:'sournia',nom:'Sournia',grp:'Ouest',lat:42.7316,lng:2.4317},
+{id:'vernet',nom:'Vernet',grp:'Ouest',lat:42.5458,lng:2.3870},
+{id:'vinca',nom:'Vinca',grp:'Ouest',lat:42.6438,lng:2.5277},
+{id:'pouest',nom:'Perpignan Ouest',grp:'Sud',lat:42.6980,lng:2.8400},
+{id:'psud',nom:'Perpignan Sud',grp:'Sud',lat:42.6770,lng:2.8950},
+{id:'les-aspres',nom:'Les Aspres',grp:'Sud',lat:42.6336,lng:2.7553},
+{id:'saint-cyprien',nom:'Saint Cyprien',grp:'Sud',lat:42.6193,lng:3.0067},
+{id:'elne',nom:'Elne',grp:'Sud',lat:42.5991,lng:2.9718},
+{id:'palau',nom:'Palau',grp:'Sud',lat:42.5711,lng:2.9609},
+{id:'argeles',nom:'Argelès',grp:'Sud',lat:42.5460,lng:3.0233},
+{id:'boulou',nom:'Boulou',grp:'Sud',lat:42.5230,lng:2.8334},
+{id:'ceret',nom:'Céret',grp:'Sud',lat:42.4860,lng:2.7480},
+{id:'vallespir',nom:'Vallespir',grp:'Sud',lat:42.4581,lng:2.6313},
+{id:'st-laurent-cerdans',nom:'St Laurent de Cerdans',grp:'Sud',lat:42.3853,lng:2.6101},
+{id:'prats',nom:'Prats',grp:'Sud',lat:42.4053,lng:2.4855},
+{id:'cote-vermeille',nom:'Côte Vermeille',grp:'Sud',lat:42.5170,lng:3.1040},
+{id:'banyuls',nom:'Banyuls',grp:'Sud',lat:42.4830,lng:3.1290},
+{id:'cerbere',nom:'Cerbère',grp:'Sud',lat:42.4424,lng:3.1685}];
 
 /* ═══ ZONES OPÉRATIONNELLES (patates) ═══ */
 var CARTE_ZONES=[
-{name:'Agglo Perpignan',cis:['pnord','psud','pouest'],color:'#e63946',defInt:180},
-{name:'Salanque',cis:['salanque','le-barcares','salses'],color:'#457b9d',defInt:45},
-{name:'Ribéral-Aspres',cis:['les-aspres','riberal','millas'],color:'#2a9d8f',defInt:55},
-{name:'Agly-Rivesaltes',cis:['rivesaltes','baixas','agly','vingrau','maury'],color:'#e76f51',defInt:40},
-{name:'Côte Sablonneuse',cis:['canet','saint-cyprien'],color:'#6c5ce7',defInt:50},
-{name:'Plaine Elne',cis:['elne','palau'],color:'#00b894',defInt:35},
-{name:'Côte Vermeille-Albères',cis:['argeles','cote-vermeille','banyuls','cerbere'],color:'#fd79a8',defInt:40},
-{name:'Vallespir',cis:['ceret','boulou','vallespir','st-laurent-cerdans','prats'],color:'#fdcb6e',defInt:30},
-{name:'Conflent',cis:['prades','vernet','vinca','ille-sur-tet','olette'],color:'#0984e3',defInt:35},
-{name:'Fenouillèdes',cis:['st-paul-fenouillet','sournia','caudies'],color:'#636e72',defInt:15},
-{name:'Cerdagne-Capcir',cis:['cerdagne','saillagouse','mont-louis','font-romeu','capcir','porte'],color:'#d63031',defInt:25}];
+{name:'Agglo Perpignan',cis:['pnord','psud','pouest'],color:'#e63946'},
+{name:'Salanque',cis:['salanque','le-barcares','salses'],color:'#457b9d'},
+{name:'Ribéral-Aspres',cis:['les-aspres','riberal','millas'],color:'#2a9d8f'},
+{name:'Agly-Rivesaltes',cis:['rivesaltes','baixas','agly','vingrau','maury'],color:'#e76f51'},
+{name:'Côte Sablonneuse',cis:['canet','saint-cyprien'],color:'#6c5ce7'},
+{name:'Plaine Elne',cis:['elne','palau'],color:'#00b894'},
+{name:'Côte Vermeille-Albères',cis:['argeles','cote-vermeille','banyuls','cerbere'],color:'#fd79a8'},
+{name:'Vallespir',cis:['ceret','boulou','vallespir','st-laurent-cerdans','prats'],color:'#fdcb6e'},
+{name:'Conflent',cis:['prades','vernet','vinca','ille-sur-tet','olette'],color:'#0984e3'},
+{name:'Fenouillèdes',cis:['st-paul-fenouillet','sournia','caudies'],color:'#636e72'},
+{name:'Cerdagne-Capcir',cis:['cerdagne','saillagouse','mont-louis','font-romeu','capcir','porte'],color:'#d63031'}];
+
+/* ═══ GARDE (couverture garantie) ═══ */
+var GARDE=[
+  { zone:'Agglo Perpignan', cis:'psud', label:'Garde Perpignan Sud',
+    jour:{startH:8,endH:20,mois:[1,2,3,4,5,6,7,8,9,10,11,12]},
+    nuit:{startH:20,endH:8,mois:[7,8,9]} }
+];
+function gardeHMois(zoneName){
+  var total=0;
+  for(var g=0;g<GARDE.length;g++){
+    if(GARDE[g].zone!==zoneName)continue;
+    // Jour: 12h/jour × nb mois/12 × 30.4j
+    if(GARDE[g].jour) total+=(GARDE[g].jour.endH-GARDE[g].jour.startH)*30.4*GARDE[g].jour.mois.length/12;
+    // Nuit: 12h/jour × nb mois/12 × 30.4j
+    if(GARDE[g].nuit) total+=((24-GARDE[g].nuit.startH)+GARDE[g].nuit.endH)*30.4*GARDE[g].nuit.mois.length/12;
+  }
+  return Math.round(total);
+}
+function gardeLabel(zoneName){
+  for(var g=0;g<GARDE.length;g++){
+    if(GARDE[g].zone!==zoneName)continue;
+    var parts=[];
+    if(GARDE[g].jour) parts.push('Jour '+GARDE[g].jour.startH+'h-'+GARDE[g].jour.endH+'h toute l\'année');
+    if(GARDE[g].nuit){
+      var mn=['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+      parts.push('Nuit '+GARDE[g].nuit.startH+'h-'+GARDE[g].nuit.endH+'h ('+GARDE[g].nuit.mois.map(function(m){return mn[m];}).join('/')+')');}
+    return GARDE[g].label+' : '+parts.join(' + ');
+  }
+  return null;
+}
+
+/* ═══ MAPPING LISTING → CIS (noms exacts du spreadsheet) ═══ */
+var CENTRE_TO_CIS={
+'perpignan sud':'psud','perpignan nord':'pnord','perpignan ouest':'pouest',
+'canet':'canet','boulou':'boulou','saint cyprien':'saint-cyprien',
+'ceret':'ceret','argeles':'argeles','vingrau':'vingrau','maury':'maury',
+'cote vermeille':'cote-vermeille','vinca':'vinca','ille sur tet':'ille-sur-tet',
+'millas':'millas','les aspres':'les-aspres','baixas':'baixas',
+'saillagouse':'saillagouse','elne':'elne','palau':'palau','prats':'prats',
+'olette':'olette','agly':'agly','salanque':'salanque','rivesaltes':'rivesaltes',
+'saint paul de fenouillet':'st-paul-fenouillet','st paul de fenouillet':'st-paul-fenouillet',
+'banyuls':'banyuls','riberal':'riberal','vallespir':'vallespir',
+'porte':'porte','cerdagne':'cerdagne',
+'font romeu':'font-romeu','mont louis':'mont-louis','le barcares':'le-barcares',
+'salses':'salses','caudies':'caudies','capcir':'capcir','sournia':'sournia',
+'vernet':'vernet','prades':'prades','cerbere':'cerbere',
+'st laurent de cerdans':'st-laurent-cerdans','saint laurent de cerdans':'st-laurent-cerdans'
+};
+
+var CIS_IDX={};for(var _i=0;_i<CIS.length;_i++) CIS_IDX[CIS[_i].id]=_i;
+
+/* === MATRICES TEMPS DE TRAJET OSRM (generees automatiquement) === */
+/* CIS-to-CIS : TRAVEL_CIS_MIN[i][j] = minutes de trajet route reelle */
+var TRAVEL_CIS_MIN=[
+[0.0,23.6,39.2,34.8,37.5,17.8,22.1,30.2,25.8,24.6,35.2,34.4,22.9,24.9,100.1,105.7,93.9,33.0,86.9,75.6,127.3,51.4,96.4,51.1,61.8,40.3,34.5,34.9,32.8,46.3,44.9,48.2,50.3,46.6,53.5,69.5,86.5,88.4,58.6,62.0,73.8],
+[23.7,0.0,24.2,48.4,23.1,31.3,21.8,15.2,13.4,10.2,20.8,20.9,36.5,37.6,95.7,101.3,89.5,28.6,82.5,71.2,122.9,47.0,92.0,57.0,57.4,35.9,14.2,19.8,26.2,31.3,29.9,33.2,35.3,31.6,38.5,54.5,71.5,73.4,43.6,47.0,58.8],
+[39.0,24.6,0.0,63.7,13.7,46.6,24.7,11.6,25.1,18.3,13.8,22.8,51.8,55.8,97.5,103.1,91.3,30.4,84.3,73.0,124.7,48.8,93.8,58.8,59.3,37.8,18.5,16.6,26.1,17.2,19.6,22.4,24.5,30.9,37.8,53.8,70.8,72.7,32.8,36.2,48.0],
+[34.8,48.0,63.7,0.0,61.9,26.4,46.5,54.6,50.2,49.0,59.6,58.9,12.7,49.8,64.1,89.9,76.8,48.5,72.9,79.2,99.7,54.3,80.6,28.0,65.5,53.8,58.9,59.3,57.2,70.7,69.3,72.6,74.7,71.0,77.9,93.9,110.9,112.9,83.0,86.4,98.2],
+[38.8,24.3,14.3,63.5,0.0,46.4,31.3,19.8,31.0,14.7,8.5,16.4,51.6,50.1,104.1,109.7,97.9,37.1,91.0,79.6,131.3,55.5,100.5,65.4,65.9,44.4,24.6,24.9,31.8,28.6,31.7,34.5,36.6,34.8,41.6,57.7,74.6,76.6,44.8,48.2,60.0],
+[17.9,31.1,46.8,26.3,45.1,0.0,29.6,37.8,33.3,32.2,42.8,42.0,14.4,23.5,88.5,113.2,101.4,40.6,94.5,83.1,124.0,59.0,104.0,44.1,69.4,47.9,42.1,42.4,40.4,53.9,52.5,55.8,57.9,54.2,61.1,77.1,94.0,96.0,66.1,69.5,81.3],
+[22.2,21.6,26.4,46.8,30.5,29.8,0.0,20.7,10.4,22.9,28.3,27.4,34.9,36.0,80.2,85.8,74.0,12.5,67.0,55.7,107.3,31.5,76.5,40.9,41.9,20.4,15.4,20.1,12.9,31.7,30.3,33.6,35.7,30.5,37.3,53.3,70.3,72.3,43.9,47.3,59.1],
+[30.0,15.5,11.8,54.6,18.0,37.6,19.4,0.0,19.5,10.4,15.7,14.9,42.8,48.0,92.3,97.9,86.0,25.2,79.1,67.7,119.4,43.6,88.6,53.5,54.0,32.5,13.1,11.8,20.8,22.1,20.7,24.1,26.2,25.7,32.5,48.5,65.5,67.5,34.4,37.8,49.6],
+[25.6,13.2,26.0,50.3,29.3,33.2,10.4,19.7,0.0,19.9,27.1,26.2,38.4,39.5,84.3,89.9,78.1,17.2,71.1,59.8,111.4,35.6,80.6,45.6,46.0,24.5,10.9,19.7,16.4,31.3,29.8,33.2,35.3,30.1,36.9,52.9,69.9,71.9,43.5,46.9,58.7],
+[24.4,9.9,17.9,49.1,13.9,32.0,21.2,9.7,20.1,0.0,11.6,10.8,37.2,41.5,94.1,99.7,87.8,27.0,80.9,69.5,121.2,45.4,90.4,55.3,55.8,34.3,14.5,14.8,21.8,26.3,24.9,28.2,30.3,26.6,33.5,49.5,66.5,68.4,38.6,42.0,53.8],
+[35.6,21.1,13.2,60.2,7.4,43.2,28.1,16.6,27.7,11.5,0.0,12.6,48.3,46.8,100.9,106.5,94.7,33.8,87.7,76.4,128.1,52.2,97.2,62.2,62.6,41.1,21.3,21.7,28.6,27.5,30.5,33.4,35.5,31.5,38.4,54.4,71.4,73.4,43.7,47.1,58.9],
+[34.0,19.6,22.8,58.6,15.6,41.6,26.2,14.7,25.8,9.6,13.0,0.0,46.8,45.2,99.0,104.6,92.8,32.0,85.9,74.5,126.2,50.4,95.3,60.3,60.8,39.3,19.5,19.8,26.7,31.3,29.9,33.2,35.3,30.6,37.5,53.5,70.5,72.5,43.5,46.9,58.7],
+[22.8,36.0,51.7,12.7,50.0,14.4,34.5,42.7,38.2,37.1,47.7,46.9,0.0,37.9,74.9,100.7,87.6,40.8,83.7,81.1,110.4,56.8,91.4,30.5,67.4,48.5,47.0,47.3,45.3,58.8,57.4,60.7,62.8,59.1,66.0,82.0,98.9,100.9,71.0,74.4,86.2],
+[24.8,37.4,55.5,49.9,48.5,23.6,35.8,47.4,39.6,41.4,46.3,45.4,38.1,0.0,112.1,119.5,107.7,46.8,100.7,89.4,141.0,65.2,110.2,67.7,75.6,54.1,52.2,52.5,46.6,64.0,62.6,65.9,68.0,62.4,69.2,85.2,102.2,104.2,76.2,79.6,91.4],
+[99.8,96.1,98.6,64.0,102.8,88.5,79.0,92.9,84.9,95.1,100.5,99.7,74.9,112.0,0.0,34.7,21.6,71.7,17.7,43.4,56.3,54.7,25.4,84.6,51.8,64.6,87.6,92.3,83.8,103.9,102.5,105.8,107.9,102.7,109.6,125.6,142.6,144.5,116.2,119.6,131.4],
+[105.3,101.5,104.1,89.7,108.3,112.9,84.5,98.4,90.4,100.6,106.0,105.2,100.5,119.2,34.7,0.0,19.7,77.2,23.2,48.9,24.4,60.2,10.0,90.1,57.3,70.1,93.1,97.8,89.2,109.4,108.0,111.3,113.4,108.2,115.1,131.1,148.0,134.2,121.7,125.1,136.9],
+[93.4,89.7,92.2,76.6,96.4,101.0,72.6,86.5,78.5,88.7,94.1,93.3,87.5,107.3,21.6,19.9,0.0,65.3,11.4,37.0,35.7,48.3,13.4,78.2,45.5,58.2,81.3,85.9,77.4,97.5,96.1,99.4,101.5,96.3,103.2,119.2,136.2,138.1,109.8,113.2,125.0],
+[32.5,28.8,31.3,48.4,35.5,40.1,11.7,25.6,17.6,27.8,33.2,32.4,40.7,46.4,71.6,77.2,65.4,0.0,58.4,47.1,98.8,23.0,67.9,29.1,33.4,11.9,20.3,25.0,13.4,36.6,35.2,38.5,40.6,35.4,42.3,58.3,75.3,77.2,48.9,52.3,64.1],
+[86.5,82.8,85.3,72.5,89.5,94.1,65.7,79.6,71.6,81.8,87.2,86.4,83.4,100.4,17.5,23.1,11.3,58.4,0.0,30.1,44.7,41.5,13.9,71.4,38.6,51.3,74.4,79.0,70.5,90.6,89.2,92.5,94.6,89.4,96.3,112.3,129.3,131.2,102.9,106.3,118.1],
+[75.0,71.2,73.8,79.4,78.0,82.6,54.2,68.1,60.1,70.3,75.7,74.9,81.4,88.9,43.1,48.7,36.9,46.9,29.9,0.0,70.3,29.9,39.4,59.8,27.0,39.8,62.8,67.5,58.9,79.1,77.7,81.0,83.1,77.9,84.8,100.8,117.7,119.7,91.4,94.8,106.6],
+[127.5,123.8,126.3,98.7,130.5,123.2,106.7,120.6,112.6,122.8,128.2,127.4,109.6,141.4,56.9,24.5,35.6,99.4,45.4,71.1,0.0,82.4,32.2,112.3,79.5,92.3,115.3,120.0,111.5,131.6,130.2,133.5,135.6,130.4,137.3,153.3,170.2,155.4,143.9,147.3,159.1],
+[49.3,45.6,48.2,55.1,52.3,57.0,28.5,42.5,34.4,44.7,50.1,49.2,55.8,63.2,55.7,61.3,49.5,21.2,42.5,31.2,82.9,0.0,52.0,35.5,17.5,14.2,37.2,41.9,33.3,53.4,52.0,55.4,57.5,52.3,59.1,75.1,92.1,94.1,65.7,69.1,80.9],
+[96.0,92.2,94.8,80.3,98.9,103.6,75.2,89.1,81.0,91.3,96.7,95.9,91.2,109.9,25.4,10.3,13.8,67.9,13.9,39.6,31.8,50.9,0.0,80.8,48.0,60.8,83.8,88.5,79.9,100.1,98.7,102.0,104.1,98.9,105.7,121.8,138.7,140.7,112.3,115.7,127.5],
+[51.2,57.5,60.1,28.1,64.2,44.3,40.4,54.3,46.3,56.6,61.9,61.1,30.6,67.8,84.2,89.8,77.9,29.3,71.0,59.7,111.3,34.7,80.5,0.0,45.9,34.6,49.1,53.8,41.4,65.3,63.9,67.2,69.4,63.7,70.4,86.4,103.3,105.3,77.6,81.0,92.8],
+[60.9,57.2,59.7,65.3,63.9,68.5,40.1,54.0,46.0,56.2,61.6,60.8,67.3,74.8,51.3,56.9,45.1,32.8,38.2,26.8,78.5,15.8,47.6,45.7,0.0,25.7,48.7,53.4,44.9,65.0,63.6,66.9,69.0,63.8,70.7,86.7,103.6,105.6,77.3,80.7,92.5],
+[39.7,36.0,38.5,53.6,42.7,47.3,18.9,32.8,24.8,35.0,40.4,39.6,48.2,53.6,63.9,69.5,57.7,11.6,50.7,39.4,91.1,15.2,60.2,34.3,25.7,0.0,27.6,32.2,23.7,43.8,42.4,45.7,47.8,42.6,49.5,65.5,82.5,84.5,56.1,59.5,71.3],
+[34.4,13.9,19.0,59.1,22.8,42.0,14.4,13.2,10.8,15.2,20.6,19.7,47.2,48.3,87.2,92.8,81.0,20.2,74.1,62.7,114.4,38.6,83.5,48.5,49.0,27.5,0.0,12.7,17.6,24.2,22.8,26.2,28.3,23.0,29.9,45.9,62.9,64.9,36.5,39.9,51.7],
+[35.1,20.6,16.0,59.8,23.5,42.7,19.8,11.1,20.2,15.9,21.2,20.4,47.9,49.0,92.6,98.2,86.4,25.6,79.4,68.1,119.8,44.0,88.9,53.9,54.4,32.9,13.6,0.0,16.8,16.9,15.5,18.8,20.9,21.6,28.5,44.5,61.5,63.5,29.2,32.6,44.4],
+[34.7,27.4,27.6,59.4,31.0,42.3,13.9,21.9,18.2,23.4,28.8,28.0,47.5,48.6,86.0,91.6,79.8,15.1,72.9,61.5,113.2,37.4,82.3,43.7,47.8,26.3,18.8,16.7,0.0,28.3,24.9,30.2,32.3,23.5,30.2,46.2,63.2,65.2,40.6,44.0,55.8],
+[45.7,31.2,17.1,70.3,28.6,53.3,29.9,21.6,30.4,26.4,28.6,31.0,58.5,59.6,102.8,108.4,96.5,35.7,89.6,78.3,129.9,54.1,99.1,64.1,64.5,43.0,23.8,15.3,26.9,0.0,9.3,12.3,14.4,27.6,37.2,53.2,70.1,72.1,22.6,26.0,37.8],
+[45.3,30.8,20.0,70.0,31.4,52.9,29.6,21.2,30.0,26.0,31.4,30.6,58.1,59.2,102.4,108.0,96.2,35.3,89.2,77.9,129.6,53.7,98.7,63.7,64.1,42.6,23.4,14.9,25.7,9.3,0.0,8.9,11.0,23.2,31.0,47.0,63.9,65.9,19.3,22.7,34.5],
+[48.8,34.4,23.1,73.5,34.5,56.4,33.1,24.8,33.5,29.6,34.6,34.1,61.6,62.7,105.9,111.5,99.7,38.8,92.7,81.4,133.1,57.2,102.2,67.2,67.7,46.2,26.9,18.4,30.1,12.8,9.7,0.0,9.2,16.0,25.5,41.5,58.5,60.5,17.9,21.3,33.1],
+[49.2,34.7,23.4,73.9,34.9,56.8,33.5,25.1,33.9,29.9,34.9,34.5,62.0,63.1,106.3,111.9,100.1,39.2,93.1,81.8,133.5,57.6,102.6,67.6,68.0,46.5,27.3,18.8,30.4,13.2,10.1,9.0,0.0,19.5,29.0,45.0,62.0,64.0,14.8,18.2,30.0],
+[47.4,32.9,32.3,72.1,33.2,55.0,30.6,26.6,31.0,27.0,31.0,31.0,60.2,62.0,103.4,109.0,97.2,35.8,90.2,78.9,130.6,54.7,99.7,64.4,65.1,43.6,24.2,21.4,24.9,28.2,23.5,16.6,19.9,0.0,13.4,29.4,46.4,48.4,28.5,31.9,43.7],
+[54.5,40.0,39.4,79.1,40.3,62.1,37.6,33.7,38.1,34.1,38.1,38.1,67.3,69.1,110.5,116.0,104.2,42.5,97.3,85.9,137.6,61.8,106.8,71.2,72.2,50.7,31.3,28.5,31.7,37.8,31.7,26.2,29.5,13.4,0.0,20.6,37.5,39.5,38.1,41.5,53.3],
+[70.2,55.7,55.1,94.8,56.0,77.8,53.3,49.4,53.8,49.8,53.8,53.8,83.0,84.8,126.2,131.8,119.9,58.2,113.0,101.6,153.3,77.5,122.5,86.9,87.9,66.4,47.0,44.2,47.4,53.5,47.4,41.9,45.2,29.1,20.1,0.0,18.8,20.8,53.8,57.2,69.0],
+[87.5,73.0,72.4,112.2,73.3,95.1,70.7,66.7,71.1,67.1,71.1,71.1,100.3,102.1,143.5,149.1,137.3,75.5,130.3,119.0,170.7,94.8,139.8,104.2,105.2,83.7,64.3,61.5,64.7,70.8,64.7,59.2,62.5,46.4,37.4,19.1,0.0,25.7,71.1,74.5,86.3],
+[89.8,75.4,74.8,114.5,75.7,97.5,73.0,69.0,73.5,69.5,73.4,73.5,102.6,104.5,145.8,133.0,139.6,77.9,132.7,121.3,153.3,97.2,141.7,106.6,107.6,86.1,66.7,63.9,67.1,73.2,67.1,61.6,64.8,48.7,39.8,21.4,25.9,0.0,73.5,76.9,88.7],
+[56.7,42.3,31.0,81.4,42.5,64.4,41.0,32.7,41.5,37.5,42.5,42.0,69.5,70.6,113.8,119.4,107.6,46.8,100.7,89.3,141.0,65.2,110.1,75.1,75.6,54.1,34.8,26.3,38.0,20.8,17.6,16.8,11.6,27.3,36.8,52.8,69.8,71.8,0.0,9.2,21.0],
+[61.5,47.0,35.8,86.2,47.2,69.1,45.8,37.4,46.2,42.2,47.2,46.8,74.3,75.4,118.6,124.2,112.4,51.5,105.4,94.1,145.8,69.9,114.9,79.9,80.4,58.8,39.6,31.1,42.8,25.5,22.4,21.5,16.4,32.0,41.6,57.6,74.5,76.5,10.2,0.0,11.8],
+[73.3,58.8,47.6,98.0,59.0,80.9,57.6,49.2,58.0,54.0,59.0,58.6,86.1,87.2,130.4,136.0,124.2,63.3,117.2,105.9,157.6,81.7,126.7,91.7,92.1,70.6,51.4,42.9,54.6,37.3,34.2,33.3,28.1,43.8,53.4,69.4,86.3,88.3,22.0,11.8,0.0]
+];
+
+/* Commune-to-CIS : TRAVEL_COMM_MIN[k][j] = minutes de la commune k au CIS j */
+var TRAVEL_COMM_MIN=[
+[60.9,46.4,45.8,85.6,46.8,68.5,44.1,40.1,44.5,40.6,44.5,44.6,73.7,75.6,116.9,122.5,110.7,49.8,103.7,92.4,144.1,68.2,113.2,78.2,78.7,57.2,37.8,35.0,40.9,41.4,37.0,29.7,33.0,16.8,24.1,42.6,59.1,61.5,41.7,45.1,56.9],
+[45.0,30.5,12.0,69.7,23.4,52.6,29.2,19.9,29.7,25.7,23.5,30.3,57.8,58.9,102.1,107.7,95.9,35.0,88.9,77.6,129.2,53.4,98.4,63.4,63.8,42.3,23.1,14.6,26.2,6.8,8.9,11.7,13.8,27.0,36.6,52.6,69.5,71.5,22.0,25.4,37.2],
+[85.1,70.7,70.1,109.8,71.0,92.8,68.3,64.3,68.8,64.8,68.7,68.8,97.9,99.8,141.1,146.7,134.9,73.2,128.0,116.6,168.3,92.5,137.4,101.9,102.9,81.4,62.0,59.2,62.4,68.5,62.4,56.9,60.1,44.0,35.1,27.0,44.0,45.9,68.8,72.2,84.0],
+[109.7,111.7,114.3,76.7,118.5,101.2,94.7,108.6,100.6,110.8,116.2,115.4,87.6,124.7,19.6,50.4,37.3,87.4,33.4,59.1,72.0,70.4,41.1,100.3,67.5,80.3,103.3,108.0,99.4,119.6,118.2,121.5,123.6,118.4,125.3,141.3,158.2,160.2,131.9,135.3,147.1],
+[148.8,145.1,147.7,132.0,151.8,156.5,128.0,142.0,133.9,144.2,149.6,148.7,142.9,162.7,77.1,55.1,55.4,120.7,66.8,92.5,70.9,103.8,59.0,133.7,100.9,113.7,136.7,141.4,132.8,152.9,151.5,154.9,157.0,151.8,158.6,174.6,191.6,186.0,165.2,168.6,180.4],
+[53.6,65.6,75.7,44.8,79.5,46.8,51.4,70.0,58.7,66.6,77.3,76.5,33.1,70.2,107.0,123.4,111.6,50.4,104.7,93.3,145.0,69.0,114.1,42.7,79.6,60.7,64.7,69.4,62.2,80.9,79.5,82.9,85.0,79.8,86.6,102.6,119.6,121.6,93.2,96.6,108.4],
+[47.6,47.1,49.6,49.0,53.8,55.2,30.0,43.9,35.9,46.1,51.5,50.7,43.6,61.4,68.1,73.7,61.8,22.7,54.9,43.5,95.2,19.4,64.4,29.6,29.8,15.6,38.6,43.3,34.8,54.9,53.5,56.8,58.9,53.7,60.6,76.6,93.6,95.5,67.2,70.6,82.4],
+[53.7,39.2,27.9,78.4,39.4,61.3,38.0,29.6,38.4,34.4,39.4,39.0,66.5,67.6,110.8,116.4,104.6,43.7,97.6,86.3,138.0,62.1,107.1,72.1,72.5,51.0,31.8,23.3,35.0,17.7,14.6,13.5,6.7,24.0,33.5,49.5,66.5,68.5,16.4,19.8,31.6],
+[71.0,56.6,56.0,95.7,56.9,78.6,54.2,50.2,54.6,50.7,54.6,54.7,83.8,85.7,127.0,132.6,120.8,59.1,113.8,102.5,154.2,78.4,123.3,87.8,88.8,67.3,47.9,45.1,48.2,54.4,48.3,42.7,46.0,29.9,21.0,2.6,16.6,18.6,54.7,58.1,69.9],
+[98.5,94.7,97.3,92.4,101.4,106.1,77.6,91.6,83.5,93.8,99.2,98.3,103.2,112.3,41.2,56.2,43.1,70.3,39.2,42.5,77.8,53.4,46.9,83.3,50.5,63.3,86.3,91.0,82.4,102.5,101.1,104.5,106.6,101.4,108.2,124.2,141.2,143.2,114.8,118.2,130.0],
+[43.4,28.9,26.4,68.0,31.7,51.0,25.7,21.5,26.6,24.1,29.5,28.6,56.1,57.2,97.8,103.4,91.6,26.8,84.6,73.3,125.0,49.1,94.1,55.5,59.5,38.0,21.4,12.9,16.0,17.7,11.0,17.7,20.5,16.8,24.4,40.5,57.4,59.4,28.7,32.1,43.9],
+[33.0,12.4,20.9,57.7,23.6,40.6,16.4,14.0,9.4,15.9,21.3,20.5,45.8,46.9,89.2,94.8,83.0,22.2,76.1,64.7,116.4,40.6,85.5,50.5,51.0,29.5,5.1,14.7,19.6,26.2,24.8,28.2,30.3,25.0,31.9,47.9,64.9,66.9,38.5,41.9,53.7],
+[60.6,56.9,59.4,72.4,63.6,68.2,39.8,53.7,45.7,55.9,61.3,60.5,67.0,74.5,80.9,86.5,74.7,32.5,67.7,56.4,108.1,32.2,77.2,53.0,42.7,20.9,48.4,53.1,44.6,64.7,63.3,66.6,68.7,63.5,70.4,86.4,103.4,105.3,77.0,80.4,92.2],
+[25.4,4.7,23.0,50.1,24.4,33.0,18.8,15.0,10.4,11.4,22.1,21.7,38.2,39.3,92.7,98.3,86.4,25.6,79.5,68.2,119.8,44.0,89.0,54.0,54.4,32.9,11.2,17.8,23.1,29.4,27.9,31.3,33.4,29.3,36.1,52.1,69.1,71.1,41.6,45.0,56.8],
+[45.7,31.2,28.7,70.3,34.0,53.3,28.4,23.8,29.3,26.4,31.8,31.0,58.5,59.5,100.5,106.1,94.3,29.5,87.3,76.0,127.7,51.8,96.8,58.2,62.3,40.8,23.7,15.3,18.7,22.5,15.2,15.6,18.8,11.6,19.2,35.2,52.2,54.2,27.5,30.9,42.7],
+[80.5,66.0,54.8,105.2,66.2,88.1,64.8,56.4,65.2,61.2,66.2,65.8,93.3,94.4,137.6,143.2,131.4,70.5,124.4,113.1,164.8,88.9,133.9,98.9,99.3,77.8,58.6,50.1,61.8,44.5,41.4,40.5,35.3,51.0,60.5,76.6,93.5,95.5,29.2,19.0,29.8],
+[38.6,24.1,14.7,63.3,5.5,46.2,31.1,19.6,30.7,14.5,9.2,16.1,51.4,49.9,103.9,109.5,97.7,36.9,90.8,79.4,131.1,55.3,100.2,65.2,65.7,44.2,24.4,24.7,31.6,29.0,32.1,34.9,37.0,34.6,41.4,57.4,74.4,76.4,45.2,48.6,60.4],
+[69.8,66.1,68.7,88.9,72.8,77.4,49.0,62.9,54.9,65.1,70.5,69.7,81.1,83.7,104.9,110.5,98.7,41.7,91.8,80.4,132.1,56.3,101.2,69.6,66.7,45.2,57.7,64.9,52.0,76.3,69.6,67.5,70.8,54.7,46.5,54.1,71.1,73.1,79.4,82.8,94.6],
+[25.5,34.5,41.4,49.0,45.6,33.1,17.2,35.7,24.4,35.5,43.3,42.5,38.3,39.4,90.7,96.3,84.5,20.6,77.6,66.2,117.9,42.1,87.0,38.3,52.5,31.0,30.4,35.1,27.9,46.7,45.3,48.6,50.7,45.5,52.4,68.4,85.3,87.3,59.0,62.4,74.2],
+[91.7,88.0,90.6,74.9,94.7,99.4,70.9,84.9,76.8,87.1,92.5,91.6,85.8,105.6,20.0,24.2,4.8,63.6,9.7,35.3,39.9,46.7,16.3,76.6,43.8,56.6,79.6,84.3,75.7,95.8,94.4,97.8,99.9,94.6,101.5,117.5,134.5,136.5,108.1,111.5,123.3],
+[34.6,19.7,10.3,59.3,15.6,42.2,22.2,8.4,22.6,11.9,13.0,16.7,47.4,49.8,95.0,100.6,88.8,27.9,81.8,70.5,122.2,46.3,91.3,56.3,56.8,35.2,16.0,14.1,23.6,23.5,22.1,25.5,27.6,28.4,35.3,51.3,68.3,70.2,35.8,39.2,51.0],
+[91.4,87.6,90.2,110.5,94.4,99.0,70.6,84.5,76.5,86.7,92.1,91.3,102.7,105.3,126.5,132.1,120.3,63.3,113.3,102.0,153.7,77.8,122.8,91.1,88.2,66.7,79.2,83.9,73.6,95.5,94.1,97.4,99.5,87.9,79.7,95.7,112.7,114.7,107.8,111.2,123.0],
+[34.8,31.1,33.7,53.9,37.8,42.4,14.0,27.9,19.9,30.1,35.5,34.7,46.1,48.7,69.9,75.5,63.7,6.7,56.8,45.4,97.1,21.3,66.2,34.6,31.7,10.2,22.7,27.3,17.0,38.9,37.5,40.8,42.9,37.7,44.6,60.6,77.6,79.6,51.2,54.6,66.4],
+[48.1,33.7,33.1,72.8,34.0,55.8,31.3,27.3,31.7,27.8,31.7,31.8,60.9,62.8,104.1,109.7,97.9,35.0,91.0,79.6,131.3,55.5,100.4,63.7,65.9,44.4,25.0,20.7,24.2,30.0,22.8,18.8,22.1,2.7,14.2,30.2,47.2,49.1,30.8,34.2,46.0],
+[107.4,103.7,106.3,91.8,110.4,115.1,86.6,100.6,92.5,102.8,108.2,107.3,102.7,121.3,36.9,5.5,23.7,79.3,25.4,51.1,28.4,62.4,12.2,92.3,59.5,72.3,95.3,100.0,91.4,111.5,110.1,113.5,115.6,110.4,117.2,133.2,150.2,138.2,123.8,127.2,139.0],
+[51.2,36.7,29.1,75.9,39.6,58.8,34.1,27.1,35.0,32.0,37.3,36.5,64.0,65.1,106.2,111.8,100.0,35.2,93.0,81.7,133.4,57.6,102.5,63.9,68.0,46.5,29.3,20.8,24.4,20.0,12.7,15.4,18.7,17.7,25.4,41.4,58.4,60.4,27.3,30.7,42.5],
+[88.6,84.9,87.4,73.0,91.6,96.2,67.8,81.7,73.7,83.9,89.3,88.5,83.9,102.5,18.1,19.8,11.4,60.5,6.6,32.2,41.3,43.6,10.5,73.5,40.7,53.4,76.5,81.1,72.6,92.7,91.3,94.6,96.7,91.5,98.4,114.4,131.4,133.3,105.0,108.4,120.2],
+[40.3,25.9,12.5,65.0,23.4,47.9,25.2,13.1,25.7,19.8,23.5,24.2,53.1,57.3,98.0,103.6,91.8,31.0,84.9,73.5,125.2,49.4,94.3,59.3,59.8,38.3,19.0,10.5,22.2,13.3,15.2,18.2,20.3,27.1,33.9,49.9,66.9,68.9,28.5,31.9,43.7],
+[47.6,41.2,41.4,68.1,44.9,55.2,26.8,35.7,31.2,37.2,42.6,41.8,60.4,61.5,89.1,94.7,82.9,20.4,75.9,64.6,116.3,40.4,85.4,48.8,50.9,29.4,32.6,30.5,17.1,42.1,39.0,44.0,46.1,37.7,43.3,59.4,76.3,78.3,54.4,57.8,69.6],
+[23.9,16.7,35.3,48.6,36.4,31.5,22.7,27.2,18.1,23.4,34.1,34.0,36.7,37.8,96.7,102.2,90.4,29.6,83.5,72.1,123.8,48.0,93.0,57.9,58.4,36.9,21.3,30.1,28.7,41.6,40.2,43.6,45.7,41.3,48.1,64.1,81.1,83.1,53.9,57.3,69.1],
+[57.6,54.1,53.9,76.7,57.4,65.2,36.8,48.2,46.0,49.7,55.1,54.3,69.0,71.5,92.7,98.3,86.5,29.5,79.6,68.2,119.9,44.1,89.1,57.4,54.5,33.0,44.2,40.9,32.7,52.3,45.6,43.5,46.8,30.7,22.5,38.5,55.5,57.5,55.5,58.9,70.7],
+[32.0,28.6,31.5,56.6,35.0,39.6,11.1,25.8,17.4,27.3,32.7,31.9,44.7,45.8,81.5,87.1,75.3,10.5,68.3,57.0,108.7,32.8,77.8,39.2,43.3,21.8,20.9,20.7,7.5,32.2,30.8,34.1,36.3,29.8,36.5,52.5,69.5,71.5,44.5,47.9,59.7],
+[56.7,52.9,55.5,50.5,59.7,64.3,35.9,49.8,41.8,52.0,57.4,56.6,53.0,70.6,64.0,69.6,57.8,28.6,50.8,39.5,91.2,14.5,60.3,30.9,25.8,21.5,44.5,49.2,40.6,60.8,59.4,62.7,64.8,59.6,66.5,82.5,99.4,101.4,73.1,76.5,88.3],
+[64.2,70.5,73.0,41.1,77.2,57.3,53.4,67.3,59.3,69.5,74.9,74.1,43.6,80.7,89.2,94.8,83.0,42.2,76.0,64.7,116.4,39.8,85.5,21.5,51.0,47.5,62.0,66.7,54.4,78.3,76.9,80.2,82.3,76.6,83.3,99.3,116.3,118.3,90.6,94.0,105.8],
+[87.6,83.9,86.5,92.1,90.6,95.2,66.8,80.7,72.7,83.0,88.3,87.5,94.0,101.5,37.7,43.3,31.5,59.5,24.5,31.2,64.9,42.6,34.0,72.5,39.7,52.4,75.5,80.2,71.6,91.7,90.3,93.6,95.8,90.5,97.4,113.4,130.4,132.4,104.0,107.4,119.2],
+[40.6,26.1,5.3,65.3,16.7,48.2,26.3,13.2,26.7,19.9,16.7,24.3,53.4,57.4,99.1,104.7,92.9,32.0,85.9,74.6,126.3,50.4,95.4,60.4,60.8,39.3,20.1,17.1,27.6,13.9,15.9,18.7,20.9,32.5,39.4,55.4,72.3,74.3,29.1,32.5,44.3],
+[35.1,20.7,20.1,59.8,23.5,42.7,16.0,14.3,15.4,15.9,21.3,20.4,47.9,49.0,88.9,94.4,82.6,21.3,75.7,64.3,116.0,40.2,85.2,50.0,50.6,29.1,10.4,9.2,10.9,20.8,19.3,22.7,24.8,19.5,26.3,42.3,59.3,61.3,33.0,36.4,48.2],
+[32.3,42.8,49.7,35.0,53.8,37.0,25.4,44.0,32.7,43.8,51.6,50.7,23.3,47.3,94.6,100.2,88.4,24.4,81.4,70.1,121.8,45.9,90.9,32.9,56.3,34.8,38.7,43.4,36.2,55.0,53.6,56.9,59.0,53.8,60.6,76.6,93.6,95.6,67.2,70.6,82.4],
+[45.0,41.6,44.9,62.3,49.1,52.6,23.9,39.2,30.4,41.4,46.8,46.0,54.5,58.8,83.3,88.8,77.0,14.6,70.1,58.7,110.4,34.6,79.6,42.9,45.0,23.5,33.9,36.4,23.3,48.0,46.6,49.9,52.0,45.6,47.4,63.4,80.4,82.4,60.3,63.7,75.5],
+[22.0,16.0,31.6,46.7,29.9,29.6,29.6,22.6,26.4,17.0,27.6,26.8,34.8,35.9,106.5,112.1,100.2,39.4,93.3,81.9,133.6,57.8,102.8,58.7,68.2,46.7,26.9,27.2,34.2,38.7,37.3,40.6,42.7,39.0,45.9,61.9,78.9,80.8,51.0,54.4,66.2],
+[21.4,31.9,44.7,43.0,45.8,28.6,20.5,38.5,27.7,32.9,43.6,42.8,31.3,36.5,89.6,95.2,83.4,19.5,76.4,65.1,116.8,40.9,85.9,33.8,51.4,29.8,33.7,38.4,31.2,50.0,48.6,51.9,54.0,48.8,55.7,71.7,88.6,90.6,62.3,65.7,77.5],
+[66.2,62.5,65.0,70.6,69.2,73.8,45.4,59.3,51.3,61.5,66.9,66.1,72.6,80.1,56.6,62.2,50.4,38.1,43.5,32.1,83.8,21.1,53.0,51.0,7.0,31.0,54.0,58.7,50.2,70.3,68.9,72.2,74.3,69.1,76.0,92.0,109.0,110.9,82.6,86.0,97.8],
+[36.3,32.9,36.7,61.0,40.1,43.9,15.5,30.9,21.7,32.5,37.9,37.0,49.1,50.2,85.8,91.4,79.6,14.8,72.6,61.3,113.0,37.2,82.1,43.5,47.6,26.1,27.9,25.8,12.3,37.4,34.3,39.3,41.4,33.0,39.7,55.7,72.6,74.6,49.6,53.0,64.8],
+[52.4,48.7,51.2,44.0,55.4,60.2,31.6,45.5,37.5,47.7,53.1,52.3,46.5,66.3,59.7,65.3,53.5,24.3,46.5,35.2,86.9,10.2,56.0,24.4,21.5,17.2,40.2,44.9,36.4,56.5,55.1,58.4,60.5,55.3,62.2,78.2,95.2,97.1,68.8,72.2,84.0],
+[38.1,51.3,67.0,5.3,65.2,29.6,49.8,57.9,53.5,52.3,62.9,62.2,16.0,53.1,67.3,93.1,80.0,52.3,76.1,83.0,102.8,58.0,83.8,31.7,69.2,57.6,62.2,62.6,60.5,74.0,72.6,75.9,78.0,74.3,81.2,97.2,114.2,116.2,86.3,89.7,101.5],
+[128.5,124.8,127.3,103.4,131.5,127.9,107.7,121.6,113.6,123.8,129.2,128.4,114.3,142.4,48.5,63.4,50.4,100.4,46.5,72.1,85.0,83.4,54.1,113.3,80.5,93.3,116.3,121.0,112.5,132.6,131.2,134.5,136.6,131.4,138.3,154.3,171.3,173.2,144.9,148.3,160.1],
+[77.0,62.5,51.2,101.7,62.7,84.6,61.2,52.9,61.7,57.7,62.7,62.3,89.8,90.9,134.1,139.7,127.9,67.0,120.9,109.6,161.2,85.4,130.4,95.4,95.8,74.3,55.1,46.6,58.2,41.0,37.8,37.0,31.8,47.5,57.0,73.0,90.0,92.0,25.6,15.5,5.9],
+[64.4,49.9,49.3,89.1,50.3,72.0,47.6,43.6,48.0,44.0,48.0,48.0,77.2,79.1,120.4,126.0,114.2,52.5,107.2,95.9,147.6,71.7,116.7,81.1,82.2,60.6,41.3,38.5,41.6,47.8,41.7,36.1,39.4,23.3,12.3,30.5,47.5,49.5,48.1,51.5,63.3],
+[37.3,22.8,18.2,62.0,12.1,44.9,29.8,13.7,29.4,13.2,7.9,15.9,50.1,48.6,102.6,108.2,96.4,35.6,89.4,78.1,129.8,54.0,98.9,63.9,64.4,42.9,23.0,22.0,30.3,31.4,30.0,33.4,35.5,33.3,40.1,56.1,73.1,75.1,43.7,47.1,58.9],
+[61.8,58.1,60.6,70.2,64.8,69.4,41.0,54.9,46.9,57.1,62.5,61.7,68.2,75.7,70.3,75.9,64.1,33.7,57.1,45.8,97.5,19.8,66.6,50.6,32.0,26.6,49.7,54.3,45.8,65.9,64.5,67.8,69.9,64.7,71.6,87.6,104.6,106.5,78.2,81.6,93.4],
+[52.1,48.4,50.9,57.2,55.1,59.7,31.3,45.2,37.2,47.4,52.8,52.0,58.5,66.0,56.5,62.1,50.3,24.0,43.3,32.0,83.7,5.3,52.8,37.6,18.3,16.9,39.9,44.6,36.1,56.2,54.8,58.1,60.2,55.0,61.9,77.9,94.8,96.8,68.5,71.9,83.7],
+[59.7,45.3,34.0,84.4,45.4,67.3,44.0,35.7,44.4,40.5,45.5,45.0,72.5,73.6,116.8,122.4,110.6,49.8,103.7,92.3,144.0,68.2,113.1,78.1,78.6,57.1,37.8,29.3,41.0,23.8,20.6,19.8,14.2,30.3,39.8,55.8,72.8,74.8,11.9,19.3,31.1],
+[72.3,68.6,71.2,76.8,75.3,80.0,51.5,65.5,57.4,67.7,73.1,72.2,78.7,86.2,72.4,78.0,66.2,44.2,59.3,47.9,99.6,27.3,68.7,57.2,34.2,37.2,60.2,64.9,56.3,76.4,75.0,78.4,80.5,75.2,82.1,98.1,115.1,117.1,88.7,92.1,103.9],
+[32.9,29.5,32.8,54.7,37.0,40.5,11.8,27.1,18.3,29.3,34.7,33.9,45.7,46.8,77.7,83.3,71.5,6.7,64.5,53.2,104.9,29.0,74.0,35.4,39.4,17.9,21.8,24.3,11.2,35.9,34.5,37.8,39.9,33.5,40.2,56.2,73.2,75.1,48.2,51.6,63.4],
+[28.6,25.2,28.5,53.2,32.7,36.2,7.7,22.8,14.0,25.0,30.4,29.6,41.4,42.4,77.1,82.7,70.9,6.1,63.9,52.6,104.3,28.4,73.4,34.8,38.9,17.4,17.5,20.4,7.3,31.9,30.5,33.9,36.0,29.5,36.2,52.2,69.2,71.2,44.2,47.6,59.4],
+[93.1,89.4,92.0,97.6,96.1,100.7,72.3,86.2,78.2,88.5,93.8,93.0,99.5,107.0,83.6,89.2,77.4,65.0,70.4,59.1,110.8,48.1,79.9,78.0,39.2,58.0,81.0,85.7,77.1,97.2,95.8,99.2,101.3,96.0,102.9,118.9,135.9,137.9,109.5,112.9,124.7],
+[27.1,21.7,31.1,51.8,35.2,34.7,8.2,25.3,10.5,27.5,32.9,32.1,39.9,41.0,86.3,91.9,80.0,19.2,73.1,61.8,113.4,37.6,82.6,47.6,48.0,26.5,19.4,24.8,19.0,36.3,34.9,38.2,40.4,35.1,42.0,58.0,75.0,77.0,48.6,52.0,63.8],
+[41.0,26.5,18.7,65.6,29.4,48.6,25.2,16.9,25.7,21.7,27.1,26.3,53.8,54.9,98.1,103.7,91.9,31.0,84.9,73.6,125.2,49.4,94.4,59.4,59.8,38.3,19.1,10.6,22.2,8.5,6.3,10.4,12.5,25.7,33.4,49.4,66.4,68.4,20.8,24.2,36.0],
+[139.3,124.8,124.2,164.0,125.1,146.9,122.5,118.5,122.9,118.9,122.9,122.9,152.1,153.9,195.3,200.9,189.1,127.3,182.1,170.8,222.5,146.6,191.6,156.0,157.0,135.5,116.1,113.3,116.5,122.6,116.6,111.0,114.3,98.2,89.2,70.9,85.6,87.5,123.0,126.3,138.2],
+[103.1,88.6,88.0,127.8,89.0,110.7,86.3,82.3,86.7,82.8,86.7,86.8,115.9,117.8,159.1,164.7,152.9,91.4,145.9,134.6,186.3,110.4,155.4,120.0,120.9,99.4,80.0,77.2,80.5,86.7,80.6,75.0,78.3,62.2,53.3,34.9,17.2,41.5,87.0,90.4,98.3],
+[138.2,134.5,137.0,121.4,141.2,145.8,117.4,131.3,123.3,133.5,138.9,138.1,132.2,152.1,66.4,44.5,44.8,110.1,56.1,81.8,60.3,93.1,48.4,123.0,90.2,103.0,126.0,130.7,122.2,142.3,140.9,144.2,146.3,141.1,148.0,164.0,181.0,175.4,154.6,158.0,169.8],
+[50.8,36.4,35.7,75.5,36.7,58.4,34.0,30.0,34.4,30.5,34.4,34.5,63.6,65.5,106.8,112.4,100.6,39.7,93.6,82.3,134.0,58.1,103.1,68.1,68.6,47.1,27.7,24.9,30.8,36.4,32.8,25.5,28.8,12.7,19.5,35.5,49.2,54.5,37.4,40.8,52.6],
+[96.5,92.8,95.3,79.7,99.5,104.1,75.7,89.6,81.6,91.8,97.2,96.4,90.6,110.4,24.7,18.6,3.1,68.4,14.5,40.1,34.4,51.4,13.3,81.3,48.5,61.3,84.3,89.0,80.5,100.6,99.2,102.5,104.6,99.4,106.3,122.3,139.3,141.2,112.9,116.3,128.1],
+[43.1,28.6,16.6,67.8,28.1,50.7,27.4,19.0,27.8,23.8,28.1,28.4,55.9,57.0,100.2,105.8,94.0,33.1,87.0,75.7,127.4,51.5,96.5,61.5,62.0,40.4,21.2,12.7,24.4,6.4,4.4,8.2,10.3,23.5,33.1,49.1,66.0,68.0,18.5,21.9,33.7],
+[128.1,124.3,126.9,112.5,131.1,135.7,107.3,121.2,113.2,123.4,128.8,128.0,123.3,142.0,57.5,25.1,36.2,100.0,46.0,71.7,34.1,83.0,32.8,112.9,80.1,92.9,115.9,120.6,112.0,132.2,130.8,134.1,136.2,131.0,137.9,153.9,170.8,156.0,144.5,147.9,159.7],
+[114.9,111.2,113.8,99.3,117.9,122.6,94.1,108.1,100.0,110.3,115.7,114.8,110.2,128.8,44.4,25.3,32.8,86.8,32.9,58.5,48.1,69.9,19.7,99.8,67.0,79.8,102.8,107.5,98.9,119.0,117.6,121.0,123.1,117.8,124.7,140.7,157.7,158.0,131.3,134.7,146.5],
+[71.1,67.3,69.9,75.5,74.1,78.7,50.3,64.2,56.2,66.4,71.8,71.0,77.5,85.0,50.0,55.6,43.8,43.0,36.8,25.5,77.2,26.0,46.3,55.9,14.9,35.9,58.9,63.6,55.0,75.2,73.8,77.1,79.2,74.0,80.8,96.9,113.8,115.8,87.5,90.9,102.7],
+[23.9,10.8,26.5,48.6,20.3,31.5,28.5,17.4,21.3,11.8,18.1,17.2,36.7,36.5,101.3,106.9,95.1,34.2,88.1,76.8,128.5,52.6,97.6,60.6,63.1,41.6,21.7,22.1,29.0,33.5,32.1,35.5,37.6,33.9,40.7,56.7,73.7,75.7,45.8,49.2,61.0],
+[47.3,43.6,46.2,59.2,50.3,55.0,26.5,40.5,32.4,42.7,48.1,47.2,53.8,61.2,67.7,73.2,61.4,19.2,54.5,43.1,94.8,19.0,64.0,39.8,29.4,12.2,35.2,39.9,31.3,51.4,50.0,53.4,55.5,50.3,57.1,73.1,90.1,92.1,63.7,67.1,78.9],
+[10.6,18.9,34.5,35.3,32.8,18.3,16.6,25.5,15.1,19.9,30.5,29.8,23.4,24.5,93.6,99.2,87.4,26.5,80.4,69.1,120.8,44.9,89.9,45.6,55.3,33.8,23.9,29.3,25.7,40.8,39.4,42.8,44.9,39.6,46.5,62.5,79.5,81.5,53.1,56.5,68.3],
+[108.7,105.0,107.5,93.1,111.7,116.3,87.9,101.8,93.8,104.0,109.4,108.6,103.9,122.6,38.1,19.4,26.5,80.6,26.6,52.3,37.9,63.6,13.8,93.5,60.7,73.5,96.5,101.2,92.7,112.8,111.4,114.7,116.8,111.6,118.5,134.5,151.4,149.8,125.1,128.5,140.3],
+[105.2,101.5,104.1,113.6,108.2,112.9,84.4,98.4,90.3,100.6,106.0,105.1,111.7,119.1,113.7,119.3,107.5,77.1,100.5,89.2,140.9,63.2,110.0,94.0,75.5,70.1,93.1,97.8,89.2,109.3,107.9,111.3,113.4,108.2,115.0,131.0,148.0,150.0,121.6,125.0,136.8],
+[62.3,58.6,61.2,68.4,65.3,69.9,41.5,55.4,47.4,57.7,63.0,62.2,68.7,76.2,73.7,79.3,67.5,34.2,60.5,49.2,100.8,25.0,70.0,48.8,35.4,27.1,50.2,54.9,46.3,66.4,65.0,68.4,70.5,65.2,72.1,88.1,105.1,107.1,78.7,82.1,93.9],
+[107.8,104.0,106.6,92.1,110.7,115.4,87.0,100.9,92.8,103.1,108.5,107.7,103.0,121.7,37.2,35.2,29.4,79.7,25.7,51.4,56.8,62.7,25.9,92.6,59.8,72.6,95.6,100.3,91.7,111.9,110.5,113.8,115.9,110.7,117.5,133.6,150.5,152.5,124.1,127.5,139.3],
+[44.2,57.1,67.5,19.4,71.0,35.7,43.0,61.8,50.2,58.2,68.8,68.0,22.1,59.2,82.1,102.2,90.4,36.7,83.4,72.1,123.8,47.1,92.9,20.8,58.3,42.0,56.5,61.2,48.8,72.8,71.3,74.7,76.8,71.1,77.8,93.8,110.8,112.8,85.0,88.4,100.2],
+[90.3,103.6,119.2,57.6,117.5,81.9,99.5,110.2,105.8,104.6,115.2,114.4,68.3,105.4,120.3,146.0,132.9,92.5,129.1,123.2,155.8,98.2,136.7,71.9,109.4,97.8,112.3,114.8,104.6,126.3,124.9,128.2,130.3,126.6,133.5,149.5,166.5,168.4,138.6,142.0,153.8],
+[76.5,72.8,75.4,83.0,79.5,84.1,55.7,69.6,61.6,71.8,77.2,76.4,82.9,90.4,69.0,74.6,62.8,48.4,55.8,44.5,96.2,29.8,65.3,63.4,21.6,41.3,64.4,69.0,60.5,80.6,79.2,82.5,84.6,79.4,86.3,102.3,119.3,121.3,92.9,96.3,108.1],
+[49.3,45.6,48.2,61.1,52.3,56.9,28.5,42.4,34.4,44.7,50.0,49.2,55.7,63.2,69.6,75.2,63.4,21.2,56.5,45.1,96.8,21.0,65.9,41.8,31.4,9.6,37.2,41.9,33.3,53.4,52.0,55.4,57.5,52.2,59.1,75.1,92.1,94.1,65.7,69.1,80.9],
+[97.5,93.7,96.3,101.9,100.5,105.1,76.7,90.6,82.6,92.8,98.2,97.4,103.9,111.4,46.0,51.5,39.7,69.4,32.8,41.1,73.1,52.4,42.3,82.3,49.5,62.3,85.3,90.0,81.4,101.6,100.2,103.5,105.6,100.4,107.3,123.3,140.2,142.2,113.9,117.3,129.1],
+[108.8,122.0,130.6,75.9,134.8,100.4,111.0,124.9,116.9,123.1,132.5,131.7,86.8,123.9,41.0,66.7,53.6,103.7,49.7,75.4,88.3,86.7,57.4,102.6,83.8,96.6,119.6,124.3,115.8,135.9,134.5,137.8,139.9,134.7,141.6,157.6,174.5,176.5,148.2,151.6,163.4],
+[95.7,105.9,108.4,62.7,112.6,87.2,88.8,102.7,94.7,104.9,110.3,109.5,73.6,110.7,18.3,44.5,31.4,81.5,27.5,53.2,66.1,64.5,35.2,89.4,61.6,74.4,97.4,102.1,93.6,113.7,112.3,115.6,117.7,112.5,119.4,135.4,152.3,154.3,126.0,129.4,141.2],
+[42.4,55.6,70.9,10.7,69.5,33.9,47.1,62.2,54.3,56.6,67.2,66.5,20.3,57.4,73.4,99.1,86.1,40.1,82.1,70.8,108.9,45.8,89.9,19.6,57.1,45.4,59.9,64.6,52.2,76.1,74.7,78.1,80.2,74.5,81.2,97.2,114.2,116.1,88.4,91.8,103.6],
+[46.7,37.6,37.4,71.4,40.9,54.3,25.9,31.7,29.5,33.2,38.6,37.8,59.5,60.6,98.0,103.6,91.8,27.1,84.9,73.5,125.2,49.4,94.3,55.7,59.8,38.3,27.7,24.5,16.2,35.9,29.1,32.6,35.9,24.1,23.8,39.8,56.8,58.8,44.5,47.9,59.7],
+[59.2,55.4,58.0,63.6,62.1,66.8,38.4,52.3,44.2,54.5,59.9,59.1,65.6,73.1,47.3,52.8,41.0,31.1,34.1,22.7,74.4,14.1,43.6,44.0,10.2,24.0,47.0,51.7,43.1,63.3,61.9,65.2,67.3,62.1,68.9,85.0,101.9,103.9,75.5,78.9,90.8],
+[56.0,52.3,54.9,70.4,59.0,63.6,35.2,49.1,41.1,51.4,56.7,55.9,65.0,69.9,80.6,86.2,74.4,27.9,67.5,56.1,107.8,32.0,76.9,51.1,42.4,17.4,43.9,48.6,40.0,60.1,58.7,62.0,64.2,58.9,65.8,81.8,98.8,100.8,72.4,75.8,87.6],
+[33.2,29.4,32.0,51.7,36.2,40.8,12.4,26.3,18.3,28.5,33.9,33.1,43.9,47.1,69.8,75.4,63.6,4.5,56.6,45.3,97.0,21.1,66.1,32.3,31.5,10.0,21.0,25.7,16.6,37.3,35.9,39.2,41.3,36.1,43.0,59.0,75.9,77.9,49.6,53.0,64.8],
+[47.7,44.0,46.5,62.1,50.7,55.3,26.9,40.8,32.8,43.0,48.4,47.6,56.7,61.6,70.8,76.3,64.5,19.6,57.6,46.2,97.9,22.1,67.1,42.7,32.5,9.1,35.5,40.2,31.7,51.8,50.4,53.7,55.8,50.6,57.5,73.5,90.4,92.4,64.1,67.5,79.3],
+[70.1,66.3,68.9,74.5,73.0,77.7,49.2,63.2,55.1,65.4,70.8,69.9,76.5,84.0,42.7,48.3,36.5,41.9,29.5,18.2,69.9,25.0,39.0,54.9,22.1,34.9,57.9,62.6,54.0,74.2,72.8,76.1,78.2,73.0,79.8,95.8,112.8,114.8,86.4,89.8,101.6],
+[99.4,85.0,84.4,124.1,85.3,107.0,82.6,78.6,83.0,79.1,83.0,83.1,112.2,114.1,155.4,157.4,149.2,87.5,142.2,130.9,177.8,106.8,151.7,116.2,117.2,95.7,76.3,73.5,76.7,82.8,76.7,71.1,74.4,58.3,49.4,31.0,26.2,26.6,83.1,86.5,98.3],
+[28.3,40.3,56.0,27.7,54.3,21.9,32.0,47.0,39.2,41.4,52.0,51.2,16.0,45.4,89.9,110.7,98.9,35.0,91.9,80.6,132.3,56.4,101.4,35.3,66.9,45.3,45.3,50.0,42.8,61.5,60.1,63.4,65.6,60.3,67.2,83.2,100.2,102.2,73.8,77.2,89.0],
+[60.0,45.6,35.5,84.7,46.4,67.7,43.2,36.0,44.1,40.2,44.1,44.2,72.8,75.2,115.3,120.9,109.1,44.3,102.1,90.8,142.5,66.6,111.6,73.0,77.1,55.6,37.4,29.6,33.5,25.3,21.5,13.6,16.9,17.1,26.6,42.6,59.6,61.5,25.6,29.0,40.8],
+[49.7,35.2,22.2,74.4,33.1,57.3,34.0,25.6,34.4,30.4,33.1,35.0,62.5,63.6,106.8,112.4,100.6,39.7,93.6,82.3,134.0,58.1,103.1,68.1,68.5,47.0,27.8,19.3,31.0,6.6,9.7,13.4,15.5,28.7,38.2,54.3,71.2,73.2,23.7,27.1,38.9],
+[114.7,111.0,113.5,99.1,117.7,122.3,93.9,107.8,99.8,110.0,115.4,114.6,109.9,128.6,44.1,11.7,22.8,86.6,32.6,58.3,12.6,69.6,19.4,99.5,66.7,79.5,102.5,107.2,98.7,118.8,117.4,120.7,122.8,117.6,124.5,140.5,157.5,142.6,131.1,134.5,146.3],
+[12.0,24.6,40.2,36.3,38.5,19.2,16.2,31.2,23.4,25.6,36.2,35.4,24.4,27.1,94.2,99.8,88.0,27.2,81.1,69.7,121.4,45.6,90.6,41.4,56.0,34.5,29.5,34.2,27.0,45.7,44.3,47.7,49.8,44.5,51.4,67.4,84.4,86.4,58.0,61.4,73.2],
+[28.4,41.6,57.3,28.5,55.6,20.0,40.1,48.3,43.8,42.7,53.3,52.5,16.8,43.5,90.7,116.4,103.4,45.8,99.5,90.2,126.2,65.9,107.2,39.6,76.5,56.2,52.6,52.9,50.9,64.4,63.0,66.3,68.4,64.7,71.6,87.6,104.5,106.5,76.6,80.0,91.8],
+[107.0,103.3,105.8,77.9,110.0,102.4,86.2,100.1,92.1,102.3,107.7,106.9,88.8,120.9,18.2,41.9,28.9,78.9,25.0,50.6,63.5,61.9,32.6,91.8,59.0,71.8,94.8,99.5,91.0,111.1,109.7,113.0,115.1,109.9,116.8,132.8,149.8,151.7,123.4,126.8,138.6],
+[49.6,40.5,40.3,74.2,43.7,57.2,28.8,34.6,32.3,36.1,41.5,40.7,62.4,63.5,100.9,106.5,94.7,29.9,87.7,76.4,128.1,52.2,97.2,58.6,62.6,41.1,30.6,27.3,19.1,38.7,32.0,30.4,33.6,17.6,14.3,30.3,47.3,49.2,42.3,45.7,57.5],
+[178.5,174.8,177.4,162.9,181.5,186.2,157.7,171.7,163.6,173.9,179.3,178.4,173.8,192.4,108.0,92.2,96.4,150.4,96.5,122.2,113.8,133.5,83.5,163.4,130.6,143.4,166.4,171.1,162.5,182.6,181.2,184.6,186.7,181.5,188.3,204.3,221.3,223.3,194.9,198.3,210.1],
+[41.1,32.0,32.2,65.8,35.7,48.7,20.3,26.5,23.9,28.0,33.4,32.6,53.9,55.0,92.4,98.0,86.2,21.4,79.2,67.9,119.6,43.7,88.7,50.1,54.2,32.7,23.4,21.3,10.6,32.9,27.3,34.0,36.7,26.0,32.7,48.7,65.7,67.6,45.0,48.4,60.2],
+[97.0,93.3,95.8,101.4,100.0,104.6,76.2,90.1,82.1,92.3,97.7,96.9,103.4,110.9,85.1,90.7,78.9,68.9,71.9,60.6,112.3,51.9,81.4,81.8,39.1,61.8,84.8,89.5,81.0,101.1,99.7,103.0,105.1,99.9,106.8,122.8,139.8,141.7,113.4,116.8,128.6],
+[44.3,40.5,43.1,56.1,47.3,51.9,23.5,37.4,29.4,39.6,45.0,44.2,50.7,58.2,61.2,66.8,55.0,16.2,48.1,36.7,88.4,12.6,57.5,36.7,23.0,9.1,32.1,36.8,28.2,48.4,47.0,50.3,52.4,47.2,54.1,70.1,87.0,89.0,60.7,64.1,75.9],
+[49.3,45.6,48.1,58.4,52.3,56.9,28.5,42.4,34.4,44.6,50.0,49.2,55.7,63.2,61.3,66.9,55.0,21.2,48.1,36.8,88.4,12.6,57.6,38.8,23.0,14.1,37.1,41.8,33.3,53.4,52.0,55.3,57.4,52.2,59.1,75.1,92.1,94.0,65.7,69.1,80.9],
+[92.2,91.8,94.4,59.3,98.5,83.8,74.7,88.6,80.6,90.8,96.2,95.4,70.2,107.3,10.0,30.4,17.4,67.4,13.5,39.1,52.0,50.5,21.2,80.4,47.6,60.3,83.4,88.1,79.5,99.6,98.2,101.5,103.7,98.4,105.3,121.3,138.3,140.3,111.9,115.3,127.1],
+[56.0,41.6,41.0,80.7,41.9,63.7,39.2,35.3,39.7,35.7,39.6,39.7,68.8,70.7,112.0,117.6,105.8,45.0,98.9,87.5,139.2,63.4,108.3,73.3,73.8,52.3,32.9,30.1,36.0,36.5,32.2,24.9,28.2,11.9,15.6,34.1,51.1,53.0,36.8,40.2,52.0],
+[22.5,35.8,51.4,34.6,49.7,14.4,34.2,42.4,38.0,36.8,47.4,46.6,22.8,37.9,96.8,117.9,106.0,45.2,99.1,87.8,139.4,63.6,108.6,52.4,74.0,52.5,46.7,47.0,45.0,58.5,57.1,60.4,62.5,58.8,65.7,81.7,98.7,100.6,70.8,74.2,86.0],
+[24.1,23.6,28.4,48.8,32.5,31.8,4.1,22.7,12.4,24.9,30.3,29.4,36.9,38.0,82.2,87.8,75.9,14.3,69.0,57.6,109.3,33.5,78.5,42.7,43.9,22.4,17.4,22.1,14.9,33.6,32.2,35.6,37.7,32.5,39.3,55.3,72.3,74.3,45.9,49.3,61.1],
+[85.0,81.2,83.8,77.0,87.9,93.2,64.2,78.1,70.0,80.3,85.7,84.9,79.5,98.9,92.3,97.9,86.1,56.9,79.1,67.8,119.5,42.8,88.6,57.4,54.0,49.8,72.8,77.5,68.9,89.1,87.7,91.0,93.1,87.9,94.7,110.8,127.7,129.7,101.3,104.7,116.6],
+[34.0,39.9,42.5,40.4,46.6,41.6,22.8,36.8,28.7,39.0,44.4,43.5,34.6,47.9,79.2,84.8,72.9,11.7,66.0,54.6,106.3,30.5,75.5,21.0,40.9,22.0,31.5,36.2,23.8,47.7,46.3,49.7,51.8,46.1,52.8,68.8,85.8,87.7,60.0,63.4,75.2],
+[50.2,41.1,40.9,74.9,44.4,57.8,29.4,35.2,33.0,36.7,42.1,41.3,63.0,64.1,101.5,107.1,95.3,30.5,88.3,77.0,128.7,52.9,97.8,59.2,63.3,41.8,31.2,28.0,19.7,39.4,32.6,36.1,39.4,27.6,27.3,43.3,60.3,62.3,48.0,51.4,63.2],
+[90.4,76.0,75.4,115.1,76.3,98.0,73.6,69.6,74.0,70.1,74.0,74.1,103.2,105.1,137.4,143.0,131.2,78.5,124.3,112.9,164.6,88.8,133.8,107.2,99.2,77.7,67.3,64.5,67.7,73.8,67.7,62.1,65.4,49.3,40.4,35.6,52.6,54.6,74.1,77.5,89.3],
+[42.5,28.0,20.4,67.1,30.9,50.1,26.7,18.4,27.2,23.2,28.6,27.8,55.3,56.4,99.6,105.2,93.3,32.5,86.4,75.1,126.7,50.9,95.9,60.9,61.3,39.8,20.6,12.1,22.6,14.4,7.6,15.0,17.1,21.7,29.4,45.4,62.4,64.3,25.3,28.7,40.6],
+[59.2,44.7,44.1,83.9,45.0,66.8,42.4,38.4,42.8,38.8,42.8,42.8,72.0,73.8,115.2,120.8,109.0,48.1,102.0,90.7,142.4,66.5,111.5,76.5,76.9,55.4,36.0,33.2,39.1,33.7,29.4,22.1,25.4,15.7,25.2,41.2,58.2,60.2,34.1,37.5,49.3],
+[84.2,69.7,69.1,108.8,70.0,91.8,67.3,63.4,67.8,63.8,67.8,67.8,97.0,98.8,140.2,145.8,133.9,72.2,127.0,115.7,167.3,91.5,136.5,100.9,101.9,80.4,61.0,58.2,61.4,67.5,61.4,55.9,59.2,43.1,34.1,15.8,24.9,26.9,67.8,71.2,83.0],
+[85.6,81.9,84.4,71.0,88.6,93.2,64.8,78.7,70.7,80.9,86.3,85.5,81.9,99.5,16.0,22.2,9.8,57.5,1.9,29.2,43.8,40.5,12.9,70.4,37.6,50.4,73.4,78.1,69.6,89.7,88.3,91.6,93.7,88.5,95.4,111.4,128.3,130.3,102.0,105.4,117.2],
+[16.1,25.1,40.4,40.8,39.0,23.7,16.2,31.7,23.4,26.1,36.8,36.0,28.9,30.0,94.2,99.8,88.0,27.1,81.0,69.7,121.4,45.5,90.5,45.2,56.0,34.5,29.4,34.1,27.0,45.7,44.3,47.6,49.7,44.5,51.4,67.4,84.4,86.3,58.0,61.4,73.2],
+[204.1,200.4,203.0,198.0,207.1,211.7,183.3,197.2,189.2,199.4,204.8,204.0,200.5,218.0,211.4,217.0,205.2,176.0,198.3,186.9,238.6,162.0,207.8,178.4,173.2,168.9,192.0,196.7,188.1,208.2,206.8,210.1,212.2,207.0,213.9,229.9,246.9,248.9,220.5,223.9,235.7],
+[106.2,102.5,105.1,90.6,109.2,113.9,85.4,99.4,91.3,101.6,107.0,106.1,101.5,120.1,35.7,8.5,24.1,78.1,24.2,49.9,31.7,61.2,11.0,91.1,58.3,71.1,94.1,98.8,90.2,110.3,108.9,112.3,114.4,109.2,116.0,132.0,149.0,141.5,122.6,126.0,137.8],
+[34.2,33.6,36.9,58.9,41.0,41.8,12.9,31.2,22.4,33.4,38.8,37.9,47.0,48.1,83.3,88.9,77.1,14.5,70.1,58.8,110.5,34.6,79.6,42.9,45.1,23.6,25.9,30.6,22.3,42.2,40.8,44.1,46.2,41.0,47.8,63.8,80.8,82.8,54.4,57.8,69.6],
+[100.3,96.6,99.2,104.8,103.3,107.9,79.5,93.4,85.4,95.6,101.0,100.2,106.7,114.2,100.4,106.0,94.2,72.2,87.2,75.9,127.6,55.3,96.7,85.2,62.2,65.1,88.2,92.8,84.3,104.4,103.0,106.3,108.5,103.2,110.1,126.1,143.1,145.1,116.7,120.1,131.9],
+[88.3,84.5,87.1,92.7,91.3,95.9,67.5,81.4,73.4,83.6,89.0,88.2,94.7,102.2,76.4,82.0,70.1,60.2,63.2,51.9,103.5,43.2,72.7,73.1,30.3,53.1,76.1,80.8,72.2,92.4,91.0,94.3,96.4,91.2,98.1,114.1,131.0,133.0,104.7,108.1,119.9],
+[104.1,100.3,102.9,87.3,107.1,111.7,83.3,97.2,89.2,99.4,104.8,104.0,98.1,118.0,32.3,26.2,10.7,76.0,22.0,47.7,42.0,59.0,20.9,88.9,56.1,68.9,91.9,96.6,88.0,108.2,106.8,110.1,112.2,107.0,113.9,129.9,146.8,148.8,120.5,123.9,135.7],
+[73.1,69.3,71.9,77.5,76.0,80.7,52.3,66.2,58.1,68.4,73.8,73.0,79.5,87.0,41.6,47.2,35.4,45.0,28.5,17.1,68.8,28.0,37.9,57.9,25.1,37.9,60.9,65.6,57.0,77.2,75.8,79.1,81.2,76.0,82.8,98.8,115.8,117.8,89.4,92.8,104.6],
+[64.5,55.4,55.2,89.2,58.7,72.1,43.7,49.5,47.2,51.0,56.4,55.6,77.3,78.4,106.7,112.3,100.5,44.8,93.5,82.2,133.9,58.0,103.0,73.5,68.5,47.0,45.5,42.2,34.0,53.6,46.9,44.8,48.1,32.0,23.8,39.8,56.8,58.8,56.8,60.2,72.0],
+[43.2,31.9,39.7,68.3,32.7,51.2,43.1,31.6,42.4,25.6,30.5,22.1,56.4,40.4,115.9,121.5,109.7,48.8,102.7,91.4,143.1,67.2,112.2,77.2,77.7,56.2,36.3,36.7,43.6,48.1,46.7,50.1,52.2,46.5,53.4,69.4,86.4,88.4,60.4,63.8,75.6],
+[75.2,71.5,74.1,79.7,78.2,82.8,54.4,68.3,60.3,70.5,75.9,75.1,81.6,89.1,39.1,49.4,37.6,47.1,30.6,19.3,71.0,30.2,40.1,60.1,27.3,40.0,63.1,67.8,59.2,79.3,77.9,81.2,83.3,78.1,85.0,101.0,118.0,120.0,91.6,95.0,106.8],
+[45.4,30.9,23.3,70.0,33.8,53.0,29.6,21.3,30.1,26.1,31.5,30.7,58.2,59.2,102.5,108.0,96.2,32.9,89.3,77.9,129.6,53.8,98.8,61.6,64.2,42.7,23.4,15.0,22.1,14.1,6.9,10.9,16.3,16.4,24.1,40.1,57.1,59.1,24.6,28.0,39.8],
+[119.3,115.6,118.1,103.7,122.3,126.9,98.5,112.4,104.4,114.6,120.0,119.2,114.5,133.2,48.7,19.4,37.2,91.2,37.2,62.9,42.6,74.2,24.0,104.1,71.3,84.1,107.1,111.8,103.3,123.4,122.0,125.3,127.4,122.2,129.1,145.1,162.1,152.4,135.7,139.1,150.9],
+[149.8,146.1,148.6,134.2,152.8,157.4,129.0,142.9,134.9,145.1,150.5,149.7,145.1,163.7,79.2,49.9,67.7,121.7,67.8,93.4,73.1,104.8,54.5,134.7,101.9,114.6,137.7,142.3,133.8,153.9,152.5,155.8,157.9,152.7,159.6,175.6,192.6,182.9,166.2,169.6,181.4],
+[50.2,35.8,24.5,74.9,35.9,57.8,34.5,26.2,34.9,31.0,36.0,35.5,63.0,64.1,107.3,112.9,101.1,40.2,94.1,82.8,134.5,58.6,103.6,68.6,69.1,47.6,28.3,19.8,31.5,14.3,11.1,1.5,8.6,15.4,25.0,41.0,57.9,59.9,17.3,20.7,32.5],
+[49.9,36.8,34.4,74.6,39.7,57.5,29.1,29.5,31.9,32.1,37.4,36.6,62.7,63.8,101.3,106.9,95.0,30.3,88.1,76.8,128.4,52.6,97.6,59.0,63.0,41.5,29.4,20.9,19.5,32.5,25.9,27.6,30.9,19.2,26.8,42.8,59.8,61.8,39.6,43.0,54.8],
+[31.8,17.3,9.7,56.5,20.1,39.4,16.7,5.8,17.2,12.5,17.9,17.0,44.6,45.7,89.5,95.1,83.3,22.5,76.4,65.0,116.7,40.9,85.9,50.8,51.3,29.8,10.5,7.0,18.1,16.4,15.0,18.4,20.5,22.9,29.8,45.8,62.8,64.8,28.7,32.1,43.9],
+[54.1,39.7,39.1,78.8,40.0,61.8,37.3,33.4,37.8,33.8,37.7,37.8,66.9,68.8,110.1,115.7,103.9,43.1,97.0,85.6,137.3,61.5,106.5,71.4,71.9,50.4,31.0,28.2,34.1,34.6,30.3,23.0,26.3,10.0,17.3,35.8,50.8,54.8,34.9,38.3,50.1],
+[25.7,6.8,21.2,50.4,20.4,33.3,23.2,12.2,16.6,7.4,18.1,18.1,38.5,39.6,96.0,101.6,89.8,29.0,82.8,71.5,123.2,47.4,92.3,57.3,57.8,36.3,14.0,16.8,23.7,28.2,26.8,30.2,32.3,28.6,35.4,51.5,68.4,70.4,40.5,43.9,55.7],
+[44.8,57.7,61.5,28.8,65.7,36.4,41.9,55.8,47.8,58.0,63.4,62.6,22.7,59.8,93.2,98.8,87.0,30.7,80.0,68.7,120.4,44.3,89.5,18.1,54.9,36.0,50.5,55.2,42.9,66.8,65.4,68.7,70.8,65.1,71.8,87.9,104.8,106.8,79.1,82.5,94.3],
+[20.6,16.2,25.6,45.3,29.7,28.3,9.7,19.8,5.0,22.1,27.4,26.6,33.4,34.5,83.6,89.2,77.4,16.5,70.4,59.1,110.8,34.9,79.9,44.9,45.3,23.8,13.9,19.3,15.7,30.8,29.4,32.8,34.9,29.6,36.5,52.5,69.5,71.5,43.1,46.5,58.3],
+[30.1,15.2,14.9,54.8,15.3,37.7,21.5,7.8,21.2,7.4,13.0,12.2,42.9,45.3,94.4,100.0,88.2,27.3,81.2,69.9,121.5,45.7,90.7,55.7,56.1,34.6,14.8,15.2,22.1,26.3,24.9,28.2,30.3,26.9,33.8,49.8,66.8,68.8,38.6,42.0,53.8],
+[125.2,121.5,124.0,111.2,128.2,132.8,104.4,118.3,110.3,120.5,125.9,125.1,122.0,139.1,56.2,59.4,50.0,97.1,43.1,68.8,80.9,80.1,50.1,110.0,77.2,90.0,113.0,117.7,109.2,129.3,127.9,131.2,133.3,128.1,135.0,151.0,168.0,169.9,141.6,145.0,156.8],
+[21.6,34.1,49.8,42.2,48.0,28.8,25.8,40.7,33.0,35.1,45.8,45.0,30.5,36.6,103.8,109.4,97.6,36.7,90.6,79.3,131.0,55.1,100.1,44.3,65.5,44.0,39.0,43.7,36.5,55.3,53.9,57.2,59.3,54.1,60.9,77.0,93.9,95.9,67.5,71.0,82.8],
+[38.7,24.3,21.8,63.4,27.1,46.4,22.4,16.9,21.8,19.5,24.9,24.0,51.5,52.6,95.2,100.8,89.0,27.2,82.0,70.7,122.4,46.5,91.5,55.8,57.0,35.5,16.7,8.3,16.3,19.9,18.4,21.8,23.9,16.8,24.5,40.5,57.5,59.4,32.2,35.6,47.4],
+[41.2,26.7,26.1,65.9,29.6,48.8,22.1,20.4,21.5,21.9,27.3,26.5,54.0,55.1,94.9,100.5,88.7,27.2,81.7,70.4,122.1,46.2,91.2,55.9,56.7,35.2,16.4,15.3,16.4,26.8,25.4,28.7,30.9,25.3,32.4,48.4,65.4,67.4,39.1,42.5,54.3],
+[125.5,121.8,124.3,99.4,128.5,123.9,104.7,118.6,110.6,120.8,126.2,125.4,110.2,139.4,54.9,22.5,33.6,97.4,43.5,69.1,6.4,80.4,30.2,110.3,77.5,90.3,113.3,118.0,109.5,129.6,128.2,131.5,133.6,128.4,135.3,151.3,168.3,153.4,141.9,145.3,157.1],
+[128.3,124.6,127.2,99.6,131.3,124.1,107.5,121.5,113.4,123.7,129.1,128.2,110.4,142.2,57.8,25.4,36.4,100.2,46.3,71.9,3.1,83.3,33.1,113.2,80.4,93.2,116.2,120.9,112.3,132.4,131.0,134.4,136.5,131.2,138.1,154.1,171.1,156.2,144.7,148.1,159.9],
+[62.2,47.7,36.5,86.9,47.9,69.8,46.5,38.1,46.9,42.9,47.9,47.5,75.0,76.1,119.3,124.9,113.1,52.2,106.1,94.8,146.5,70.6,115.6,80.6,81.0,59.5,40.3,31.8,43.5,26.2,23.1,22.2,17.1,32.7,42.3,58.3,75.2,77.2,10.9,10.0,21.8],
+[50.2,46.5,49.0,57.9,53.2,57.8,29.4,43.3,35.3,45.5,50.9,50.1,56.6,64.1,57.1,62.7,50.9,22.1,44.0,32.6,84.3,6.0,53.5,38.3,18.9,15.0,38.0,42.7,34.2,54.3,52.9,56.2,58.3,53.1,60.0,76.0,93.0,94.9,66.6,70.0,81.8],
+[97.2,82.7,82.1,121.8,83.0,104.8,80.3,76.4,80.8,76.8,80.8,80.8,110.0,111.8,153.2,138.8,146.9,85.2,140.0,128.6,159.2,104.5,147.5,113.9,114.9,93.4,74.0,71.2,74.4,80.5,74.4,68.9,72.2,56.1,47.1,28.8,33.2,10.1,80.8,84.2,96.0],
+[50.4,61.1,63.7,21.3,67.9,42.0,44.1,58.0,50.0,60.2,65.6,64.8,28.3,65.4,88.1,93.7,81.9,32.9,75.0,63.6,115.3,38.7,84.4,12.4,49.9,38.2,52.7,57.4,45.0,69.0,67.6,70.9,73.0,67.3,74.0,90.0,107.0,109.0,81.3,84.7,96.5],
+[30.3,43.5,59.2,9.9,57.4,21.9,42.0,50.1,45.7,44.5,55.2,54.4,8.3,45.4,72.1,97.8,84.7,47.9,80.8,87.1,107.6,62.1,88.5,35.9,73.4,55.6,54.4,54.8,52.8,66.2,64.8,68.2,70.3,66.6,73.4,89.4,106.4,108.4,78.5,81.9,93.7],
+[52.6,48.9,51.4,71.7,55.6,60.2,31.8,45.7,37.7,47.9,53.3,52.5,63.9,66.5,87.7,93.3,81.5,24.5,74.5,63.2,114.9,39.1,84.0,52.3,49.5,28.0,40.5,47.7,34.8,59.1,52.4,50.3,53.6,37.5,29.3,45.3,62.3,64.3,62.2,65.6,77.4],
+[83.3,96.5,106.0,50.4,110.1,74.9,86.3,100.2,92.2,97.5,107.8,107.0,61.3,98.4,16.3,42.0,29.0,79.0,25.1,50.7,63.6,62.1,32.8,77.0,59.2,71.9,95.0,99.6,91.1,111.2,109.8,113.1,115.2,110.0,116.9,132.9,149.9,151.9,123.5,126.9,138.7],
+[104.6,100.8,103.4,109.0,107.5,112.2,83.8,97.7,89.6,99.9,105.3,104.5,111.0,118.5,92.6,98.2,86.4,76.5,79.5,68.1,119.8,59.5,89.0,89.4,46.6,69.4,92.4,97.1,88.5,108.7,107.3,110.6,112.7,107.5,114.3,130.3,147.3,149.3,120.9,124.3,136.1],
+[65.0,71.3,73.9,40.9,78.0,58.1,54.2,68.1,60.1,70.3,75.7,74.9,44.4,81.6,88.9,103.6,91.7,43.0,84.8,73.5,125.1,48.5,94.3,20.7,59.7,48.4,62.9,67.5,55.2,79.1,77.7,81.0,83.1,77.5,84.2,100.2,117.1,119.1,91.4,94.8,106.6],
+[95.1,91.4,93.9,68.7,98.1,93.2,74.3,88.2,80.2,90.4,95.8,95.0,79.6,109.0,19.3,40.5,27.4,67.0,23.5,39.2,62.1,50.0,31.2,79.9,47.1,59.9,83.0,87.6,79.1,99.2,97.8,101.1,103.2,98.0,104.9,120.9,137.9,139.8,111.5,114.9,126.7],
+[27.1,39.1,54.8,42.2,53.0,34.2,30.7,45.7,38.0,40.1,50.7,50.0,30.5,42.1,107.7,113.3,101.5,37.6,94.5,83.2,134.9,59.0,104.0,44.3,69.5,47.9,44.0,48.7,41.5,60.3,58.9,62.2,64.3,59.1,65.9,82.0,98.9,100.9,72.5,75.9,87.7],
+[133.5,146.7,151.7,100.6,155.9,125.1,132.1,146.0,138.0,148.2,153.6,152.8,111.4,148.5,65.3,87.8,74.7,124.8,70.8,96.5,109.4,107.8,78.5,127.2,104.9,117.7,140.7,145.4,136.8,157.0,155.6,158.9,161.0,155.8,162.7,178.7,195.6,197.6,169.3,172.7,184.5],
+[71.8,57.3,56.7,96.5,57.7,79.4,55.0,51.0,55.4,51.4,55.4,55.4,84.6,86.5,127.8,133.4,121.6,59.8,114.6,103.3,155.0,79.1,124.1,88.5,89.5,68.0,48.6,45.9,49.0,55.1,49.1,43.5,46.8,30.7,21.8,31.5,48.4,50.4,55.5,58.9,70.7],
+[52.9,49.2,51.8,57.4,55.9,60.5,32.1,46.0,38.0,48.2,53.6,52.8,59.3,66.8,53.0,58.6,46.8,24.8,39.8,28.5,80.2,7.9,49.3,37.8,14.8,17.7,40.8,45.4,36.9,57.0,55.6,58.9,61.0,55.8,62.7,78.7,95.7,97.7,69.3,72.7,84.5],
+[47.3,43.5,46.1,61.7,50.2,54.9,26.4,40.4,32.3,42.6,48.0,47.1,56.3,61.1,71.9,77.5,65.6,19.1,58.7,47.3,99.0,23.2,68.2,42.3,33.6,8.6,35.1,39.8,31.2,51.3,49.9,53.3,55.4,50.2,57.0,73.0,90.0,92.0,63.6,67.0,78.8],
+[25.6,11.1,20.1,50.3,13.1,33.2,23.5,11.9,21.5,2.7,10.8,10.9,38.4,40.3,96.3,101.9,90.1,29.2,83.1,71.8,123.5,47.6,92.6,57.6,58.0,36.5,16.7,17.1,24.0,28.5,27.1,30.4,32.5,26.9,33.8,49.8,66.8,68.7,40.8,44.2,56.0],
+[39.8,36.1,38.7,57.2,42.8,47.5,19.0,33.0,24.9,35.2,40.6,39.7,51.8,53.7,67.4,73.0,61.2,11.7,54.3,42.9,94.6,18.8,63.7,37.9,29.2,7.7,27.7,32.4,23.8,43.9,42.5,45.9,48.0,42.8,49.6,65.6,82.6,84.6,56.2,59.6,71.4],
+[64.2,60.4,63.0,68.6,67.2,71.8,43.4,57.3,49.3,59.5,64.9,64.1,70.6,78.1,52.3,57.9,46.0,36.1,39.1,27.8,79.4,19.1,48.6,49.0,6.2,29.0,52.0,56.7,48.1,68.3,66.9,70.2,72.3,67.1,74.0,90.0,106.9,108.9,80.6,84.0,95.8],
+[96.7,92.9,95.5,81.0,99.6,104.3,75.9,89.8,81.7,92.0,97.4,96.5,91.9,110.6,26.1,9.2,14.5,68.5,14.6,40.3,30.8,51.6,1.5,81.5,48.7,61.5,84.5,89.2,80.6,100.8,99.4,102.7,104.8,99.6,106.4,122.4,139.4,141.4,113.0,116.4,128.2],
+[52.0,37.5,26.2,76.6,37.7,59.6,36.2,27.9,36.7,32.7,37.7,37.3,64.7,65.8,109.1,114.6,102.8,42.0,95.9,84.5,136.2,60.4,105.4,70.3,70.8,49.3,30.0,21.5,33.2,16.0,12.8,8.2,7.6,18.8,28.3,44.3,61.3,63.3,16.3,19.7,31.5],
+[31.7,44.9,60.5,25.8,58.8,23.2,39.8,51.5,47.0,45.9,56.5,55.7,14.1,46.7,88.0,114.1,100.7,42.8,95.3,84.0,123.5,59.7,104.8,33.4,70.3,51.4,53.1,56.2,50.6,67.6,66.2,69.5,71.6,67.9,74.8,90.8,107.8,109.7,79.9,83.3,95.1],
+[48.3,41.9,42.1,73.0,45.6,55.9,27.5,36.4,31.9,37.9,43.3,42.5,61.1,62.2,98.0,103.6,91.8,27.1,84.9,73.5,125.2,49.4,94.3,55.7,59.8,38.3,33.3,31.2,17.8,42.8,39.7,44.7,46.8,38.4,42.4,58.4,75.4,77.4,55.1,58.5,70.3],
+[46.4,31.9,17.9,71.1,28.5,54.0,30.7,22.4,31.1,27.2,28.6,31.7,59.2,60.3,103.5,109.1,97.3,36.4,90.3,79.0,130.7,54.8,99.8,64.8,65.3,43.8,24.5,16.0,27.7,1.8,9.6,13.0,15.1,28.4,37.9,53.9,70.9,72.9,23.4,26.8,38.6],
+[30.2,11.0,16.7,54.8,19.4,37.8,17.6,9.8,13.0,10.9,17.1,16.3,42.9,44.0,90.4,96.0,84.2,23.4,77.2,65.9,117.6,41.8,86.7,51.7,52.2,30.7,6.6,11.5,18.1,23.1,21.6,25.0,27.1,23.0,29.8,45.9,62.8,64.8,35.3,38.7,50.5],
+[26.5,21.0,24.3,51.2,28.4,34.1,5.7,18.6,9.8,20.8,26.2,25.3,39.3,40.4,80.5,86.1,74.3,10.4,67.3,56.0,107.7,31.9,76.8,39.1,42.3,20.8,13.3,18.0,8.5,29.6,28.1,31.5,33.6,28.4,35.2,51.2,68.2,70.2,41.8,45.2,57.0],
+[29.5,20.8,24.1,54.2,28.2,37.1,8.7,18.4,9.6,20.6,26.0,25.2,42.3,43.4,82.5,88.1,76.3,15.3,69.3,58.0,109.7,33.9,78.8,43.8,44.3,22.8,13.1,17.8,10.2,29.4,28.0,31.3,33.4,28.2,35.0,51.1,68.0,70.0,41.6,45.0,56.9],
+[53.1,38.7,29.7,77.8,39.5,60.8,36.3,29.1,37.2,33.3,37.2,37.3,65.9,68.3,108.4,114.0,102.2,37.4,95.2,83.9,135.6,59.7,104.7,66.1,70.2,48.7,30.5,22.7,26.6,19.5,14.6,7.8,11.1,10.2,19.7,35.7,52.7,54.6,19.8,23.2,35.0],
+[43.8,29.3,25.5,68.4,17.5,51.4,36.3,24.7,35.9,19.7,14.9,14.2,56.5,55.0,109.1,114.7,102.9,42.0,95.9,84.6,136.3,60.4,105.4,70.4,70.8,49.3,29.5,29.9,36.8,39.8,39.9,43.2,45.4,39.7,46.6,62.6,79.6,81.6,53.6,57.0,68.8],
+[45.4,30.9,28.5,70.1,33.8,53.0,28.1,23.6,29.1,26.2,31.5,30.7,58.2,59.3,100.3,105.9,94.0,29.3,87.1,75.8,127.4,51.6,96.6,58.0,62.0,40.5,23.5,15.0,18.5,23.4,16.7,18.0,21.3,13.8,21.5,37.5,54.4,56.4,29.9,33.3,45.1],
+[46.1,31.6,31.0,70.8,32.0,53.7,29.3,25.3,29.7,25.7,29.7,29.7,58.9,60.8,102.1,107.7,95.9,35.0,88.9,77.6,129.3,53.4,98.4,63.4,63.8,42.3,22.9,20.2,24.8,29.4,23.4,17.8,21.1,5.0,7.9,23.9,40.9,42.9,29.8,33.2,45.0],
+[92.1,77.6,77.0,116.8,78.0,99.7,75.3,71.3,75.7,71.7,75.7,75.7,104.9,106.8,148.1,153.7,141.9,80.2,134.9,123.6,175.3,99.4,144.4,108.8,109.9,88.4,69.0,66.2,69.3,75.5,69.4,63.8,67.1,51.0,42.1,23.7,7.2,30.3,75.8,79.2,91.0],
+[39.8,25.3,21.2,64.4,13.2,47.4,32.3,20.8,31.9,15.7,10.7,17.3,52.6,51.1,105.1,110.7,98.9,38.0,91.9,80.6,132.3,56.4,101.4,66.4,66.9,45.4,25.5,25.9,32.8,35.5,35.9,39.3,41.4,35.7,42.6,58.6,75.6,77.6,49.6,53.0,64.8],
+[108.8,105.1,107.6,93.2,111.8,116.4,88.0,101.9,93.9,104.1,109.5,108.7,104.0,122.7,38.2,11.0,26.6,80.7,26.7,52.4,34.2,63.7,13.5,93.6,60.8,73.6,96.6,101.3,92.8,112.9,111.5,114.8,116.9,111.7,118.6,134.6,151.5,144.0,125.2,128.6,140.4],
+[41.9,27.1,7.5,66.6,11.1,49.5,28.9,15.1,29.4,19.3,11.1,21.4,54.7,55.2,101.8,107.4,95.6,34.7,88.6,77.3,128.9,53.1,98.1,63.1,63.5,42.0,22.8,20.9,30.3,21.8,24.9,27.7,29.8,35.2,42.0,58.1,75.0,77.0,38.0,41.4,53.2],
+[63.1,59.3,61.9,82.2,66.1,70.7,42.3,56.2,48.2,58.4,63.8,63.0,74.4,77.0,98.2,103.8,92.0,35.0,85.0,73.7,125.4,49.5,94.5,62.8,59.9,38.4,50.9,58.2,45.3,69.6,62.8,60.8,64.0,47.9,39.8,33.8,50.8,52.7,72.7,76.1,87.9],
+[34.3,47.5,63.2,17.2,61.4,25.9,45.0,54.2,49.7,48.5,59.2,58.4,12.2,49.4,79.9,105.0,93.2,44.2,86.2,74.9,115.4,49.9,95.7,23.6,61.1,49.5,58.4,58.8,56.3,70.2,68.8,72.2,74.3,70.6,77.4,93.5,110.4,112.4,82.5,85.9,97.7],
+[35.1,31.8,35.1,52.4,39.2,42.7,14.0,29.4,20.6,31.6,37.0,36.1,44.7,49.0,73.4,79.0,67.2,4.7,60.2,48.9,100.6,24.7,69.7,33.1,35.2,13.7,24.1,26.6,13.5,38.2,36.7,40.1,42.2,35.7,42.4,58.4,75.4,77.4,50.4,53.8,65.6],
+[44.1,29.6,8.7,68.8,20.2,51.7,29.7,16.7,30.2,23.3,20.2,27.8,56.9,60.9,102.6,108.2,96.3,35.5,89.4,78.1,129.7,53.9,98.9,63.9,64.3,42.8,23.6,15.2,26.8,9.9,11.9,14.8,16.9,30.1,38.5,54.6,71.5,73.5,25.1,28.5,40.3],
+[27.6,40.8,56.5,17.9,54.8,19.2,39.3,47.5,43.0,41.9,52.5,51.7,5.3,42.7,80.1,105.8,92.7,46.0,88.8,86.2,115.6,61.9,96.5,35.6,72.5,53.6,51.8,52.1,50.1,63.6,62.2,65.5,67.6,63.9,70.8,86.8,103.7,105.7,75.8,79.2,91.0],
+[100.6,96.8,99.4,84.9,103.6,108.2,79.8,93.7,85.7,95.9,101.3,100.5,95.8,114.5,30.0,28.0,22.2,72.5,18.5,44.2,49.6,55.5,18.7,85.4,52.6,65.4,88.4,93.1,84.5,104.7,103.3,106.6,108.7,103.5,110.4,126.4,143.3,145.3,117.0,120.4,132.2],
+[39.6,25.1,13.5,64.2,25.0,47.2,23.8,15.5,24.3,20.3,25.0,24.9,52.4,53.5,96.7,102.3,90.5,29.6,83.5,72.2,123.8,48.0,93.0,58.0,58.4,36.9,17.7,9.2,20.8,11.1,12.6,16.0,18.1,25.7,32.6,48.6,65.5,67.5,26.3,29.7,41.5],
+[33.7,20.6,24.0,58.4,16.4,41.3,27.3,15.8,27.0,10.8,13.8,1.7,46.5,44.9,100.2,105.8,93.9,33.1,87.0,75.7,127.3,51.5,96.5,61.5,61.9,40.4,20.6,21.0,27.9,32.4,31.0,34.3,36.4,31.8,38.6,54.6,71.6,73.6,44.7,48.1,59.9],
+[95.1,91.4,93.9,82.2,98.1,102.7,74.3,88.2,80.2,90.4,95.8,95.0,93.1,109.0,32.9,54.1,41.0,67.0,37.1,39.1,75.7,50.0,44.8,79.9,47.1,59.9,82.9,87.6,79.1,99.2,97.8,101.1,103.2,98.0,104.9,120.9,137.8,139.8,111.5,114.9,126.7],
+[88.4,84.7,87.3,77.9,91.4,96.0,67.6,81.5,73.5,83.7,89.1,88.3,88.8,102.3,23.0,28.6,16.8,60.3,9.8,32.0,50.2,43.4,19.3,73.3,40.5,53.2,76.3,81.0,72.4,92.5,91.1,94.4,96.5,91.3,98.2,114.2,131.2,133.2,104.8,108.2,120.0],
+[60.1,56.4,59.0,64.6,63.1,67.8,39.3,53.3,45.2,55.5,60.9,60.0,66.5,74.0,41.2,46.7,34.9,32.0,28.0,16.6,68.3,15.1,37.5,45.0,12.2,25.0,48.0,52.7,44.1,64.2,62.8,66.2,68.3,63.0,69.9,85.9,102.9,104.9,76.5,79.9,91.7],
+[97.8,83.3,82.7,122.5,83.6,105.4,81.0,77.0,81.4,77.4,81.4,81.4,110.6,112.4,153.8,155.8,147.6,85.8,140.6,129.3,176.1,105.1,150.1,114.5,115.5,94.0,74.6,71.8,75.0,81.1,75.0,69.5,72.8,56.7,47.7,29.4,24.6,25.0,81.4,84.8,96.7],
+[33.3,18.1,21.5,57.9,25.6,40.9,13.7,15.8,10.0,18.0,23.4,22.6,46.0,47.1,86.5,92.1,80.3,19.5,73.3,62.0,113.7,37.9,82.8,47.8,48.3,26.8,9.4,15.2,13.2,26.8,25.4,28.7,30.8,25.6,32.4,48.5,65.4,67.4,39.0,42.4,54.2],
+[61.2,46.7,35.4,85.8,46.9,68.8,45.4,37.1,45.9,41.9,46.9,46.5,74.0,75.0,118.3,123.8,112.0,51.2,105.1,93.7,145.4,69.6,114.6,79.5,80.0,58.5,39.2,30.8,42.4,25.2,22.0,19.5,15.2,30.1,39.7,55.7,72.7,74.6,26.2,29.6,41.4],
+[73.5,69.7,72.3,77.9,76.4,81.1,52.6,66.6,58.5,68.8,74.2,73.3,79.9,87.3,41.6,47.2,35.4,45.3,28.4,5.2,68.7,28.4,37.9,58.3,25.5,38.3,61.3,66.0,57.4,77.5,76.1,79.5,81.6,76.4,83.2,99.2,116.2,118.2,89.8,93.2,105.0],
+[63.6,69.9,72.5,40.5,76.6,56.7,52.9,66.8,58.7,69.0,74.4,73.6,43.0,80.2,96.4,102.0,90.2,41.7,83.2,71.9,123.5,46.9,92.7,19.9,58.1,47.0,61.5,66.2,53.8,77.8,76.4,79.7,81.8,76.1,82.8,98.8,115.8,117.8,90.0,93.4,105.3],
+[65.7,56.6,56.4,90.4,54.4,73.3,44.9,50.7,48.5,48.1,52.1,52.1,78.5,79.6,103.6,109.2,97.3,40.3,90.4,79.1,130.7,54.9,99.9,68.2,65.3,43.8,46.7,43.5,35.2,54.9,48.1,40.2,43.5,27.4,18.5,28.5,45.5,47.5,52.2,55.6,67.4],
+[47.8,51.8,54.4,46.3,58.6,54.6,34.8,48.7,40.7,50.9,56.3,55.5,40.9,61.7,77.5,83.1,71.3,25.3,64.4,53.0,104.7,28.9,73.9,26.9,39.3,20.4,43.4,48.1,37.4,59.7,58.3,61.6,63.7,58.5,65.4,81.4,98.3,100.3,72.0,75.4,87.2],
+[99.9,96.2,98.7,83.1,102.9,107.5,79.1,93.0,85.0,95.2,100.6,99.8,94.0,113.8,28.1,16.0,6.5,71.8,17.9,43.5,31.8,54.9,15.9,84.8,52.0,64.7,87.8,92.4,83.9,104.0,102.6,105.9,108.0,102.8,109.7,125.7,142.7,144.6,116.3,119.7,131.5],
+[62.4,58.7,61.2,81.5,65.4,70.0,41.6,55.5,47.5,57.7,63.1,62.3,73.7,76.3,97.5,103.1,91.3,34.3,84.3,73.0,124.7,48.8,93.8,62.1,59.3,37.8,50.2,57.5,44.6,68.9,62.2,60.1,63.4,47.3,39.1,34.5,51.4,53.4,72.0,75.4,87.2],
+[76.5,72.8,75.4,83.0,79.5,84.1,55.7,69.6,61.6,71.8,77.2,76.4,82.9,90.4,69.0,74.6,62.8,48.4,55.8,44.5,96.2,29.8,65.3,63.4,21.6,41.3,64.4,69.0,60.5,80.6,79.2,82.5,84.6,79.4,86.3,102.3,119.3,121.3,92.9,96.3,108.1],
+[15.7,28.2,43.9,40.8,42.2,23.7,26.7,34.9,30.5,29.3,39.9,39.1,28.9,15.5,104.8,110.3,98.5,37.7,91.6,80.2,131.9,56.1,101.1,55.8,66.5,45.0,39.2,39.5,37.5,51.0,49.6,52.9,55.0,51.3,58.2,74.2,91.1,93.1,63.2,66.6,78.5],
+[117.9,103.4,102.8,142.6,103.7,125.5,101.1,97.1,101.5,97.5,101.5,101.5,130.7,132.6,173.9,170.6,167.7,105.9,160.7,149.4,191.0,125.2,170.2,134.6,135.6,114.1,94.7,91.9,95.1,101.2,95.2,89.6,92.9,76.8,67.8,49.5,54.0,39.4,101.6,105.0,116.8],
+[40.9,31.8,32.1,65.6,35.5,48.6,20.1,26.3,23.7,27.9,33.3,32.4,53.7,54.8,92.3,97.9,86.1,21.3,79.1,67.8,119.4,43.6,88.6,50.0,54.0,32.5,23.3,21.2,10.5,32.8,27.1,33.7,36.5,25.8,27.5,43.5,60.5,62.5,44.8,48.2,60.0],
+[41.4,27.0,17.8,66.1,29.2,49.1,25.7,17.4,26.1,22.2,27.6,26.7,54.2,55.3,98.5,104.1,92.3,31.5,85.4,74.0,125.7,49.9,94.8,59.8,60.3,38.8,19.5,11.0,22.7,11.3,10.4,13.8,15.9,27.6,34.4,50.4,67.4,69.4,24.1,27.5,39.3],
+[111.4,107.6,110.2,115.8,114.3,119.0,90.6,104.5,96.4,106.7,112.1,111.3,117.8,125.3,59.8,65.4,53.6,83.3,46.7,55.0,87.0,66.3,56.1,96.2,63.4,76.2,99.2,103.9,95.3,115.5,114.1,117.4,119.5,114.3,121.1,137.2,154.1,156.1,127.7,131.1,143.0],
+[33.0,23.9,24.2,57.7,27.6,40.6,12.2,18.4,15.8,20.0,25.4,24.5,45.8,46.9,84.4,90.0,78.1,13.4,71.2,59.8,111.5,35.7,80.7,42.1,46.1,24.6,15.3,13.3,2.9,24.8,23.4,26.8,28.9,22.1,28.8,44.8,61.8,63.7,37.1,40.5,52.3],
+[45.7,36.6,36.4,70.4,39.9,53.3,24.9,30.7,28.4,32.2,37.6,36.8,58.5,59.6,97.0,102.6,90.8,26.0,83.8,72.5,124.2,48.3,93.3,54.7,58.8,37.3,26.7,23.4,15.2,34.8,28.1,31.6,34.8,21.9,17.7,33.7,50.7,52.6,43.5,46.9,58.7],
+[39.4,24.9,9.3,64.0,6.5,47.0,30.1,16.3,30.5,15.3,6.6,16.9,52.1,50.6,102.9,108.5,96.7,35.8,89.7,78.4,130.1,54.2,99.2,64.2,64.6,43.1,23.9,22.0,31.4,23.6,26.7,29.5,31.6,35.3,42.2,58.2,75.2,77.2,39.8,43.2,55.0],
+[33.3,17.9,19.6,58.0,23.1,40.9,12.7,13.9,12.1,15.4,20.8,20.0,46.1,47.2,85.5,91.1,79.3,18.4,72.3,61.0,112.7,36.8,81.8,46.8,47.3,25.8,7.0,10.5,11.9,22.1,20.7,24.0,26.1,20.6,27.4,43.5,60.4,62.4,34.4,37.8,49.6],
+[49.9,35.4,32.9,74.5,38.3,57.5,32.5,28.0,33.5,30.6,36.0,35.2,62.7,63.8,104.6,110.2,98.4,33.6,91.5,80.1,131.8,56.0,100.9,62.3,66.4,44.9,28.0,19.5,22.8,29.6,22.3,22.7,26.0,9.7,17.4,33.4,50.4,52.3,34.6,38.0,49.8],
+[40.4,46.8,49.3,36.1,53.5,44.4,29.7,43.6,35.6,45.8,51.2,50.4,30.7,54.3,81.2,86.8,75.0,18.5,68.0,56.7,108.3,32.5,77.5,16.8,42.9,24.0,38.3,43.0,30.6,54.6,53.2,56.5,58.6,52.9,59.6,75.6,92.6,94.6,66.9,70.3,82.1],
+[38.1,50.2,55.1,30.2,59.2,32.2,35.4,49.3,41.3,51.2,56.9,56.1,18.5,55.7,90.7,96.3,84.5,24.3,77.5,66.2,117.9,42.1,87.0,26.3,52.5,33.6,44.1,48.8,36.4,60.3,58.9,62.2,64.4,58.7,65.4,81.4,98.3,100.3,72.6,76.0,87.8],
+[42.4,30.5,28.0,67.0,33.3,50.0,21.6,23.2,22.5,25.7,31.1,30.2,55.2,56.3,93.7,99.3,87.5,22.7,80.5,69.2,120.9,45.0,90.0,51.4,55.4,33.9,20.1,14.6,11.9,26.0,19.3,25.9,28.7,17.5,25.2,41.2,58.2,60.2,37.0,40.4,52.2],
+[108.9,105.2,107.7,93.3,111.9,116.5,88.1,102.0,94.0,104.2,109.6,108.8,104.1,122.8,38.3,5.9,17.0,80.8,26.8,52.5,21.2,63.8,13.6,93.7,60.9,73.7,96.7,101.4,92.8,113.0,111.6,114.9,117.0,111.8,118.7,134.7,151.6,136.8,125.3,128.7,140.5],
+[211.3,207.6,210.2,205.3,214.3,219.0,190.5,204.5,196.4,206.7,212.1,211.2,207.8,225.2,218.7,224.3,212.4,183.2,205.5,194.2,245.8,169.2,215.0,185.7,180.4,176.2,199.2,203.9,195.3,215.4,214.0,217.4,219.5,214.2,221.1,237.1,254.1,256.1,227.7,231.1,242.9],
+[140.5,136.7,139.3,124.8,143.4,148.1,119.7,133.6,125.5,135.8,141.2,140.3,135.7,154.4,69.9,40.5,58.3,112.3,58.4,84.1,63.7,95.4,45.2,125.3,92.5,105.3,128.3,133.0,124.4,144.6,143.2,146.5,148.6,143.4,150.2,166.2,183.2,173.6,156.8,160.2,172.0],
+[72.2,68.5,71.0,84.0,75.2,79.8,51.4,65.3,57.3,67.5,72.9,72.1,78.6,86.1,92.5,98.1,86.3,44.1,79.3,68.0,119.7,43.8,88.8,64.6,54.2,32.4,60.0,64.7,56.1,76.3,74.9,78.9,82.2,66.1,57.9,65.6,82.6,84.5,90.9,94.3,106.1],
+[65.5,61.7,64.3,69.9,68.5,73.1,44.7,58.6,50.6,60.8,66.2,65.4,71.9,79.4,55.9,61.5,49.7,37.4,42.7,31.4,83.1,20.4,52.2,50.3,6.3,30.3,53.3,58.0,49.4,69.6,68.2,71.5,73.6,68.4,75.3,91.3,108.2,110.2,81.9,85.3,97.1],
+[86.8,83.1,85.7,91.3,89.8,94.4,66.0,79.9,71.9,82.1,87.5,86.7,93.2,100.7,86.9,92.5,80.7,58.7,73.7,62.4,114.1,41.8,83.2,71.7,48.7,51.6,74.7,79.3,70.8,90.9,89.5,92.8,94.9,89.7,96.6,112.6,129.6,131.6,103.2,106.6,118.4],
+[37.4,22.6,9.6,62.0,14.3,45.0,24.4,10.6,24.9,14.8,11.9,19.6,50.1,52.7,97.2,102.8,91.0,30.2,84.1,72.7,124.4,48.6,93.5,58.5,59.0,37.5,18.2,16.3,25.8,23.2,24.4,27.7,29.8,30.6,37.5,53.5,70.5,72.5,38.0,41.4,53.2],
+[57.9,43.5,37.7,82.6,43.8,65.6,41.1,37.2,41.6,37.6,41.5,41.6,70.7,72.6,113.9,119.5,107.7,46.0,100.8,89.4,141.1,65.3,110.2,74.6,75.7,54.2,34.8,31.3,35.1,27.5,23.2,15.8,19.1,14.5,24.0,40.0,57.0,58.9,27.8,31.2,43.0],
+[43.5,29.0,26.5,68.2,31.9,51.1,25.6,21.6,26.5,24.2,29.6,28.8,56.3,57.4,97.7,103.3,91.5,26.8,84.6,73.2,124.9,49.1,94.0,55.4,59.5,38.0,21.6,13.1,15.9,24.6,18.1,21.0,24.3,12.5,20.2,36.2,53.2,55.1,32.9,36.3,48.1],
+[38.9,24.4,19.8,63.5,27.2,46.5,23.1,17.0,23.6,19.6,25.0,24.1,51.6,52.7,95.9,101.5,89.7,28.9,82.8,71.4,123.1,47.3,92.3,57.2,57.7,36.2,16.9,8.4,20.1,13.8,12.2,15.7,17.8,21.3,28.9,45.0,61.9,63.9,26.1,29.5,41.3],
+[29.3,9.2,22.6,54.0,25.3,37.0,14.1,15.7,5.7,15.9,23.0,22.2,42.1,43.2,88.0,93.6,81.8,20.9,74.8,63.5,115.2,39.3,84.3,49.3,49.7,28.2,6.8,16.4,16.8,28.0,26.6,29.9,32.0,26.8,33.6,49.7,66.6,68.6,40.2,43.6,55.5],
+[40.8,37.1,39.6,53.3,43.8,48.4,20.0,33.9,25.9,36.1,41.5,40.7,47.9,54.7,63.6,69.2,57.3,12.7,50.4,39.1,90.7,14.9,59.9,33.9,25.3,2.7,28.7,33.3,24.8,44.9,43.5,46.8,48.9,43.7,50.6,66.6,83.6,85.5,57.2,60.6,72.4],
+[25.1,20.1,33.3,50.2,26.4,33.1,36.1,25.2,30.5,19.2,24.1,23.2,38.3,22.3,109.5,115.1,103.3,42.5,96.4,85.0,136.7,60.9,105.8,65.2,71.3,49.8,30.0,30.3,37.2,41.8,40.4,43.7,45.8,40.2,47.0,63.0,80.0,82.0,54.0,57.4,69.3],
+[76.9,90.1,104.2,45.3,104.0,68.5,80.4,96.8,87.7,91.1,101.8,101.0,54.8,92.0,107.9,134.2,120.6,73.4,115.5,104.1,143.5,79.2,125.0,52.9,90.4,78.7,93.2,97.9,85.6,109.5,108.1,111.4,113.5,107.8,114.5,130.5,147.5,149.5,121.8,125.2,137.0],
+[51.8,37.3,36.7,76.5,37.6,59.4,34.4,31.0,35.4,31.4,35.4,35.4,64.6,66.4,106.5,112.1,100.3,35.5,93.3,82.0,133.7,57.8,102.8,64.2,68.2,46.7,28.6,25.8,24.7,35.1,29.1,23.5,26.8,10.7,12.2,28.2,45.2,47.2,35.5,38.9,50.7],
+[58.8,72.0,84.0,29.7,85.9,50.4,60.2,78.3,67.4,73.0,83.6,82.9,36.7,73.8,92.4,114.0,102.2,53.2,95.3,83.9,135.6,59.0,104.7,32.7,70.2,58.5,73.0,77.7,65.3,89.3,87.9,91.2,93.3,87.6,94.3,110.3,127.3,129.3,101.5,104.9,116.8]
+];
+
+/* CIS le plus proche par commune (index dans CIS[], temps en minutes) */
+var COMMUNE_NEAREST=[
+{c:33,m:16.8},{c:29,m:6.8},{c:35,m:27.0},{c:14,m:19.6},{c:15,m:55.1},{c:12,m:33.1},{c:25,m:15.6},{c:32,m:6.7},{c:35,m:2.6},{c:18,m:39.2},
+{c:30,m:11.0},{c:26,m:5.1},{c:25,m:20.9},{c:1,m:4.7},{c:33,m:11.6},{c:39,m:19.0},{c:4,m:5.5},{c:17,m:41.7},{c:6,m:17.2},{c:16,m:4.8},
+{c:7,m:8.4},{c:17,m:63.3},{c:17,m:6.7},{c:33,m:2.7},{c:15,m:5.5},{c:30,m:12.7},{c:18,m:6.6},{c:27,m:10.5},{c:28,m:17.1},{c:1,m:16.7},
+{c:34,m:22.5},{c:28,m:7.5},{c:21,m:14.5},{c:23,m:21.5},{c:18,m:24.5},{c:2,m:5.3},{c:27,m:9.2},{c:12,m:23.3},{c:17,m:14.6},{c:1,m:16.0},
+{c:17,m:19.5},{c:24,m:7.0},{c:28,m:12.3},{c:21,m:10.2},{c:3,m:5.3},{c:18,m:46.5},{c:40,m:5.9},{c:34,m:12.3},{c:10,m:7.9},{c:21,m:19.8},
+{c:21,m:5.3},{c:38,m:11.9},{c:21,m:27.3},{c:17,m:6.7},{c:17,m:6.1},{c:24,m:39.2},{c:6,m:8.2},{c:30,m:6.3},{c:35,m:70.9},{c:36,m:17.2},
+{c:15,m:44.5},{c:33,m:12.7},{c:16,m:3.1},{c:30,m:4.4},{c:15,m:25.1},{c:22,m:19.7},{c:24,m:14.9},{c:1,m:10.8},{c:25,m:12.2},{c:0,m:10.6},
+{c:22,m:13.8},{c:21,m:63.2},{c:21,m:25.0},{c:18,m:25.7},{c:3,m:19.4},{c:3,m:57.6},{c:24,m:21.6},{c:25,m:9.6},{c:18,m:32.8},{c:14,m:41.0},
+{c:14,m:18.3},{c:3,m:10.7},{c:28,m:16.2},{c:24,m:10.2},{c:25,m:17.4},{c:17,m:4.5},{c:25,m:9.1},{c:19,m:18.2},{c:36,m:26.2},{c:12,m:16.0},
+{c:31,m:13.6},{c:29,m:6.6},{c:15,m:11.7},{c:0,m:12.0},{c:12,m:16.8},{c:14,m:18.2},{c:34,m:14.3},{c:22,m:83.5},{c:28,m:10.6},{c:24,m:39.1},
+{c:25,m:9.1},{c:21,m:12.6},{c:14,m:10.0},{c:33,m:11.9},{c:5,m:14.4},{c:6,m:4.1},{c:21,m:42.8},{c:17,m:11.7},{c:28,m:19.7},{c:35,m:35.6},
+{c:30,m:7.6},{c:33,m:15.7},{c:35,m:15.8},{c:18,m:1.9},{c:0,m:16.1},{c:21,m:162.0},{c:15,m:8.5},{c:6,m:12.9},{c:21,m:55.3},{c:24,m:30.3},
+{c:16,m:10.7},{c:19,m:17.1},{c:34,m:23.8},{c:11,m:22.1},{c:19,m:19.3},{c:30,m:6.9},{c:15,m:19.4},{c:15,m:49.9},{c:31,m:1.5},{c:33,m:19.2},
+{c:7,m:5.8},{c:33,m:10.0},{c:1,m:6.8},{c:23,m:18.1},{c:8,m:5.0},{c:9,m:7.4},{c:18,m:43.1},{c:0,m:21.6},{c:27,m:8.3},{c:27,m:15.3},
+{c:20,m:6.4},{c:20,m:3.1},{c:39,m:10.0},{c:21,m:6.0},{c:37,m:10.1},{c:23,m:12.4},{c:12,m:8.3},{c:17,m:24.5},{c:14,m:16.3},{c:24,m:46.6},
+{c:23,m:20.7},{c:14,m:19.3},{c:0,m:27.1},{c:14,m:65.3},{c:34,m:21.8},{c:21,m:7.9},{c:25,m:8.6},{c:9,m:2.7},{c:25,m:7.7},{c:24,m:6.2},
+{c:22,m:1.5},{c:32,m:7.6},{c:12,m:14.1},{c:28,m:17.8},{c:29,m:1.8},{c:26,m:6.6},{c:6,m:5.7},{c:6,m:8.7},{c:31,m:7.8},{c:11,m:14.2},
+{c:33,m:13.8},{c:33,m:5.0},{c:36,m:7.2},{c:10,m:10.7},{c:15,m:11.0},{c:2,m:7.5},{c:35,m:33.8},{c:12,m:12.2},{c:17,m:4.7},{c:2,m:8.7},
+{c:12,m:5.3},{c:18,m:18.5},{c:27,m:9.2},{c:11,m:1.7},{c:14,m:32.9},{c:18,m:9.8},{c:24,m:12.2},{c:36,m:24.6},{c:26,m:9.4},{c:32,m:15.2},
+{c:19,m:5.2},{c:23,m:19.9},{c:34,m:18.5},{c:25,m:20.4},{c:16,m:6.5},{c:17,m:34.3},{c:24,m:21.6},{c:13,m:15.5},{c:37,m:39.4},{c:28,m:10.5},
+{c:30,m:10.4},{c:18,m:46.7},{c:28,m:2.9},{c:28,m:15.2},{c:4,m:6.5},{c:26,m:7.0},{c:33,m:9.7},{c:23,m:16.8},{c:12,m:18.5},{c:28,m:11.9},
+{c:15,m:5.9},{c:21,m:169.2},{c:15,m:40.5},{c:25,m:32.4},{c:24,m:6.3},{c:21,m:41.8},{c:2,m:9.6},{c:33,m:14.5},{c:33,m:12.5},{c:27,m:8.4},
+{c:8,m:5.7},{c:25,m:2.7},{c:9,m:19.2},{c:3,m:45.3},{c:33,m:10.7},{c:3,m:29.7}
+];
+
 
 /* ═══ MODÈLE ISP ═══ */
-var H_MOIS=730,BASE_H=36,DUREE_INTER=2;
-function getBaseH(){var el=document.getElementById('heuresSlider');return el?parseInt(el.value)||36:BASE_H;}
-function ispH(n){var bh=getBaseH();return n*bh+Math.floor(n/5)*bh;}
-function needISP(cp,im){for(var n=0;n<=300;n++){if(ispH(n)>=(cp/100)*(H_MOIS+im*DUREE_INTER))return n;}return 300;}
-function covPct(n,im){var d=H_MOIS+im*DUREE_INTER;return d>0?Math.min(100,Math.round(ispH(n)/d*1000)/10):100;}
+/* 30 jours × 24h = 720h/mois à couvrir.
+   1 ISP = 36h/mois → 20 ISP = 100% → chaque ISP = 5%.
+   Si casernes proches, leurs ISP se poolent pour couvrir la même zone. */
+var H_MOIS=720, BASE_H=36;
+function covPct(pool,gh){gh=gh||0;return Math.min(100,Math.round((pool*BASE_H+gh)/H_MOIS*1000)/10);}
+function needISP(cp,gh){gh=gh||0;var need=Math.ceil((cp/100*H_MOIS-gh)/BASE_H);return Math.max(0,need);}
+
+/* ═══ DISTANCE / TEMPS TRAJET ENTRE CASERNES (OSRM) ═══ */
+function cisDistKm(c1,c2){
+  var R=6371,dLat=(c2.lat-c1.lat)*Math.PI/180,dLng=(c2.lng-c1.lng)*Math.PI/180;
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(c1.lat*Math.PI/180)*Math.cos(c2.lat*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function cisDistMin(c1,c2){
+  /* Temps de trajet reel OSRM (lookup matrice pre-calculee) */
+  var i1=CIS_IDX[c1.id], i2=CIS_IDX[c2.id];
+  if(i1!==undefined && i2!==undefined) return Math.round(TRAVEL_CIS_MIN[i1][i2]);
+  return Math.round(cisDistKm(c1,c2)*1.2/65*60);
+}
+
+/* ═══ POPULATION ISP RÉELS DEPUIS LE LISTING ═══ */
+function populateCisIsp(){
+  if(!DATA)return;
+
+  // Reset
+  for(var i=0;i<CIS.length;i++) CIS[i].actualIsp=0;
+
+  // Source : DATA.centres (buildCentresList_ côté serveur, gère le 50/50)
+  var src=DATA.centres||[];
+  if(!src.length&&DATA.effectifStats&&DATA.effectifStats.byCentre){
+    for(var j=0;j<DATA.effectifStats.byCentre.length;j++){
+      var e=DATA.effectifStats.byCentre[j];
+      if(e.key&&e.key!=='Non affecté') src.push({centre:e.key, nbIsp:e.val});
+    }
+  }
+
+  // Normalise : minuscules, accents retirés, tirets → espaces
+  var norm=function(s){
+    try{s=s.normalize('NFD');}catch(e){}
+    return(s||'').toLowerCase()
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/[ùûü]/g,'u')
+      .replace(/[ôö]/g,'o').replace(/[îï]/g,'i').replace(/[ç]/g,'c')
+      .replace(/[-_'\u2019\u2018]/g,' ').replace(/\s+/g,' ').trim();
+  };
+
+  // Index CIS par id
+  var cisById={};
+  for(var i=0;i<CIS.length;i++) cisById[CIS[i].id]=i;
+
+  // Build reverse index: norm(CIS.nom) → CIS.id for fuzzy fallback
+  var nomToCis={};
+  for(var i=0;i<CIS.length;i++) nomToCis[norm(CIS[i].nom)]=CIS[i].id;
+
+  var matched=0,unmatched=[];
+  for(var j=0;j<src.length;j++){
+    var n=norm(src[j].centre);
+    var cisId=CENTRE_TO_CIS[n];
+    // Fuzzy fallback 1: try direct name match
+    if(!cisId) cisId=nomToCis[n];
+    // Fuzzy fallback 2: try contains match on CENTRE_TO_CIS keys
+    if(!cisId){
+      for(var k in CENTRE_TO_CIS){
+        if(n.indexOf(k)!==-1||k.indexOf(n)!==-1){cisId=CENTRE_TO_CIS[k];break;}
+      }
+    }
+    if(cisId&&cisById[cisId]!==undefined){
+      CIS[cisById[cisId]].actualIsp+=src[j].nbIsp;
+      matched++;
+    } else {
+      unmatched.push(src[j].centre+'→['+n+']');
+    }
+  }
+  console.log('ISP MATCHING: '+matched+'/'+src.length+' centres matchés');
+  if(unmatched.length) console.log('NON MATCHÉS:', unmatched);
+  // Debug: visible banner if 0 matched
+  var total=0; for(var i=0;i<CIS.length;i++) total+=CIS[i].actualIsp;
+  if(total===0 && src.length>0){
+    console.warn('⚠️ 0 ISP matched! src centres:', src.map(function(s){return s.centre+'('+s.nbIsp+')';}));
+    console.warn('rawCentreNames:', DATA.rawCentreNames);
+  }
+}
+
+/* ═══ CASERNES CONTRIBUANT À UNE ZONE (avec temps trajet) ═══ */
+function getContributingCis(zone,travelMax){
+  var core=[];
+  for(var i=0;i<zone.cis.length;i++){for(var j=0;j<CIS.length;j++){if(CIS[j].id===zone.cis[i]){core.push(CIS[j]);break;}}}
+  if(!travelMax||travelMax<=0)return core;
+  var inc={};for(var i=0;i<core.length;i++)inc[core[i].id]=true;
+  for(var i=0;i<CIS.length;i++){
+    if(inc[CIS[i].id])continue;
+    for(var j=0;j<core.length;j++){
+      if(cisDistMin(CIS[i],core[j])<=travelMax){inc[CIS[i].id]=true;break;}
+    }
+  }
+  return CIS.filter(function(c){return inc[c.id];});
+}
+
+/* ═══ ZONE → INTERVENTIONS/MOIS (données réelles) ═══ */
+function zIntMois(zo){
+  if(DATA&&DATA.interStats&&DATA.interStats.byGroup){
+    var nb=DATA.interStats.nbMois||12;
+    for(var i=0;i<DATA.interStats.byGroup.length;i++){
+      if(DATA.interStats.byGroup[i].key===zo.name)return Math.round(DATA.interStats.byGroup[i].val/nb);
+    }
+  }
+  return 0;
+}
 
 /* ═══ GÉOMÉTRIE (convex hull + buffer pour patates) ═══ */
 function cross2(O,A,B){return(A[0]-O[0])*(B[1]-O[1])-(A[1]-O[1])*(B[0]-O[0]);}
@@ -692,445 +1317,1170 @@ function initCarte(){
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
     attribution:'© <a href="https://carto.com">CARTO</a> © <a href="https://osm.org">OSM</a>',maxZoom:18
   }).addTo(map);
-  window._mapObj=map;window._zl=[];
+  window._mapObj=map;
+  window._zonePolys=[];
+  window._zoneLabels=[];
+
+  // Créer un pane pour les marqueurs CIS au-dessus des polygones
+  map.createPane('cisMarkers');
+  map.getPane('cisMarkers').style.zIndex=650;
+
+  populateCisIsp();
+
+  // Marqueurs CIS avec tooltips réels
   var gc={Nord:'#3498db',Ouest:'#9b59b6',Sud:'#e67e22'};
-
-  // Marqueurs CIS
   for(var i=0;i<CIS.length;i++){var c=CIS[i];
-    L.circleMarker([c.lat,c.lng],{radius:5,fillColor:gc[c.grp]||'#333',color:'#fff',weight:2,fillOpacity:.9})
-     .addTo(map).bindTooltip('<strong>'+c.nom+'</strong><br>Groupement '+c.grp+'<br>Cible : '+c.cible+' ISP',{direction:'top',offset:[0,-6]});
+    var isp=c.actualIsp||0;
+    var zoneName='—';
+    for(var z=0;z<CARTE_ZONES.length;z++){if(CARTE_ZONES[z].cis.indexOf(c.id)!==-1){zoneName=CARTE_ZONES[z].name;break;}}
+    var tip='<strong>'+c.nom+'</strong><br>Groupement '+c.grp+'<br>Zone : '+zoneName+'<br>ISP actuels : <strong>'+isp+'</strong>';
+    L.circleMarker([c.lat,c.lng],{pane:'cisMarkers',radius:Math.max(4,Math.min(12,isp*1.5+3)),fillColor:gc[c.grp]||'#333',color:'#fff',weight:2,fillOpacity:.9})
+     .addTo(map).bindTooltip(tip,{direction:'top',offset:[0,-8]});
   }
 
-  // Polygones zones (patates)
-  for(var z=0;z<CARTE_ZONES.length;z++){
-    var zo=CARTE_ZONES[z],poly=mkZonePoly(zo.cis);
-    if(poly.length>0){
-      var lyr=L.polygon(poly,{color:zo.color,weight:2,fillColor:zo.color,fillOpacity:.15,dashArray:'6,4'}).addTo(map);
-      var ct=centroid(poly);
-      L.marker(ct,{icon:L.divIcon({className:'',html:'<div style=\"background:'+zo.color+';color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3);pointer-events:none;\">'+zo.name+'</div>',iconSize:null,iconAnchor:[40,10]})}).addTo(map);
-      window._zl.push({z:zo,l:lyr});
-      (function(zz,ll){ll.on('click',function(){hlZone(zz.name);});})(zo,lyr);
-    }
-  }
-
-  // Légende groupements
+  // Légende
   var leg=L.control({position:'bottomleft'});
   leg.onAdd=function(){
     var d=L.DomUtil.create('div','');
-    d.style.cssText='background:#fff;padding:8px 12px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2);font-size:12px;line-height:1.6;';
-    d.innerHTML='<strong>Groupements</strong><br>'+
-      '<span style=\"color:#3498db;\">●</span> Nord&emsp;'+
-      '<span style=\"color:#9b59b6;\">●</span> Ouest&emsp;'+
-      '<span style=\"color:#e67e22;\">●</span> Sud';
+    d.style.cssText='background:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.2);font-size:11px;line-height:1.6;max-width:280px;';
+    d.innerHTML='<strong>Légende</strong><br>'+
+      '<span style="color:#3498db;">●</span> Grp Nord&emsp;<span style="color:#9b59b6;">●</span> Grp Ouest&emsp;<span style="color:#e67e22;">●</span> Grp Sud<br>'+
+      '<hr style="margin:4px 0;border:none;border-top:1px solid #eee;">'+
+      '<strong>ISP actuels</strong> = inscrits au listing, rattachés aux casernes<br>'+
+      '<strong>ISP requis</strong> = nb d\'ISP pour atteindre l\'objectif (heures/ISP réglable via slider)<br>'+
+      '<strong>Taille marqueur</strong> = proportionnelle au nb d\'ISP';
     return d;
   };
   leg.addTo(map);
+
   renderZones();
 }
 
 function hlZone(name){
   var cards=document.querySelectorAll('.zone-card');
   for(var i=0;i<cards.length;i++) cards[i].classList.toggle('active',cards[i].getAttribute('data-z')===name);
-  for(var i=0;i<window._zl.length;i++){
-    var zl=window._zl[i];
-    if(zl.z.name===name){window._mapObj.fitBounds(zl.l.getBounds().pad(.3));zl.l.setStyle({fillOpacity:.35,weight:3});}
-    else{zl.l.setStyle({fillOpacity:.15,weight:2});}
+  for(var i=0;i<window._zonePolys.length;i++){
+    var zp=window._zonePolys[i];
+    if(zp._zoneName===name){window._mapObj.fitBounds(zp.getBounds().pad(.3));zp.setStyle({fillOpacity:.35,weight:3});}
+    else{zp.setStyle({fillOpacity:.15,weight:2});}
   }
-}
-
-function zIntMois(zo){
-  if(DATA&&DATA.interStats&&DATA.interStats.byGroup){
-    var me=Math.max(1,new Date().getMonth()+1);
-    for(var i=0;i<DATA.interStats.byGroup.length;i++){
-      if(DATA.interStats.byGroup[i].key===zo.name) return Math.round(DATA.interStats.byGroup[i].val/me);
-    }
-  }
-  return zo.defInt;
-}
-function zCible(zo){var t=0;for(var i=0;i<zo.cis.length;i++){for(var j=0;j<CIS.length;j++){if(CIS[j].id===zo.cis[i]){t+=CIS[j].cible;break;}}}return t;}
-
-/* ═══ DISTANCE & TEMPS DE TRAJET ENTRE CIS ═══ */
-function haversineKm(lat1,lng1,lat2,lng2){
-  var R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
-  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-// Temps de trajet estimé en minutes (vitesse moyenne ~50 km/h en montagne/rural, facteur sinuosité 1.3)
-function trajetMin(c1,c2){return Math.round(haversineKm(c1.lat,c1.lng,c2.lat,c2.lng)*1.3/50*60);}
-
-// Trouver le centroïde d'une zone (moyenne lat/lng de ses CIS)
-function zoneCentroid(zo){
-  var lat=0,lng=0,n=0;
-  for(var i=0;i<zo.cis.length;i++){
-    for(var j=0;j<CIS.length;j++){
-      if(CIS[j].id===zo.cis[i]){lat+=CIS[j].lat;lng+=CIS[j].lng;n++;break;}
-    }
-  }
-  return n>0?{lat:lat/n,lng:lng/n}:{lat:0,lng:0};
-}
-
-// Calculer les ISP effectifs pour une zone en incluant les CIS voisins accessibles
-function zCibleWithTrajet(zo, maxMinutes){
-  var base = zCible(zo);
-  if(maxMinutes <= 0) return base;
-
-  // Trouver les CIS de cette zone
-  var zoneCisSet = {};
-  for(var i=0;i<zo.cis.length;i++) zoneCisSet[zo.cis[i]] = true;
-
-  // Centroid de la zone cible
-  var zc = zoneCentroid(zo);
-
-  // Chercher tous les CIS hors zone dont le trajet vers le centroïde de la zone <= maxMinutes
-  var extra = 0;
-  for(var i=0;i<CIS.length;i++){
-    if(zoneCisSet[CIS[i].id]) continue;
-    var t = Math.round(haversineKm(CIS[i].lat,CIS[i].lng,zc.lat,zc.lng)*1.3/50*60);
-    if(t <= maxMinutes){
-      // On compte une fraction des ISP de ce CIS voisin (plus c'est loin, moins on compte)
-      var ratio = Math.max(0, 1 - t/maxMinutes * 0.5); // de 100% à 50% selon distance
-      extra += Math.round(CIS[i].cible * ratio * 10) / 10;
-    }
-  }
-  return Math.round((base + extra) * 10) / 10;
 }
 
 function renderZones(){
-  var cp=parseInt(document.getElementById('coverSlider').value)||75;
-  var trajet=parseInt(document.getElementById('trajetSlider').value)||0;
-  var h='',tc=0,tn=0,ti=0;
-  for(var z=0;z<CARTE_ZONES.length;z++){
-    var zo=CARTE_ZONES[z],im=zIntMois(zo),cbl=zCibleWithTrajet(zo,trajet),nd=needISP(cp,im),cv=covPct(cbl,im),df=Math.round((cbl-nd)*10)/10;
-    var st,sc;
-    if(df>=0){st='✅ OK (+'+df+')';sc='ok';}
-    else if(df>=-3){st='⚠️ −'+Math.abs(df)+' ISP';sc='warn';}
-    else{st='🚨 −'+Math.abs(df)+' ISP';sc='crit';}
-    tc+=cbl;tn+=nd;ti+=im;
-    var extraLabel = trajet>0 ? ' <span style="font-size:.75em;color:var(--blue);">(+voisins ≤'+trajet+'min)</span>' : '';
-    h+='<div class="zone-card" data-z="'+zo.name+'" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')" style="border-left-color:'+zo.color+';">';
-    h+='<div class="zn" style="color:'+zo.color+';">'+zo.name+' <span style="font-weight:400;font-size:.82em;color:var(--text-light);">('+zo.cis.length+' CIS)</span></div>';
-    h+='<div class="zr"><span>Inter/mois</span><strong>~'+im+'</strong></div>';
-    h+='<div class="zr"><span>ISP effectifs'+extraLabel+'</span><strong>'+cbl+'</strong></div>';
-    h+='<div class="zr"><span>ISP nécessaires ('+cp+'%)</span><strong>'+nd+'</strong></div>';
-    h+='<div class="zr"><span>Couverture actuelle</span><strong>'+cv+'%</strong></div>';
-    h+='<div class="zs '+sc+'">'+st+'</div></div>';
+  var map=window._mapObj;if(!map)return;
+  var defCp=parseInt(document.getElementById('coverSlider').value)||75;
+  var travelMax=parseInt(document.getElementById('travelSlider').value)||0;
+  BASE_H=parseInt(document.getElementById('baseHSlider').value)||36;
+
+  if(!window._cisAdj) window._cisAdj={};
+  if(!window._zoneTargets) window._zoneTargets={};
+
+  /* ISP simulé pour une caserne */
+  function simIsp(cid){
+    if(window._cisAdj[cid]!==undefined) return window._cisAdj[cid];
+    for(var i=0;i<CIS.length;i++){if(CIS[i].id===cid) return CIS[i].actualIsp||0;}
+    return 0;
   }
+
+  /* ══ ÉTAPE 1 : calculer le pool et la couverture de CHAQUE CASERNE ══ */
+  var cisPool={};  // cisId → {pool:N, poolDetail:[{cis,isp,dist}], cov:X%}
+  for(var i=0;i<CIS.length;i++){
+    var c=CIS[i];
+    var myIsp=simIsp(c.id);
+    var poolTotal=myIsp;
+    var detail=[{cis:c,isp:myIsp,dist:0}];
+
+    // Trouver toutes les casernes à ≤ travelMax
+    if(travelMax>0){
+      for(var j=0;j<CIS.length;j++){
+        if(j===i)continue;
+        var d=cisDistMin(c,CIS[j]);
+        if(d<=travelMax){
+          var nIsp=simIsp(CIS[j].id);
+          poolTotal+=nIsp;
+          detail.push({cis:CIS[j],isp:nIsp,dist:d});
+        }
+      }
+      detail.sort(function(a,b){return a.dist-b.dist;});
+    }
+
+    // Garde éventuelle
+    var cisGh=0;
+    for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===c.id) cisGh=gardeHMois(GARDE[g].zone);}
+
+    var cov=covPct(poolTotal,cisGh);
+    cisPool[c.id]={pool:poolTotal,detail:detail,cov:cov,gh:cisGh};
+  }
+
+  /* ── Filtres zone ── */
+  var filDiv=document.getElementById('zoneFilters');
+  if(!filDiv._built){
+    var fh='';
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zo=CARTE_ZONES[z];
+      fh+='<label style="font-size:0.75em;cursor:pointer;display:flex;align-items:center;gap:2px;"><input type="checkbox" checked data-zone="'+zo.name+'" onchange="renderZones()" style="accent-color:'+zo.color+';"><span style="color:'+zo.color+';font-weight:600;">'+zo.name+'</span></label>';
+    }
+    filDiv.innerHTML=fh;
+    filDiv._built=true;
+  }
+  var checkedZones={};
+  var checks=filDiv.querySelectorAll('input[type=checkbox]');
+  for(var i=0;i<checks.length;i++){if(checks[i].checked)checkedZones[checks[i].getAttribute('data-zone')]=true;}
+
+  /* Nettoyage carte */
+  for(var i=0;i<window._zonePolys.length;i++)map.removeLayer(window._zonePolys[i]);
+  for(var i=0;i<window._zoneLabels.length;i++)map.removeLayer(window._zoneLabels[i]);
+  window._zonePolys=[];window._zoneLabels=[];
+
+  /* ══ ÉTAPE 2 : affichage par zone ══ */
+  var h='',zonesOk=0,allCovSum=0,allCovN=0;
+
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    var zo=CARTE_ZONES[z];
+    var visible=!!checkedZones[zo.name];
+    var cp=(window._zoneTargets[zo.name]!==undefined)?window._zoneTargets[zo.name]:defCp;
+    var gh=gardeHMois(zo.name);
+
+    /* Casernes de la zone */
+    var coreCis=[];
+    for(var i=0;i<zo.cis.length;i++){
+      for(var j=0;j<CIS.length;j++){if(CIS[j].id===zo.cis[i]){coreCis.push(CIS[j]);break;}}
+    }
+
+    /* Couverture zone = pire caserne (maillon faible) */
+    var worstCov=100,worstCis=null,bestCov=0;
+    for(var i=0;i<coreCis.length;i++){
+      var cc=cisPool[coreCis[i].id].cov;
+      allCovSum+=cc;allCovN++;
+      if(cc<worstCov){worstCov=cc;worstCis=coreCis[i];}
+      if(cc>bestCov) bestCov=cc;
+    }
+    var zoneCov=worstCov;
+    var nd=needISP(cp,gh);
+    var zoneOk=zoneCov>=cp;
+    if(zoneOk) zonesOk++;
+
+    /* Polygone — inclut les casernes contributrices dans le rayon */
+    if(visible){
+      /* Collecter tous les CIS IDs qui contribuent à cette zone (core + voisins dans le rayon) */
+      var polyCisIds=zo.cis.slice();
+      if(travelMax>0){
+        for(var i=0;i<CIS.length;i++){
+          if(polyCisIds.indexOf(CIS[i].id)!==-1) continue;
+          for(var k=0;k<coreCis.length;k++){
+            if(cisDistMin(CIS[i],coreCis[k])<=travelMax){polyCisIds.push(CIS[i].id);break;}
+          }
+        }
+      }
+      var poly=mkZonePoly(polyCisIds);
+      if(poly.length>0){
+        var lyr=L.polygon(poly,{color:zo.color,weight:2,fillColor:zo.color,fillOpacity:.15,dashArray:'6,4'}).addTo(map);
+        lyr._zoneName=zo.name;
+        window._zonePolys.push(lyr);
+        var ct=centroid(poly);
+        var lbl=L.marker(ct,{icon:L.divIcon({className:'',html:'<div style="background:'+zo.color+';color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3);pointer-events:none;">'+zo.name+'</div>',iconSize:null,iconAnchor:[40,10]})}).addTo(map);
+        window._zoneLabels.push(lbl);
+        (function(zn,ll){ll.on('click',function(){hlZone(zn);});})(zo.name,lyr);
+      }
+    }
+
+    /* ══ SIDEBAR ══ */
+    h+='<div class="zone-card" data-z="'+zo.name+'" style="border-left-color:'+zo.color+';'+(visible?'':'opacity:0.4;')+'">';
+
+    /* En-tête zone + objectif */
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="hlZone(\''+zo.name.replace(/'/g,"\\'")+'\')">';
+    h+='<span class="zn" style="color:'+zo.color+';margin:0;">'+zo.name+'</span>';
+    h+='<span style="font-size:.78em;font-weight:700;color:'+(zoneOk?'var(--green)':'var(--primary)')+';">\ud83c\udfaf '+cp+'%</span>';
+    h+='</div>';
+    /* Slider objectif par zone */
+    h+='<div style="display:flex;align-items:center;gap:4px;margin:2px 0 4px;" onclick="event.stopPropagation();">';
+    h+='<span style="font-size:.68em;color:var(--text-light);white-space:nowrap;">Objectif</span>';
+    h+='<input type="range" min="50" max="100" value="'+cp+'" style="flex:1;margin:0;cursor:pointer;accent-color:'+zo.color+';height:14px;" ';
+    h+='oninput="this.nextElementSibling.textContent=this.value+\'%\';event.stopPropagation();" ';
+    h+='onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();" ';
+    h+='onchange="window._zoneTargets[\''+zo.name.replace(/'/g,"\\'")+'\']= +this.value;renderZones();">';
+    h+='<strong style="min-width:30px;text-align:right;font-size:.78em;">'+cp+'%</strong>';
+    h+='</div>';
+
+    if(gh>0){
+      h+='<div style="font-size:.72em;color:var(--blue);margin:2px 0;">\ud83d\udee1\ufe0f Garde : +'+gh+'h/mois \u2248 '+Math.round(gh/BASE_H)+' ISP \u00e9q.</div>';
+    }
+
+    /* ── Détail par caserne ── */
+    for(var i=0;i<coreCis.length;i++){
+      var c=coreCis[i];
+      var cp_=cisPool[c.id];
+      var sI=simIsp(c.id),aI=Math.round((c.actualIsp||0)*10)/10;
+      var covOk=cp_.cov>=cp;
+      var poolN=cp_.detail.length;
+
+      h+='<div style="margin:6px 0 4px;padding:6px 8px;background:'+(covOk?'#e6f5f3':'#fde8ea')+';border-radius:6px;border-left:3px solid '+(covOk?'var(--green)':'var(--primary)')+';">';
+
+      /* Nom caserne + slider ISP */
+      h+='<div style="display:flex;align-items:center;gap:3px;font-size:.82em;margin-bottom:3px;">';
+      h+='<strong style="flex:1;">'+c.nom+'</strong>';
+      h+='<input type="range" min="0" max="30" value="'+Math.round(sI)+'" style="width:55px;margin:0;cursor:pointer;accent-color:'+zo.color+';" ';
+      h+='oninput="this.nextElementSibling.textContent=this.value;event.stopPropagation();" ';
+      h+='onmousedown="event.stopPropagation();" ontouchstart="event.stopPropagation();" ';
+      h+='onchange="window._cisAdj[\''+c.id+'\']= +this.value;renderZones();">';
+      h+='<strong style="min-width:16px;text-align:right;">'+Math.round(sI)+'</strong>';
+      h+='</div>';
+
+      /* Pool et couverture */
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;font-size:.78em;">';
+      h+='<span>Pool : <strong>'+Math.round(cp_.pool)+' ISP</strong> ('+poolN+' caserne'+(poolN>1?'s':'')+')</span>';
+      h+='<strong style="font-size:1.15em;color:'+(covOk?'var(--green)':'var(--primary)')+';">'+cp_.cov+'%</strong>';
+      h+='</div>';
+
+      /* Barre */
+      h+='<div style="height:5px;background:rgba(0,0,0,.1);border-radius:3px;margin:3px 0;overflow:hidden;">';
+      h+='<div style="width:'+Math.min(100,cp_.cov)+'%;height:100%;border-radius:3px;background:'+(covOk?'var(--green)':'var(--primary)')+';"></div>';
+      h+='</div>';
+
+      /* Formule */
+      h+='<div style="font-size:.65em;color:var(--text-light);">'+Math.round(cp_.pool)+' ISP \u00d7 '+BASE_H+'h'+(cp_.gh>0?' + '+cp_.gh+'h garde':'')+' = '+Math.round(cp_.pool*BASE_H+cp_.gh)+'h / 720h</div>';
+
+      /* Détail du pool si >1 caserne */
+      if(cp_.detail.length>1){
+        h+='<details style="font-size:.7em;color:var(--text-light);margin-top:2px;"><summary style="cursor:pointer;">D\u00e9tail du pool ('+cp_.detail.length+' casernes)</summary>';
+        for(var d=0;d<cp_.detail.length;d++){
+          var dd=cp_.detail[d];
+          h+='<div style="padding:1px 0 1px 8px;">'+dd.cis.nom+' : '+Math.round(dd.isp)+' ISP'+(dd.dist>0?' \u2014 '+dd.dist+' min':'')+'</div>';
+        }
+        h+='</details>';
+      }
+
+      h+='</div>'; /* fin caserne block */
+    }
+
+    /* ── Résumé zone ── */
+    var scl=zoneOk?'ok':(zoneCov>=cp-15?'warn':'crit');
+    var st=zoneOk?('\u2705 Couverte ('+Math.round(zoneCov)+'%)'):('\ud83d\udea8 '+Math.round(zoneCov)+'% (maillon faible : '+worstCis.nom+')');
+    h+='<div class="zs '+scl+'" style="margin-top:6px;">'+st+'</div>';
+
+    /* Recommandation : sera remplie après l'algo itératif global */
+    if(!zoneOk){
+      h+='<div class="zone-reco" data-zone="'+zo.name+'" style="font-size:.72em;color:var(--orange);margin-top:3px;position:relative;cursor:pointer;" ';
+      h+='onmouseenter="var p=this.querySelector(\'.reco-popup\');if(p)p.style.display=\'block\'" onmouseleave="var p=this.querySelector(\'.reco-popup\');if(p)p.style.display=\'none\'">';
+      h+='\ud83d\udca1 <span class="reco-text">Calcul en cours\u2026</span>';
+      h+='</div>';
+    }
+
+    h+='</div>'; /* fin zone-card */
+  }
+
   document.getElementById('zoneCards').innerHTML=h;
 
-  var tcv=covPct(tc,ti),td=tc-tn;
-  document.getElementById('zoneTotals').innerHTML=
-    '<div class="zone-totals">'+
-    '<div class="tr" style="font-weight:700;margin-bottom:6px;font-size:1em;"><span>📊 Synthèse département</span></div>'+
-    '<div class="tr"><span>Interventions/mois</span><strong>~'+ti+'</strong></div>'+
-    '<div class="tr"><span>ISP cible total</span><strong>'+tc+'</strong></div>'+
-    '<div class="tr"><span>ISP nécessaires ('+cp+'%)</span><strong>'+tn+'</strong></div>'+
-    '<div class="tr"><span>Couverture actuelle</span><strong>'+tcv+'%</strong></div>'+
-    '<div class="tr"><span>Écart global</span><strong style="color:'+(td>=0?'var(--green)':'var(--primary)')+';">'+(td>=0?'+':'')+td+' ISP</strong></div>'+
+  /* ══════════════════════════════════════════════════════
+     ALGO ITÉRATIF DE RECRUTEMENT GLOBAL
+     Recruter 1 ISP à la fois au pire endroit, recalculer
+     tous les pools (car 1 recrue aide toutes les casernes
+     voisines dans le rayon), et recommencer.
+     ══════════════════════════════════════════════════════ */
+  function computeGreedyRecruitment(simIspBase, travelRadius){
+    var recruited={}; /* cisId → nb recruté */
+    /* Copie des ISP simulés */
+    var curIsp={};
+    for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=simIspBase(CIS[i].id);
+
+    /* Pré-calculer la matrice de voisinage (une seule fois) */
+    var neighbors={}; /* cisId → [cisId voisins dans le rayon] */
+    for(var i=0;i<CIS.length;i++){
+      var nb=[];
+      if(travelRadius>0){
+        for(var j=0;j<CIS.length;j++){
+          if(j!==i && TRAVEL_CIS_MIN[i][j]<=travelRadius) nb.push(CIS[j].id);
+        }
+      }
+      neighbors[CIS[i].id]=nb;
+    }
+
+    /* Fonction : pool d'une caserne avec l'état courant */
+    function pool(cid){
+      var tot=curIsp[cid]||0;
+      var nbs=neighbors[cid];
+      for(var n=0;n<nbs.length;n++) tot+=(curIsp[nbs[n]]||0);
+      return tot;
+    }
+
+    /* Fonction : couverture d'une caserne */
+    function cisCov(cid){
+      var gh=0;
+      for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cid) gh=gardeHMois(GARDE[g].zone);}
+      return covPct(pool(cid),gh);
+    }
+
+    /* Objectif par zone */
+    var zoneTarget={};
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zn=CARTE_ZONES[z].name;
+      zoneTarget[zn]=(window._zoneTargets[zn]!==undefined)?window._zoneTargets[zn]:defCp;
+    }
+
+    /* Boucle itérative : max 400 recrutements */
+    for(var iter=0;iter<400;iter++){
+      /* Trouver le pire maillon faible parmi toutes les zones non-OK */
+      var worstId=null, worstCovVal=Infinity, worstZone=null;
+      for(var z=0;z<CARTE_ZONES.length;z++){
+        var zo=CARTE_ZONES[z];
+        var target=zoneTarget[zo.name];
+        for(var i=0;i<zo.cis.length;i++){
+          var cc=cisCov(zo.cis[i]);
+          if(cc<target && cc<worstCovVal){
+            worstCovVal=cc; worstId=zo.cis[i]; worstZone=zo.name;
+          }
+        }
+      }
+      if(worstId===null) break; /* toutes les zones OK */
+
+      /* Recruter 1 ISP à cette caserne */
+      curIsp[worstId]=(curIsp[worstId]||0)+1;
+      recruited[worstId]=(recruited[worstId]||0)+1;
+    }
+
+    return recruited;
+  }
+
+  /* Exécuter l'algo avec le travel actuel */
+  var recruited=computeGreedyRecruitment(simIsp, travelMax);
+  /* Exécuter aussi avec travel=0 pour comparer */
+  var recruited0=computeGreedyRecruitment(simIsp, 0);
+
+  var totNeedRecruit=0; for(var cid in recruited) totNeedRecruit+=recruited[cid];
+  var totNeed0=0; for(var cid in recruited0) totNeed0+=recruited0[cid];
+  var econTravel=totNeed0-totNeedRecruit;
+
+  /* Construire le listing par zone à partir du résultat itératif */
+  var recruitList=[];
+  var recruitByZone={}; /* zoneName → [{caserne,manque}] */
+  for(var cid in recruited){
+    if(recruited[cid]<=0) continue;
+    var cNom='?',cZone='?',cColor='#666';
+    for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){cNom=CIS[j].nom;break;}}
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(CARTE_ZONES[z].cis.indexOf(cid)!==-1){cZone=CARTE_ZONES[z].name;cColor=CARTE_ZONES[z].color;break;}
+    }
+    var entry={zone:cZone,color:cColor,caserne:cNom,cisId:cid,manque:recruited[cid],pool:Math.round(cisPool[cid].pool),cov:cisPool[cid].cov};
+    recruitList.push(entry);
+    if(!recruitByZone[cZone]) recruitByZone[cZone]=[];
+    recruitByZone[cZone].push(entry);
+  }
+  recruitList.sort(function(a,b){return b.manque-a.manque;});
+
+  /* Mettre à jour les recommandations par zone dans les cards */
+  var recoEls=document.querySelectorAll('.zone-reco');
+  for(var i=0;i<recoEls.length;i++){
+    var zName=recoEls[i].getAttribute('data-zone');
+    var zRecs=recruitByZone[zName];
+    if(!zRecs||!zRecs.length){
+      recoEls[i].querySelector('.reco-text').textContent='\u2705 OK avec la mutualisation';
+      continue;
+    }
+    var zTotal=0; for(var j=0;j<zRecs.length;j++) zTotal+=zRecs[j].manque;
+    var zTarget=(window._zoneTargets[zName]!==undefined)?window._zoneTargets[zName]:defCp;
+    recoEls[i].querySelector('.reco-text').innerHTML='Recruter <strong>'+zTotal+' ISP</strong> pour atteindre '+zTarget+'%';
+
+    /* Popup détaillée */
+    var popup='<div class="reco-popup" style="display:none;position:absolute;left:0;bottom:100%;margin-bottom:4px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:10px 14px;z-index:999;min-width:260px;font-size:.95em;color:var(--text);">';
+    popup+='<div style="font-weight:700;margin-bottom:6px;color:var(--orange);">\ud83d\udcdd Plan de recrutement \u2014 '+zName+'</div>';
+    zRecs.sort(function(a,b){return b.manque-a.manque;});
+    for(var j=0;j<zRecs.length;j++){
+      popup+='<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f0f0f0;"><span>'+zRecs[j].caserne+'</span><strong style="color:var(--primary);">+'+zRecs[j].manque+' ISP</strong></div>';
+    }
+    popup+='<div style="margin-top:6px;font-size:.85em;color:var(--text-light);">Algo it\u00e9ratif : chaque recrue renforce tout le pool (rayon '+travelMax+' min)</div>';
+    popup+='</div>';
+    recoEls[i].insertAdjacentHTML('beforeend',popup);
+  }
+
+  /* ══ SYNTHÈSE ══ */
+  var allSimIsp=0;
+  for(var i=0;i<CIS.length;i++) allSimIsp+=simIsp(CIS[i].id);
+  var listingTotal=DATA&&DATA.effectifStats?DATA.effectifStats.total:'?';
+  var globalCov=allCovN>0?Math.round(allCovSum/allCovN*10)/10:0;
+
+  /* Casernes isolées */
+  var isolated=[];
+  for(var i=0;i<CIS.length;i++){
+    if(cisPool[CIS[i].id].cov<defCp) isolated.push({nom:CIS[i].nom,cov:cisPool[CIS[i].id].cov,pool:cisPool[CIS[i].id].pool});
+  }
+  isolated.sort(function(a,b){return a.cov-b.cov;});
+
+  var synthHtml=
+    '<div class="zone-totals" style="margin-bottom:12px;">'+
+    '<div class="tr" style="font-weight:700;margin-bottom:6px;font-size:1em;"><span>\ud83d\udcca Synth\u00e8se d\u00e9partement</span></div>'+
+    '<div class="tr"><span>ISP au listing</span><strong>'+listingTotal+'</strong></div>'+
+    '<div class="tr"><span>ISP simul\u00e9s</span><strong>'+Math.round(allSimIsp)+'</strong></div>'+
+    '<div class="tr"><span>Rayon d\'action</span><strong>'+travelMax+' min</strong></div>'+
+    '<div class="tr"><span>Heures / ISP</span><strong>'+BASE_H+'h/mois</strong></div>'+
+    '<div class="tr" style="font-weight:700;font-size:1.1em;margin-top:4px;"><span>\ud83d\udcc8 Couverture moy.</span><strong style="color:'+(globalCov>=defCp?'var(--green)':'var(--primary)')+';">'+globalCov+'%</strong></div>'+
+    '<div class="tr"><span>Zones OK (\u2265 objectif)</span><strong style="color:'+(zonesOk===CARTE_ZONES.length?'var(--green)':'var(--primary)')+';">'+zonesOk+' / '+CARTE_ZONES.length+'</strong></div>'+
+    '<div style="margin-top:8px;padding:6px 8px;background:var(--blue-light);border-radius:6px;font-size:.82em;">'+
+    '<div style="display:flex;justify-content:space-between;font-weight:700;"><span>\ud83d\ude80 ISP \u00e0 recruter (algo it\u00e9ratif)</span><strong style="color:var(--primary);">'+totNeedRecruit+'</strong></div>'+
+    '<div style="font-size:.8em;color:var(--text-light);margin-top:2px;">Chaque recrue renforce le pool de toutes les casernes \u00e0 port\u00e9e</div>'+
+    (travelMax>0&&econTravel>0?'<div style="font-size:.85em;color:var(--green);margin-top:2px;">\u2705 Le rayon de '+travelMax+' min \u00e9conomise <strong>'+econTravel+' recrutement'+(econTravel>1?'s':'')+'</strong> vs 0 min</div>':'')+
+    (travelMax===0?'<div style="font-size:.85em;color:var(--text-light);margin-top:2px;">\u2191 Augmentez le rayon d\'action pour mutualiser les pools</div>':'')+
     '</div>';
+
+  /* ══ LISTING RECRUTEMENTS GROUPÉ PAR ZONE (dépliable) ══ */
+  if(recruitList.length>0){
+    synthHtml+='<div style="margin-top:8px;padding:8px 10px;background:var(--orange-light);border-radius:6px;border:1px solid var(--orange);">';
+    synthHtml+='<div style="font-weight:700;font-size:.88em;color:var(--orange);margin-bottom:6px;">\ud83d\udcdd Recrutements \u00e0 effectuer</div>';
+    /* Grouper par zone */
+    var zoneOrder=[];
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      var zn=CARTE_ZONES[z].name;
+      if(recruitByZone[zn]&&recruitByZone[zn].length>0) zoneOrder.push({name:zn,color:CARTE_ZONES[z].color,recs:recruitByZone[zn]});
+    }
+    for(var zi=0;zi<zoneOrder.length;zi++){
+      var zg=zoneOrder[zi];
+      var zTotal=0; for(var j=0;j<zg.recs.length;j++) zTotal+=zg.recs[j].manque;
+      zg.recs.sort(function(a,b){return b.manque-a.manque;});
+      synthHtml+='<details style="margin-bottom:4px;"'+(zi===0?' open':'')+'>';
+      synthHtml+='<summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:.85em;border-bottom:1px solid rgba(0,0,0,.08);">';
+      synthHtml+='<span style="color:'+zg.color+';font-weight:700;">'+zg.name+'</span>';
+      synthHtml+='<strong style="color:var(--primary);">+'+zTotal+' ISP</strong>';
+      synthHtml+='</summary>';
+      synthHtml+='<table style="width:100%;font-size:.76em;border-collapse:collapse;margin:4px 0 6px 8px;">';
+      for(var j=0;j<zg.recs.length;j++){
+        var rl=zg.recs[j];
+        synthHtml+='<tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:2px 6px;">'+rl.caserne+'</td><td style="text-align:center;padding:2px 4px;font-size:.9em;">pool '+rl.pool+'</td><td style="text-align:center;padding:2px 4px;font-size:.9em;">'+rl.cov+'%</td><td style="text-align:right;padding:2px 6px;font-weight:700;color:var(--primary);">+'+rl.manque+'</td></tr>';
+      }
+      synthHtml+='</table></details>';
+    }
+    synthHtml+='<div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;padding-top:4px;border-top:1px solid var(--orange);font-size:.9em;"><span>Total d\u00e9partement</span><span style="color:var(--primary);">+'+totNeedRecruit+' ISP</span></div>';
+    synthHtml+='</div>';
+  }
+
+  if(isolated.length>0&&isolated.length<=20){
+    synthHtml+='<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-size:.78em;">';
+    synthHtml+='<strong style="color:var(--primary);">\ud83d\udea8 Casernes sous-couvertes ('+isolated.length+') :</strong>';
+    for(var i=0;i<Math.min(12,isolated.length);i++){
+      synthHtml+='<div style="display:flex;justify-content:space-between;padding:1px 0;"><span>'+isolated[i].nom+' (pool '+Math.round(isolated[i].pool)+')</span><strong style="color:var(--primary);">'+isolated[i].cov+'%</strong></div>';
+    }
+    if(isolated.length>12) synthHtml+='<div style="color:var(--text-light);">...et '+(isolated.length-12)+' autres</div>';
+    synthHtml+='</div>';
+  }
+
+  synthHtml+='<div style="text-align:center;margin-top:8px;"><a href="#" onclick="window._cisAdj={};window._zoneTargets={};renderZones();return false;" style="font-size:.78em;color:var(--blue);text-decoration:none;">\ud83d\udd04 R\u00e9initialiser tout</a></div>'+
+    '</div>';
+
+  document.getElementById('zoneTotals').innerHTML=synthHtml;
 }
 
 function updateCoverage(v){document.getElementById('coverTarget').textContent=v;renderZones();}
-function updateTrajet(v){document.getElementById('trajetTarget').textContent=v;renderZones();}
-function updateHeures(v){document.getElementById('heuresTarget').textContent=v;document.getElementById('modelDesc').textContent='Modèle : '+v+'h/mois par ISP, 1 sur 5 fait '+(v*2)+'h. Cliquez sur une zone pour zoomer.';renderZones();}
-
-/* ═══ RÉSULTAT FINAL ═══ */
-function renderResultat(){
-  if(!DATA)return;
-  var centres=DATA.centres||[];
-
-  function nrm(s){return(s||'').toUpperCase().replace(/[ÉÈÊË]/g,'E').replace(/[ÀÂÄÃ]/g,'A').replace(/[ÎÏ]/g,'I').replace(/[ÔÖ]/g,'O').replace(/[ÙÛÜÚ]/g,'U').replace(/[Ç]/g,'C').replace(/[-_'()]/g,' ').replace(/\s+/g,' ').trim();}
-
-  var alias={
-    'pnord':['PNORD','PERPIGNAN NORD'],'psud':['PSUD','PERPIGNAN SUD'],'pouest':['POUEST','PERPIGNAN OUEST'],
-    'les-aspres':['ASPRES','THUIR','LES ASPRES'],'le-barcares':['BARCARES','LE BARCARES'],
-    'saint-cyprien':['ST CYPRIEN','SAINT CYPRIEN'],'vallespir':['AMELIE','VALLESPIR'],
-    'porte':['PORTE PUYMORENS','PORTE'],'boulou':['LE BOULOU','BOULOU'],
-    'cote-vermeille':['COTE VERMEILLE'],'st-laurent-cerdans':['ST LAURENT DE CERDANS','SAINT LAURENT'],
-    'st-paul-fenouillet':['ST PAUL DE FENOUILLET','SAINT PAUL'],'prats':['PRATS DE MOLLO','PRATS'],
-    'cerdagne':['CERDAGNE','BOURG MADAME'],'font-romeu':['FONT ROMEU'],'ille-sur-tet':['ILLE SUR TET','ILLE'],
-    'mont-louis':['MONT LOUIS'],'capcir':['CAPCIR','FORMIGUERES'],'caudies':['CAUDIES'],
-    'argeles':['ARGELES'],'ceret':['CERET'],'vinca':['VINCA'],'salses':['SALSES'],
-    'maury':['MAURY'],'vingrau':['VINGRAU'],'canet':['CANET'],'rivesaltes':['RIVESALTES'],
-    'salanque':['SALANQUE'],'baixas':['BAIXAS'],'millas':['MILLAS'],'riberal':['RIBERAL'],
-    'elne':['ELNE'],'palau':['PALAU'],'agly':['AGLY'],'olette':['OLETTE'],
-    'sournia':['SOURNIA'],'vernet':['VERNET'],'prades':['PRADES'],'saillagouse':['SAILLAGOUSE'],
-    'cerbere':['CERBERE'],'banyuls':['BANYULS']
-  };
-
-  function findISP(id,nom){
-    var names=[nrm(nom)];
-    if(alias[id]) for(var a=0;a<alias[id].length;a++) names.push(nrm(alias[id][a]));
-    for(var i=0;i<centres.length;i++){
-      var cn=nrm(centres[i].centre);
-      for(var j=0;j<names.length;j++){
-        if(cn===names[j]||(names[j].length>3&&cn.indexOf(names[j])!==-1)||(cn.length>3&&names[j].indexOf(cn)!==-1)) return centres[i].nbIsp;
-      }
-    }
-    return 0;
-  }
-
-  var zoneRows=[],gCur=0,gCib=0;
-  for(var z=0;z<CARTE_ZONES.length;z++){
-    var zo=CARTE_ZONES[z],im=zIntMois(zo),rows=[],zCur=0,zCib=0;
-    for(var c=0;c<zo.cis.length;c++){
-      var obj=null;for(var k=0;k<CIS.length;k++){if(CIS[k].id===zo.cis[c]){obj=CIS[k];break;}}
-      if(!obj)continue;
-      var cur=findISP(obj.id,obj.nom);
-      rows.push({nom:obj.nom,cur:cur,cib:obj.cible,delta:cur-obj.cible});
-      zCur+=cur;zCib+=obj.cible;
-    }
-    var cov=covPct(zCur,im);
-    zoneRows.push({zone:zo,rows:rows,zCur:zCur,zCib:zCib,zDelta:zCur-zCib,cov:cov,im:im});
-    gCur+=zCur;gCib+=zCib;
-  }
-
-  var gD=gCur-gCib;
-  var wSum=0,wTot=0;
-  for(var z=0;z<zoneRows.length;z++){wSum+=zoneRows[z].cov*zoneRows[z].im;wTot+=zoneRows[z].im;}
-  var gCov=wTot>0?Math.round(wSum/wTot*10)/10:0;
-  var gCovCls=gCov>=75?'ok':(gCov>=50?'warn':'crit');
-
-  document.getElementById('resultatKpi').innerHTML=
-    sc(gCur,'ISP actuels','blue')+
-    sc(gCib,'ISP cible (75%)','green')+
-    sc((gD>=0?'+':'')+gD,'Écart global',gD>=0?'green':'red')+
-    sc(gCov+'%','Couverture moy. pondérée',gCov>=75?'green':'red');
-
-  var h='<table class="res-table"><thead><tr><th>Caserne</th><th>ISP actuels</th><th>ISP cible</th><th>Écart</th><th>Couverture zone</th></tr></thead><tbody>';
-
-  for(var z=0;z<zoneRows.length;z++){
-    var zd=zoneRows[z],co=zd.zone.color;
-    var covCls=zd.cov>=75?'ok':(zd.cov>=50?'warn':'crit');
-    h+='<tr class="res-zone-header" style="--zone-color:'+co+';"><td colspan="5">'+esc(zd.zone.name)+' <span style="font-weight:400;font-size:.82em;color:var(--text-light);">('+zd.rows.length+' CIS \u2022 ~'+zd.im+' inter/mois)</span></td></tr>';
-    for(var r=0;r<zd.rows.length;r++){
-      var rw=zd.rows[r],dc=rw.delta>=0?'res-delta-pos':'res-delta-neg';
-      h+='<tr><td style="padding-left:24px;">'+esc(rw.nom)+'</td><td>'+rw.cur+'</td><td>'+rw.cib+'</td><td class="'+dc+'">'+(rw.delta>=0?'+':'')+rw.delta+'</td><td></td></tr>';
-    }
-    var dc2=zd.zDelta>=0?'res-delta-pos':'res-delta-neg';
-    h+='<tr class="res-subtotal"><td>Sous-total</td><td>'+zd.zCur+'</td><td>'+zd.zCib+'</td><td class="'+dc2+'">'+(zd.zDelta>=0?'+':'')+zd.zDelta+'</td><td><span class="res-cov '+covCls+'">'+zd.cov+'%</span></td></tr>';
-  }
-
-  var gDCls=gD>=0?'res-delta-pos':'res-delta-neg';
-  h+='<tr class="res-grandtotal"><td>TOTAL DÉPARTEMENT</td><td>'+gCur+'</td><td>'+gCib+'</td><td class="'+gDCls+'">'+(gD>=0?'+':'')+gD+'</td><td><span class="res-cov '+gCovCls+'">'+gCov+'%</span></td></tr>';
-  h+='</tbody></table>';
-
-  document.getElementById('resultatTable').innerHTML=h;
-  renderRecruitmentPlan();
-}
+function updateTravel(v){document.getElementById('travelTarget').textContent=v;renderZones();}
+function updateBaseH(v){document.getElementById('baseHTarget').textContent=v;renderZones();}
 
 /* ═══════════════════════════════════════════════════════
-   PLAN DE RECRUTEMENT — Algorithme glouton priorisé
-   Priorité 1 : casernes sans ISP
-   Priorité 2 : casernes sous la cible
-   Priorité 3 : amélioration marginale couverture inter-zones
+   ONGLET 3 — RECRUTEMENT PAR VAGUES
    ═══════════════════════════════════════════════════════ */
-function renderRecruitmentPlan(){
-  if(!DATA) return;
-  var centres=DATA.centres||[];
+var COMMUNES=[{n:'L\u2019Albère',lat:42.4762,lng:2.897},{n:'Alénya',lat:42.6413,lng:2.9824},{n:'Amélie-les-Bains-Palalda',lat:42.4508,lng:2.687},{n:'Les Angles',lat:42.5797,lng:2.049},{n:'Angoustrine-Villeneuve-des-Escaldes',lat:42.546,lng:1.9443},{n:'Ansignan',lat:42.7646,lng:2.5233},{n:'Arboussols',lat:42.6669,lng:2.4953},{n:'Argelès-sur-Mer',lat:42.53,lng:3.0234},{n:'Arles-sur-Tech',lat:42.4531,lng:2.6228},{n:'Ayguatébia-Talau',lat:42.5561,lng:2.1962},{n:'Bages',lat:42.6075,lng:2.8893},{n:'Baho',lat:42.7066,lng:2.8229},{n:'Baillestavy',lat:42.5682,lng:2.5266},{n:'Baixas',lat:42.744,lng:2.8079},{n:'Banyuls-dels-Aspres',lat:42.5653,lng:2.8649},{n:'Banyuls-sur-Mer',lat:42.4602,lng:3.1014},{n:'Le Barcarès',lat:42.8118,lng:3.028},{n:'La Bastide',lat:42.5371,lng:2.5752},{n:'Bélesta',lat:42.7241,lng:2.6228},{n:'Bolquère',lat:42.5225,lng:2.0614},{n:'Bompas',lat:42.7271,lng:2.9426},{n:'Boule-d\u2019Amont',lat:42.5884,lng:2.5905},{n:'Bouleternère',lat:42.6435,lng:2.5878},{n:'Le Boulou',lat:42.5267,lng:2.8328},{n:'Bourg-Madame',lat:42.438,lng:1.9608},{n:'Brouilla',lat:42.5759,lng:2.8927},{n:'La Cabanasse',lat:42.501,lng:2.1056},{n:'Cabestany',lat:42.6804,lng:2.9507},{n:'Caixas',lat:42.6031,lng:2.6633},{n:'Calce',lat:42.7477,lng:2.7545},{n:'Calmeilles',lat:42.5507,lng:2.6735},{n:'Camélas',lat:42.6404,lng:2.6911},{n:'Campôme',lat:42.6506,lng:2.3826},{n:'Campoussy',lat:42.6978,lng:2.452},{n:'Canaveilles',lat:42.5348,lng:2.2179},{n:'Canet-en-Roussillon',lat:42.6809,lng:3.002},{n:'Canohès',lat:42.6514,lng:2.8294},{n:'Caramany',lat:42.7388,lng:2.5572},{n:'Casefabre',lat:42.6156,lng:2.6127},{n:'Cases-de-Pène',lat:42.7931,lng:2.7771},{n:'Cassagnes',lat:42.7415,lng:2.626},{n:'Casteil',lat:42.5035,lng:2.4229},{n:'Castelnou',lat:42.6247,lng:2.7046},{n:'Catllar',lat:42.6407,lng:2.4186},{n:'Caudiès-de-Fenouillèdes',lat:42.8213,lng:2.3781},{n:'Caudiès-de-Conflent',lat:42.5623,lng:2.1451},{n:'Cerbère',lat:42.4471,lng:3.1493},{n:'Céret',lat:42.473,lng:2.7565},{n:'Claira',lat:42.7626,lng:2.9458},{n:'Clara-Villerach',lat:42.5831,lng:2.4489},{n:'Codalet',lat:42.6015,lng:2.4169},{n:'Collioure',lat:42.5087,lng:3.0744},{n:'Conat',lat:42.6203,lng:2.3426},{n:'Corbère',lat:42.6515,lng:2.6614},{n:'Corbère-les-Cabanes',lat:42.66,lng:2.6837},{n:'Corneilla-de-Conflent',lat:42.5786,lng:2.382},{n:'Corneilla-la-Rivière',lat:42.7098,lng:2.7247},{n:'Corneilla-del-Vercol',lat:42.6228,lng:2.9512},{n:'Corsavy',lat:42.483,lng:2.541},{n:'Coustouges',lat:42.3602,lng:2.632},{n:'Dorres',lat:42.5125,lng:1.9224},{n:'Les Cluses',lat:42.4847,lng:2.8437},{n:'Égat',lat:42.5008,lng:2.0195},{n:'Elne',lat:42.6083,lng:2.978},{n:'Enveitg',lat:42.491,lng:1.8922},{n:'Err',lat:42.4131,lng:2.0678},{n:'Escaro',lat:42.5337,lng:2.319},{n:'Espira-de-l\u2019Agly',lat:42.7987,lng:2.8231},{n:'Espira-de-Conflent',lat:42.6168,lng:2.4923},{n:'Estagel',lat:42.7642,lng:2.7077},{n:'Estavar',lat:42.4764,lng:2.0121},{n:'Estoher',lat:42.5695,lng:2.4829},{n:'Eus',lat:42.6552,lng:2.4478},{n:'Eyne',lat:42.4544,lng:2.111},{n:'Feilluns',lat:42.7613,lng:2.4877},{n:'Fenouillet',lat:42.7786,lng:2.382},{n:'Fillols',lat:42.5587,lng:2.4257},{n:'Finestret',lat:42.6068,lng:2.5194},{n:'Fontpédrouse',lat:42.4718,lng:2.202},{n:'Fontrabiouse',lat:42.6413,lng:2.0514},{n:'Formiguères',lat:42.6227,lng:2.0629},{n:'Fosse',lat:42.7842,lng:2.4335},{n:'Fourques',lat:42.5845,lng:2.7759},{n:'Fuilla',lat:42.5673,lng:2.3549},{n:'Glorianes',lat:42.5904,lng:2.5528},{n:'Ille-sur-Têt',lat:42.6746,lng:2.6167},{n:'Joch',lat:42.6151,lng:2.5244},{n:'Jujols',lat:42.5852,lng:2.2823},{n:'Lamanère',lat:42.3628,lng:2.5191},{n:'Lansac',lat:42.7685,lng:2.5651},{n:'Laroque-des-Albères',lat:42.5179,lng:2.9314},{n:'Latour-Bas-Elne',lat:42.6041,lng:3.0067},{n:'Latour-de-Carol',lat:42.4746,lng:1.8736},{n:'Latour-de-France',lat:42.7701,lng:2.6498},{n:'Lesquerde',lat:42.7927,lng:2.5381},{n:'La Llagonne',lat:42.5401,lng:2.083},{n:'Llauro',lat:42.5458,lng:2.7494},{n:'Llo',lat:42.4358,lng:2.0895},{n:'Llupia',lat:42.6275,lng:2.7827},{n:'Mantet',lat:42.4555,lng:2.2922},{n:'Marquixanes',lat:42.6344,lng:2.4848},{n:'Los Masos',lat:42.6145,lng:2.4593},{n:'Matemale',lat:42.5788,lng:2.1154},{n:'Maureillas-las-Illas',lat:42.4635,lng:2.7999},{n:'Maury',lat:42.816,lng:2.6194},{n:'Millas',lat:42.6966,lng:2.6865},{n:'Molitg-les-Bains',lat:42.6624,lng:2.3955},{n:'Montalba-le-Château',lat:42.699,lng:2.5658},{n:'Montauriol',lat:42.5777,lng:2.725},{n:'Montbolo',lat:42.4924,lng:2.6265},{n:'Montescot',lat:42.6158,lng:2.9188},{n:'Montesquieu-des-Albères',lat:42.5206,lng:2.8685},{n:'Montferrer',lat:42.4415,lng:2.567},{n:'Mont-Louis',lat:42.5098,lng:2.1197},{n:'Montner',lat:42.7439,lng:2.6946},{n:'Mosset',lat:42.6719,lng:2.2848},{n:'Nahuja',lat:42.4243,lng:1.9995},{n:'Néfiach',lat:42.696,lng:2.6566},{n:'Nohèdes',lat:42.6256,lng:2.2547},{n:'Nyer',lat:42.4957,lng:2.2764},{n:'Font-Romeu-Odeillo-Via',lat:42.5145,lng:2.0212},{n:'Olette',lat:42.5938,lng:2.2449},{n:'Oms',lat:42.5319,lng:2.7102},{n:'Opoul-Périllos',lat:42.8817,lng:2.8601},{n:'Oreilla',lat:42.5788,lng:2.2272},{n:'Ortaffa',lat:42.5855,lng:2.9191},{n:'Osséja',lat:42.3923,lng:2.0006},{n:'Palau-de-Cerdagne',lat:42.3864,lng:1.9818},{n:'Palau-del-Vidre',lat:42.5662,lng:2.9595},{n:'Passa',lat:42.5674,lng:2.804},{n:'Perpignan',lat:42.699,lng:2.9045},{n:'Le Perthus',lat:42.4664,lng:2.8639},{n:'Peyrestortes',lat:42.7484,lng:2.8471},{n:'Pézilla-de-Conflent',lat:42.7356,lng:2.4884},{n:'Pézilla-la-Rivière',lat:42.7089,lng:2.76},{n:'Pia',lat:42.7506,lng:2.9172},{n:'Planès',lat:42.4701,lng:2.1444},{n:'Planèzes',lat:42.7736,lng:2.6215},{n:'Pollestres',lat:42.6373,lng:2.8736},{n:'Ponteilla',lat:42.6347,lng:2.8288},{n:'Porta',lat:42.5212,lng:1.7935},{n:'Porté-Puymorens',lat:42.5546,lng:1.8381},{n:'Port-Vendres',lat:42.5034,lng:3.1048},{n:'Prades',lat:42.6107,lng:2.4276},{n:'Prats-de-Mollo-la-Preste',lat:42.4174,lng:2.4229},{n:'Prats-de-Sournia',lat:42.7399,lng:2.4535},{n:'Prugnanes',lat:42.8254,lng:2.435},{n:'Prunet-et-Belpuig',lat:42.5655,lng:2.6373},{n:'Puyvalador',lat:42.6488,lng:2.1097},{n:'Py',lat:42.4683,lng:2.3635},{n:'Rabouillet',lat:42.7265,lng:2.3646},{n:'Railleu',lat:42.5923,lng:2.1619},{n:'Rasiguères',lat:42.7732,lng:2.5979},{n:'Réal',lat:42.64,lng:2.1488},{n:'Reynès',lat:42.466,lng:2.6971},{n:'Ria-Sirach',lat:42.6101,lng:2.3828},{n:'Rigarda',lat:42.6292,lng:2.5375},{n:'Rivesaltes',lat:42.7761,lng:2.8769},{n:'Rodès',lat:42.6563,lng:2.5485},{n:'Sahorre',lat:42.5255,lng:2.3565},{n:'Saillagouse',lat:42.4564,lng:2.0382},{n:'Saint-André',lat:42.5541,lng:2.9794},{n:'Saint-Arnac',lat:42.7737,lng:2.5343},{n:'Sainte-Colombe-de-la-Commanderie',lat:42.6161,lng:2.7421},{n:'Saint-Cyprien',lat:42.6205,lng:3.0139},{n:'Saint-Estève',lat:42.7154,lng:2.8445},{n:'Saint-Féliu-d\u2019Amont',lat:42.6752,lng:2.7166},{n:'Saint-Féliu-d\u2019Avall',lat:42.6733,lng:2.7498},{n:'Saint-Génis-des-Fontaines',lat:42.5488,lng:2.9221},{n:'Saint-Hippolyte',lat:42.8104,lng:2.9754},{n:'Saint-Jean-Lasseille',lat:42.5863,lng:2.8646},{n:'Saint-Jean-Pla-de-Corts',lat:42.5183,lng:2.7938},{n:'Saint-Laurent-de-Cerdans',lat:42.3944,lng:2.6222},{n:'Saint-Laurent-de-la-Salanque',lat:42.8073,lng:2.9993},{n:'Sainte-Léocadie',lat:42.4298,lng:2.0057},{n:'Sainte-Marie-la-Mer',lat:42.7262,lng:3.0168},{n:'Saint-Marsal',lat:42.5256,lng:2.6182},{n:'Saint-Martin-de-Fenouillet',lat:42.7848,lng:2.4777},{n:'Saint-Michel-de-Llotes',lat:42.6465,lng:2.6268},{n:'Saint-Nazaire',lat:42.6619,lng:2.9895},{n:'Saint-Paul-de-Fenouillet',lat:42.8229,lng:2.5025},{n:'Saint-Pierre-dels-Forcats',lat:42.4778,lng:2.114},{n:'Saleilles',lat:42.6553,lng:2.947},{n:'Salses-le-Château',lat:42.8359,lng:2.9134},{n:'Sansa',lat:42.6189,lng:2.1788},{n:'Sauto',lat:42.5166,lng:2.1461},{n:'Serdinya',lat:42.5736,lng:2.324},{n:'Serralongue',lat:42.3846,lng:2.5559},{n:'Le Soler',lat:42.6756,lng:2.7999},{n:'Sorède',lat:42.5083,lng:2.988},{n:'Souanyas',lat:42.5493,lng:2.2826},{n:'Sournia',lat:42.7138,lng:2.4171},{n:'Taillet',lat:42.5191,lng:2.6808},{n:'Tarerach',lat:42.6816,lng:2.5081},{n:'Targasonne',lat:42.5014,lng:1.9877},{n:'Taulis',lat:42.5149,lng:2.6145},{n:'Taurinya',lat:42.555,lng:2.4408},{n:'Tautavel',lat:42.8163,lng:2.7161},{n:'Le Tech',lat:42.4439,lng:2.5154},{n:'Terrats',lat:42.6046,lng:2.7584},{n:'Théza',lat:42.6403,lng:2.947},{n:'Thuès-Entre-Valls',lat:42.5006,lng:2.2317},{n:'Thuir',lat:42.6384,lng:2.7618},{n:'Tordères',lat:42.5653,lng:2.7619},{n:'Torreilles',lat:42.7571,lng:3.0059},{n:'Toulouges',lat:42.6723,lng:2.8234},{n:'Tresserre',lat:42.5559,lng:2.842},{n:'Trévillach',lat:42.7091,lng:2.5105},{n:'Trilla',lat:42.7369,lng:2.5229},{n:'Trouillas',lat:42.6055,lng:2.8235},{n:'Ur',lat:42.4594,lng:1.9382},{n:'Urbanya',lat:42.6429,lng:2.2964},{n:'Valcebollère',lat:42.382,lng:2.0472},{n:'Valmanya',lat:42.5251,lng:2.5089},{n:'Vernet-les-Bains',lat:42.5363,lng:2.4152},{n:'Villefranche-de-Conflent',lat:42.5955,lng:2.3575},{n:'Villelongue-de-la-Salanque',lat:42.7261,lng:2.977},{n:'Villelongue-dels-Monts',lat:42.5238,lng:2.8979},{n:'Villemolaque',lat:42.5976,lng:2.848},{n:'Villeneuve-de-la-Raho',lat:42.6402,lng:2.909},{n:'Villeneuve-la-Rivière',lat:42.7046,lng:2.7964},{n:'Vinça',lat:42.6431,lng:2.5225},{n:'Vingrau',lat:42.8588,lng:2.7904},{n:'Vira',lat:42.7653,lng:2.3899},{n:'Vivès',lat:42.5303,lng:2.766},{n:'Le Vivier',lat:42.7637,lng:2.4423}];
 
-  function nrm(s){return(s||'').toUpperCase().replace(/[ÉÈÊË]/g,'E').replace(/[ÀÂÄÃ]/g,'A').replace(/[ÎÏ]/g,'I').replace(/[ÔÖ]/g,'O').replace(/[ÙÛÜÚ]/g,'U').replace(/[Ç]/g,'C').replace(/[-_'()]/g,' ').replace(/\s+/g,' ').trim();}
+/* Couleur chaleur couverture */
+function covColor(pct){
+  if(pct>=90) return '#1a9641';
+  if(pct>=75) return '#a6d96a';
+  if(pct>=60) return '#ffffbf';
+  if(pct>=40) return '#fdae61';
+  if(pct>=20) return '#f46d43';
+  return '#d73027';
+}
 
-  var al={
-    'pnord':['PNORD','PERPIGNAN NORD'],'psud':['PSUD','PERPIGNAN SUD'],'pouest':['POUEST','PERPIGNAN OUEST'],
-    'les-aspres':['ASPRES','THUIR','LES ASPRES'],'le-barcares':['BARCARES','LE BARCARES'],
-    'saint-cyprien':['ST CYPRIEN','SAINT CYPRIEN'],'vallespir':['AMELIE','VALLESPIR'],
-    'porte':['PORTE PUYMORENS','PORTE'],'boulou':['LE BOULOU','BOULOU'],
-    'cote-vermeille':['COTE VERMEILLE'],'st-laurent-cerdans':['ST LAURENT DE CERDANS','SAINT LAURENT'],
-    'st-paul-fenouillet':['ST PAUL DE FENOUILLET','SAINT PAUL'],'prats':['PRATS DE MOLLO','PRATS'],
-    'cerdagne':['CERDAGNE','BOURG MADAME'],'font-romeu':['FONT ROMEU'],'ille-sur-tet':['ILLE SUR TET','ILLE'],
-    'mont-louis':['MONT LOUIS'],'capcir':['CAPCIR','FORMIGUERES'],'caudies':['CAUDIES'],
-    'argeles':['ARGELES'],'ceret':['CERET'],'vinca':['VINCA'],'salses':['SALSES'],
-    'maury':['MAURY'],'vingrau':['VINGRAU'],'canet':['CANET'],'rivesaltes':['RIVESALTES'],
-    'salanque':['SALANQUE'],'baixas':['BAIXAS'],'millas':['MILLAS'],'riberal':['RIBERAL'],
-    'elne':['ELNE'],'palau':['PALAU'],'agly':['AGLY'],'olette':['OLETTE'],
-    'sournia':['SOURNIA'],'vernet':['VERNET'],'prades':['PRADES'],'saillagouse':['SAILLAGOUSE'],
-    'cerbere':['CERBERE'],'banyuls':['BANYULS']
-  };
-
-  function getISP(id,nom){
-    var names=[nrm(nom)];
-    if(al[id]) for(var a=0;a<al[id].length;a++) names.push(nrm(al[id][a]));
-    for(var i=0;i<centres.length;i++){
-      var cn=nrm(centres[i].centre);
-      for(var j=0;j<names.length;j++){
-        if(cn===names[j]||(names[j].length>3&&cn.indexOf(names[j])!==-1)||(cn.length>3&&names[j].indexOf(cn)!==-1)) return centres[i].nbIsp;
-      }
-    }
-    return 0;
-  }
-
-  function zoneOf(cisId){
-    for(var z=0;z<CARTE_ZONES.length;z++){
-      if(CARTE_ZONES[z].cis.indexOf(cisId)!==-1) return CARTE_ZONES[z];
-    }
-    return null;
-  }
-
-  /* ─── État initial : ISP par CIS ─── */
-  var curISP={};
-  for(var i=0;i<CIS.length;i++) curISP[CIS[i].id]=getISP(CIS[i].id,CIS[i].nom);
-
-  /* ─── Matrice couverture inter-zones : chaque CIS peut couvrir ses voisins ≤30min ─── */
-  var MAX_RENFORT=30;
-  var cisCov={};
+/* CIS le plus proche d'un point (commune) */
+function nearestCis(lat,lng){
+  var best=null,bestD=Infinity;
   for(var i=0;i<CIS.length;i++){
-    var c=CIS[i]; cisCov[c.id]=[];
-    for(var z=0;z<CARTE_ZONES.length;z++){
-      var zo=CARTE_ZONES[z];
-      if(zo.cis.indexOf(c.id)!==-1){
-        cisCov[c.id].push({zo:zo,t:0,w:1.0});
-      } else {
-        var zc=zoneCentroid(zo);
-        var t=Math.round(haversineKm(c.lat,c.lng,zc.lat,zc.lng)*1.3/50*60);
-        if(t<=MAX_RENFORT) cisCov[c.id].push({zo:zo,t:t,w:Math.max(0.2,1-t/MAX_RENFORT*0.8)});
+    var dlat=CIS[i].lat-lat, dlng=CIS[i].lng-lng;
+    var d=dlat*dlat+dlng*dlng;
+    if(d<bestD){bestD=d;best=CIS[i];}
+  }
+  return best;
+}
+
+/* Calculer la couverture de chaque commune selon un état ISP donné */
+function computeCommuneCoverage(ispState){
+  /* Isochrones OSRM : COMMUNE_NEAREST donne le CIS le plus proche,
+     TRAVEL_CIS_MIN donne les temps reels entre CIS pour le pool */
+  var TRAVEL_RADIUS=20;
+  var result=[];
+  for(var i=0;i<COMMUNES.length;i++){
+    var c=COMMUNES[i];
+    var cn=COMMUNE_NEAREST[i];
+    var cis=CIS[cn.c];
+    /* Pool de ce CIS + CIS voisins (temps reel OSRM) */
+    var pool=ispState[cis.id]||0;
+    for(var j=0;j<CIS.length;j++){
+      if(j!==cn.c && TRAVEL_CIS_MIN[j][cn.c]<=TRAVEL_RADIUS){
+        pool+=(ispState[CIS[j].id]||0);
       }
     }
+    var gh=0;
+    for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cis.id) gh=gardeHMois(GARDE[g].zone);}
+    var cov=covPct(pool,gh);
+    result.push({nom:c.n,lat:c.lat,lng:c.lng,cov:cov,cisNom:cis.nom,cisId:cis.id,pool:pool});
+  }
+  return result;
+}
+
+/* Algo greedy par vagues de 12 ISP */
+function computeRecruitWaves(){
+  populateCisIsp();
+  /* État ISP de départ */
+  var curIsp={};
+  for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=CIS[i].actualIsp||0;
+
+  var TRAVEL_RADIUS=20;
+  /* Pré-calculer la matrice de voisinage */
+  var neighbors={};
+  for(var i=0;i<CIS.length;i++){
+    var nb=[];
+    for(var j=0;j<CIS.length;j++){
+      if(j!==i && TRAVEL_CIS_MIN[i][j]<=TRAVEL_RADIUS) nb.push(CIS[j].id);
+    }
+    neighbors[CIS[i].id]=nb;
   }
 
-  /* ─── Calcul couverture par zone depuis un état ISP ─── */
-  function zCov(st){
-    var res={};
-    for(var z=0;z<CARTE_ZONES.length;z++){
-      var zo=CARTE_ZONES[z], eff=0, near=999, tSum=0, tCnt=0;
+  function pool(cid){
+    var tot=curIsp[cid]||0;
+    var nbs=neighbors[cid];
+    for(var n=0;n<nbs.length;n++) tot+=(curIsp[nbs[n]]||0);
+    return tot;
+  }
+  function cisCov(cid){
+    var gh=0;
+    for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cid) gh=gardeHMois(GARDE[g].zone);}
+    return covPct(pool(cid),gh);
+  }
+
+  var waves=[];
+  /* Vague 0 = situation actuelle */
+  var snap0={}; for(var k in curIsp) snap0[k]=curIsp[k];
+  waves.push({label:'Situation actuelle',snap:snap0,recruited:{}});
+
+  /* 5 vagues de 12 ISP — Algo à impact global marginal
+     Pour chaque recrutement, on simule +1 ISP dans CHAQUE caserne
+     et on retient celle qui maximise le gain TOTAL de couverture
+     sur l'ensemble du département (toutes casernes confondues).
+     Ainsi, un ISP placé en B peut couvrir B ET renforcer C via le rayon,
+     avec un meilleur impact global qu'un ISP isolé en C. */
+  function totalCovScore(){
+    var s=0;
+    for(var i=0;i<CIS.length;i++) s+=cisCov(CIS[i].id);
+    return s;
+  }
+
+  for(var w=0;w<5;w++){
+    var waveRec={};
+    for(var r=0;r<12;r++){
+      var bestId=null, bestGain=-1;
+      var baseCov=totalCovScore();
       for(var i=0;i<CIS.length;i++){
-        var c=CIS[i], n=st[c.id]||0;
-        if(n<=0) continue;
-        for(var j=0;j<cisCov[c.id].length;j++){
-          var cv=cisCov[c.id][j];
-          if(cv.zo.name===zo.name){
-            eff+=n*cv.w;
-            var zc=zoneCentroid(zo);
-            var tt=Math.round(haversineKm(c.lat,c.lng,zc.lat,zc.lng)*1.3/50*60);
-            if(tt<near) near=tt;
-            tSum+=tt*n; tCnt+=n;
-            break;
-          }
+        var cid=CIS[i].id;
+        /* Simuler +1 ISP ici */
+        curIsp[cid]=(curIsp[cid]||0)+1;
+        var gain=totalCovScore()-baseCov;
+        /* Bonus : si cette caserne ou un voisin est sous 50%, favoriser légèrement */
+        var lowBonus=0;
+        if(cisCov(cid)<50) lowBonus=0.5;
+        else{
+          var nbs=neighbors[cid];
+          for(var n=0;n<nbs.length;n++){if(cisCov(nbs[n])<50){lowBonus=0.3;break;}}
         }
+        gain+=lowBonus;
+        if(gain>bestGain){bestGain=gain;bestId=cid;}
+        /* Annuler la simulation */
+        curIsp[cid]-=1;
       }
-      var im=zIntMois(zo);
-      res[zo.name]={eff:Math.round(eff*10)/10,cov:covPct(Math.round(eff),im),near:near<999?near:0,avg:tCnt>0?Math.round(tSum/tCnt):0,im:im};
+      if(bestId===null) break;
+      curIsp[bestId]=(curIsp[bestId]||0)+1;
+      waveRec[bestId]=(waveRec[bestId]||0)+1;
     }
-    return res;
+    var snap={}; for(var k in curIsp) snap[k]=curIsp[k];
+    waves.push({label:'Vague '+(w+1)+' (+12 ISP = +'+(12*(w+1))+' total)',snap:snap,recruited:waveRec});
+  }
+  return waves;
+}
+
+var _recruitWaves=null;
+var _recruitMarkers=[];
+function initRecruitTab(){
+  if(!DATA) return;
+  /* Init map */
+  var map=L.map('recruitMap').setView([42.58,2.55],10);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© CARTO © OSM',maxZoom:18
+  }).addTo(map);
+  window._recruitMapObj=map;
+
+  /* CIS markers (petits, discrets) */
+  for(var i=0;i<CIS.length;i++){
+    L.circleMarker([CIS[i].lat,CIS[i].lng],{radius:4,color:'#333',weight:1,fillColor:'#666',fillOpacity:.5})
+      .bindTooltip(CIS[i].nom,{direction:'top',offset:[0,-4],className:''})
+      .addTo(map);
   }
 
-  /* ─── Algorithme glouton de recrutement ─── */
-  function recruit(st0,num){
-    var plan=[], st={};
-    for(var p in st0) st[p]=st0[p];
+  /* Légende couleur */
+  var cols=['#d73027','#f46d43','#fdae61','#ffffbf','#a6d96a','#1a9641'];
+  var lb=''; for(var i=0;i<cols.length;i++) lb+='<div style="flex:1;background:'+cols[i]+';"></div>';
+  document.getElementById('legendBar').innerHTML=lb;
 
-    for(var r=0;r<num;r++){
-      var best=null, bScore=-Infinity, bReason='';
-      var bef=zCov(st);
+  /* Calculer vagues */
+  _recruitWaves=computeRecruitWaves();
 
-      for(var i=0;i<CIS.length;i++){
-        var c=CIS[i], cur=st[c.id]||0, score=0, reason='';
+  /* Boutons vagues */
+  var btnHtml='';
+  for(var w=0;w<_recruitWaves.length;w++){
+    var lbl=w===0?'🏠 Actuel':'🔄 Vague '+w+' (+'+12*w+')';
+    btnHtml+='<button class="wave-btn'+(w===0?' active':'')+'" data-wave="'+w+'" onclick="showWave('+w+')">'+lbl+'</button>';
+  }
+  document.getElementById('waveBtns').innerHTML=btnHtml;
 
-        /* P1 — CIS sans ISP (priorité absolue demandée) */
-        if(cur===0){
-          score+=1000; reason='CIS sans ISP';
-          var zo=zoneOf(c.id);
-          if(zo){
-            var zISP=0;
-            for(var j=0;j<zo.cis.length;j++) zISP+=(st[zo.cis[j]]||0);
-            if(zISP===0){score+=500; reason='Zone sans aucun ISP';}
-          }
-        }
+  /* Afficher les détails de toutes les vagues dans la sidebar */
+  renderWaveSidebar();
 
-        /* P2 — Sous la cible */
-        var delta=c.cible-cur;
-        if(delta>0){score+=delta*50; if(!reason) reason='Besoin : \u2212'+delta+' vs cible';}
+  /* Afficher vague 0 par défaut */
+  showWave(0);
 
-        /* P3 — Amélioration marginale couverture (toutes zones) */
-        var sim={};
-        for(var q in st) sim[q]=st[q];
-        sim[c.id]=(sim[c.id]||0)+1;
-        var aft=zCov(sim);
-        var imp=0;
-        for(var z=0;z<CARTE_ZONES.length;z++){
-          var zName=CARTE_ZONES[z].name;
-          imp+=(aft[zName].cov-bef[zName].cov)*aft[zName].im;
-        }
-        score+=imp;
+  /* Init dropdowns simulation */
+  initSimDropdowns();
+}
 
-        /* Pénalité si déjà au-dessus de la cible */
-        if(cur>=c.cible) score-=200;
-        if(!reason) reason='Renfort couverture';
+/* Afficher 10 communes de plus */
+var _worstShown=10;
+function showMoreCommunes(){
+  _worstShown+=10;
+  var rows=document.querySelectorAll('.worst-commune-row');
+  for(var i=0;i<rows.length;i++){
+    rows[i].style.display=i<_worstShown?'flex':'none';
+  }
+  var btn=document.getElementById('showMoreWorst');
+  if(btn && _worstShown>=rows.length) btn.style.display='none';
+}
 
-        if(score>bScore){bScore=score; best=c; bReason=reason;}
-      }
+function showWave(wIdx){
+  if(!_recruitWaves) return;
+  var map=window._recruitMapObj;
+  var wave=_recruitWaves[wIdx];
 
-      if(best){
-        var zo2=zoneOf(best.id);
-        plan.push({
-          rank:r+1, id:best.id, nom:best.nom,
-          zone:zo2?zo2.name:'\u2014', color:zo2?zo2.color:'#999',
-          before:st[best.id]||0, after:(st[best.id]||0)+1,
-          cible:best.cible, reason:bReason
-        });
-        st[best.id]=(st[best.id]||0)+1;
-      }
-    }
-    return {plan:plan, state:st};
+  /* Update boutons */
+  var btns=document.querySelectorAll('#waveBtns .wave-btn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',parseInt(btns[i].getAttribute('data-wave'))===wIdx);
+
+  /* Supprimer anciens marqueurs */
+  for(var i=0;i<_recruitMarkers.length;i++) map.removeLayer(_recruitMarkers[i]);
+  _recruitMarkers=[];
+
+  /* Calculer couverture des communes */
+  var covData=computeCommuneCoverage(wave.snap);
+
+  /* Stats globales */
+  var totIsp=0; for(var k in wave.snap) totIsp+=wave.snap[k];
+  var sumCov=0; for(var i=0;i<covData.length;i++) sumCov+=covData[i].cov;
+  var avgCov=covData.length>0?Math.round(sumCov/covData.length*10)/10:0;
+  var above75=0,below50=0;
+  for(var i=0;i<covData.length;i++){if(covData[i].cov>=75)above75++;if(covData[i].cov<50)below50++;}
+
+  document.getElementById('recruitGlobalKpi').innerHTML=
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+
+    '<div style="flex:1;min-width:100px;background:var(--blue-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--blue);">'+totIsp+'</div><div style="font-size:.7em;color:var(--text-light);">ISP total</div></div>'+
+    '<div style="flex:1;min-width:100px;background:'+(avgCov>=75?'var(--green-light)':'var(--primary-light)')+';border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:'+(avgCov>=75?'var(--green)':'var(--primary)')+';">'+avgCov+'%</div><div style="font-size:.7em;color:var(--text-light);">Couv. moyenne</div></div>'+
+    '<div style="flex:1;min-width:100px;background:var(--green-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--green);">'+above75+'</div><div style="font-size:.7em;color:var(--text-light);">Communes ≥75%</div></div>'+
+    '<div style="flex:1;min-width:100px;background:var(--primary-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--primary);">'+below50+'</div><div style="font-size:.7em;color:var(--text-light);">Communes <50%</div></div>'+
+    '</div>';
+
+  /* Placer marqueurs communes */
+  for(var i=0;i<covData.length;i++){
+    var cd=covData[i];
+    var col=covColor(cd.cov);
+    var m=L.circleMarker([cd.lat,cd.lng],{radius:7,color:'#fff',weight:1.5,fillColor:col,fillOpacity:.85})
+      .bindTooltip('<strong>'+cd.nom+'</strong><br>Couverture : <strong>'+cd.cov+'%</strong><br>CIS : '+cd.cisNom+' (pool '+cd.pool+')',{direction:'top',className:''})
+      .addTo(map);
+    _recruitMarkers.push(m);
   }
 
-  /* ─── Exécution des 2 vagues ─── */
-  var cv0=zCov(curISP);
-  var w1=recruit(curISP,12), cv1=zCov(w1.state);
-  var w2=recruit(w1.state,12), cv2=zCov(w2.state);
+  /* Highlight la wave active dans la sidebar */
+  var details=document.querySelectorAll('#waveDetails details.wave-detail');
+  for(var i=0;i<details.length;i++){
+    details[i].style.borderLeft=parseInt(details[i].getAttribute('data-wave'))===wIdx?'4px solid var(--primary)':'4px solid transparent';
+    if(parseInt(details[i].getAttribute('data-wave'))===wIdx) details[i].open=true;
+  }
+}
 
-  var totCur=0; for(var k in curISP) totCur+=curISP[k];
-
-  /* ─── Génération HTML ─── */
+function renderWaveSidebar(){
+  if(!_recruitWaves) return;
   var html='';
-  html+='<div class="wave-header" style="background:var(--text);margin-bottom:16px;border-radius:8px;">\ud83d\udccb Plan de Recrutement \u2014 Priorisation intelligente</div>';
-  html+='<p style="color:var(--text-light);font-size:.85em;margin:0 0 20px 0;">Algorithme glouton : priorit\u00e9 casernes sans ISP, puis casernes sous la cible, couverture inter-zones (ISP couvrant secteurs voisins \u2264'+MAX_RENFORT+' min). Mod\u00e8le : '+getBaseH()+'h/mois par ISP.</p>';
-  html+=waveHTML('Vague 1 \u2014 Recrutement prioritaire',w1.plan,cv0,cv1,'#1d4ed8',totCur,totCur+12);
-  html+=waveHTML('Vague 2 \u2014 Consolidation',w2.plan,cv1,cv2,'#059669',totCur+12,totCur+24);
+  for(var w=0;w<_recruitWaves.length;w++){
+    var wave=_recruitWaves[w];
+    var covData=computeCommuneCoverage(wave.snap);
+    var sumCov=0; for(var i=0;i<covData.length;i++) sumCov+=covData[i].cov;
+    var avgCov=covData.length>0?Math.round(sumCov/covData.length*10)/10:0;
 
-  document.getElementById('recruitmentPlan').innerHTML=html;
+    html+='<details class="wave-detail" data-wave="'+w+'"'+(w<=1?' open':'')+'  style="border-left:4px solid '+(w===0?'var(--primary)':'transparent')+';">';
 
-  /* ─── Render une vague ─── */
-  function waveHTML(title,plan,cvBef,cvAft,col,ispBef,ispAft){
-    var w='<div class="recruit-wave">';
-    w+='<div class="wave-header" style="background:'+col+';">\ud83c\udfaf '+title+' ('+ispBef+' \u2192 '+ispAft+' ISP)</div>';
-    w+='<table class="recruit-table"><thead><tr><th>#</th><th>Caserne</th><th>Secteur</th><th>Avant</th><th>Apr\u00e8s</th><th>Cible</th><th>Motif de priorisation</th></tr></thead><tbody>';
-    for(var i=0;i<plan.length;i++){
-      var p=plan[i];
-      w+='<tr><td><strong>'+p.rank+'</strong></td>';
-      w+='<td><strong>'+esc(p.nom)+'</strong></td>';
-      w+='<td><span style="color:'+p.color+';font-weight:700;">\u25cf</span> '+esc(p.zone)+'</td>';
-      w+='<td>'+p.before+'</td><td><strong>'+p.after+'</strong></td><td>'+p.cible+'</td>';
-      w+='<td style="font-size:.85em;color:var(--text-light);">'+esc(p.reason)+'</td></tr>';
+    if(w===0){
+      /* Situation actuelle */
+      var totIsp=0; for(var k in wave.snap) totIsp+=wave.snap[k];
+      html+='<summary><span>\ud83c\udfe0 Situation actuelle</span><span style="color:var(--blue);font-size:.85em;">'+totIsp+' ISP \u2014 '+avgCov+'% moy.</span></summary>';
+      html+='<div style="padding:8px 0 4px;font-size:.82em;color:var(--text-light);">\u00c9tat des lieux avec l\u2019effectif actuel du listing ISP.</div>';
+
+      /* ── Top communes les moins couvertes (paginé par 10) ── */
+      covData.sort(function(a,b){return a.cov-b.cov;});
+      html+='<div style="margin-top:6px;font-size:.78em;"><strong style="color:var(--primary);">\ud83d\udea8 Communes les moins couvertes :</strong>';
+      html+='<div id="worstCommunesList">';
+      for(var i=0;i<covData.length;i++){
+        html+='<div class="worst-commune-row" style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f0f0f0;'+(i>=10?'display:none;':'')+'" data-idx="'+i+'"><span>'+covData[i].nom+'</span><strong style="color:'+covColor(covData[i].cov)+';">'+covData[i].cov+'%</strong></div>';
+      }
+      html+='</div>';
+      if(covData.length>10){
+        html+='<button id="showMoreWorst" onclick="showMoreCommunes()" style="margin-top:4px;padding:4px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg);cursor:pointer;font-size:.85em;font-weight:600;color:var(--primary);width:100%;">\u25bc Afficher 10 de plus</button>';
+      }
+      html+='</div>';
+
+      /* ── Top 10 grosses villes les mieux couvertes ── */
+      var GROSSES_VILLES=['Perpignan','Canet-en-Roussillon','Saint-Estève','Cabestany','Argelès-sur-Mer','Saint-Cyprien','Elne','Rivesaltes','Thuir','Céret','Prades','Ille-sur-Têt','Le Boulou','Bompas','Pia','Claira','Toulouges','Pollestres','Canohès','Saleilles','Saint-Laurent-de-la-Salanque','Le Barcarès','Banyuls-sur-Mer','Collioure','Port-Vendres','Font-Romeu-Odeillo-Via','Saillagouse','Millas','Amélie-les-Bains-Palalda','Le Soler'];
+      var bigCities=[];
+      for(var i=0;i<covData.length;i++){
+        if(GROSSES_VILLES.indexOf(covData[i].nom)!==-1) bigCities.push(covData[i]);
+      }
+      bigCities.sort(function(a,b){return b.cov-a.cov;});
+      if(bigCities.length>0){
+        html+='<div style="margin-top:10px;font-size:.78em;"><strong style="color:var(--blue);">\ud83c\udfd9\ufe0f Grosses villes — couverture :</strong>';
+        for(var i=0;i<Math.min(15,bigCities.length);i++){
+          html+='<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #f0f0f0;"><span>'+bigCities[i].nom+'</span><strong style="color:'+covColor(bigCities[i].cov)+';">'+bigCities[i].cov+'%</strong></div>';
+        }
+        html+='</div>';
+      }
+    } else {
+      /* Vague de recrutement */
+      html+='<summary onclick="showWave('+w+')" style="cursor:pointer;"><span>🔄 Vague '+w+' — +12 ISP</span><span style="color:var(--green);font-size:.85em;">→ '+avgCov+'% moy.</span></summary>';
+      /* Détail : où recruter */
+      var recs=[];
+      for(var cid in wave.recruited){
+        if(wave.recruited[cid]>0){
+          var nom='?';
+          for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){nom=CIS[j].nom;break;}}
+          /* Trouver la zone */
+          var zone='?',color='#666';
+          for(var z=0;z<CARTE_ZONES.length;z++){
+            if(CARTE_ZONES[z].cis.indexOf(cid)!==-1){zone=CARTE_ZONES[z].name;color=CARTE_ZONES[z].color;break;}
+          }
+          recs.push({caserne:nom,nb:wave.recruited[cid],zone:zone,color:color});
+        }
+      }
+      recs.sort(function(a,b){return b.nb-a.nb;});
+      html+='<table style="width:100%;font-size:.78em;border-collapse:collapse;margin:6px 0;">';
+      html+='<tr style="background:var(--bg);"><th style="text-align:left;padding:3px 6px;">Caserne</th><th style="text-align:left;padding:3px 6px;">Zone</th><th style="text-align:center;padding:3px 6px;">À recruter</th></tr>';
+      for(var j=0;j<recs.length;j++){
+        html+='<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 6px;font-weight:600;">'+recs[j].caserne+'</td><td style="padding:3px 6px;"><span style="color:'+recs[j].color+';font-weight:600;">'+recs[j].zone+'</span></td><td style="text-align:center;padding:3px 6px;font-weight:700;color:var(--primary);">+'+recs[j].nb+'</td></tr>';
+      }
+      html+='</table>';
+      /* Impact */
+      var prevCov=computeCommuneCoverage(_recruitWaves[w-1].snap);
+      var prevSum=0; for(var i=0;i<prevCov.length;i++) prevSum+=prevCov[i].cov;
+      var prevAvg=prevCov.length>0?Math.round(prevSum/prevCov.length*10)/10:0;
+      var delta=Math.round((avgCov-prevAvg)*10)/10;
+      html+='<div style="margin-top:4px;padding:4px 8px;background:var(--green-light);border-radius:4px;font-size:.8em;">📈 Impact : couverture moyenne <strong>'+prevAvg+'% → '+avgCov+'%</strong> (+'+delta+' pts)</div>';
     }
-    w+='</tbody></table>';
-
-    /* Bilan couverture par secteur */
-    w+='<div class="bilan-header">\ud83d\udcca Bilan couverture apr\u00e8s '+title.split('\u2014')[0].trim()+'</div>';
-    w+='<div class="bilan-grid">';
-    var wBef=0,wAft=0,wIm=0;
-    for(var z=0;z<CARTE_ZONES.length;z++){
-      var zo=CARTE_ZONES[z], b=cvBef[zo.name], a=cvAft[zo.name];
-      var d=a.cov-b.cov, cls=a.cov>=75?'ok':(a.cov>=50?'warn':'crit');
-      w+='<div class="bilan-card '+cls+'" style="border-left-color:'+zo.color+';">';
-      w+='<div class="bilan-zone" style="color:'+zo.color+';">'+zo.name+'</div>';
-      w+='<div class="bilan-row"><span>Couverture</span><strong class="res-cov '+cls+'">'+a.cov+'%</strong></div>';
-      if(d>0) w+='<div class="bilan-row"><span>\u00c9volution</span><strong style="color:var(--green);">+'+Math.round(d*10)/10+'%</strong></div>';
-      w+='<div class="bilan-row"><span>ISP effectifs</span><strong>'+a.eff+'</strong></div>';
-      w+='<div class="bilan-row"><span>\ud83d\ude97 Temps trajet</span><strong>~'+a.avg+' min</strong></div>';
-      w+='<div class="bilan-row"><span>\ud83d\ude97 ISP le plus proche</span><strong>~'+a.near+' min</strong></div>';
-      w+='</div>';
-      wBef+=b.cov*b.im; wAft+=a.cov*a.im; wIm+=a.im;
-    }
-    w+='</div>';
-
-    /* Synthèse globale */
-    var mBef=wIm>0?Math.round(wBef/wIm*10)/10:0, mAft=wIm>0?Math.round(wAft/wIm*10)/10:0;
-    var gCls=mAft>=75?'ok':(mAft>=50?'warn':'crit');
-    w+='<div class="bilan-global '+gCls+'"><strong>\ud83c\udfe2 Couverture d\u00e9partement :</strong> '+mBef+'% \u2192 <strong>'+mAft+'%</strong>';
-    if(mAft>mBef) w+=' <span style="color:var(--green);">(+'+Math.round((mAft-mBef)*10)/10+'%)</span>';
-    w+='</div></div>';
-    return w;
+    html+='</details>';
   }
+  document.getElementById('waveDetails').innerHTML=html;
+}
+
+/* ═══ SIMULATION DE RECRUTEMENT ═══ */
+function initSimDropdowns(){
+  var sorted=CIS.slice().sort(function(a,b){return a.nom.localeCompare(b.nom);});
+  /* Grouper par zone pour le optgroup */
+  var zoneMap={};
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    zoneMap[CARTE_ZONES[z].name]=[];
+  }
+  for(var i=0;i<sorted.length;i++){
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(CARTE_ZONES[z].cis.indexOf(sorted[i].id)!==-1){
+        zoneMap[CARTE_ZONES[z].name].push(sorted[i]);
+        break;
+      }
+    }
+  }
+  var optionsHtml='<option value="">— Choisir un CIS —</option>';
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    var zn=CARTE_ZONES[z].name;
+    if(!zoneMap[zn]||zoneMap[zn].length===0) continue;
+    optionsHtml+='<optgroup label="'+zn+'">';
+    for(var j=0;j<zoneMap[zn].length;j++){
+      optionsHtml+='<option value="'+zoneMap[zn][j].id+'">'+zoneMap[zn][j].nom+'</option>';
+    }
+    optionsHtml+='</optgroup>';
+  }
+  var rows='';
+  for(var i=1;i<=12;i++){
+    rows+='<div class="sim-row"><span class="sim-label">Nouvel ISP '+i+'</span><select class="sim-select" onchange="updateSimulation()">'+optionsHtml+'</select></div>';
+  }
+  document.getElementById('simRows').innerHTML=rows;
+}
+
+function updateSimulation(){
+  if(!_recruitWaves) return;
+  var baseSnap=_recruitWaves[0].snap;
+  var simSnap={};
+  for(var k in baseSnap) simSnap[k]=baseSnap[k];
+
+  var selects=document.querySelectorAll('.sim-select');
+  var nbSelected=0;
+  for(var i=0;i<selects.length;i++){
+    if(selects[i].value){
+      simSnap[selects[i].value]=(simSnap[selects[i].value]||0)+1;
+      nbSelected++;
+    }
+  }
+
+  var rd=document.getElementById('simResults');
+  if(nbSelected===0){
+    rd.innerHTML='<div style="color:var(--text-light);font-size:.82em;text-align:center;padding:12px 0;">Sélectionnez au moins un CIS pour voir l\'impact.</div>';
+    return;
+  }
+
+  var covBefore=computeCommuneCoverage(baseSnap);
+  var covAfter=computeCommuneCoverage(simSnap);
+
+  /* Moyennes globales */
+  var sB=0,sA=0;
+  for(var i=0;i<covBefore.length;i++) sB+=covBefore[i].cov;
+  for(var i=0;i<covAfter.length;i++) sA+=covAfter[i].cov;
+  var avgB=Math.round(sB/covBefore.length*10)/10;
+  var avgA=Math.round(sA/covAfter.length*10)/10;
+  var dG=Math.round((avgA-avgB)*10)/10;
+
+  /* Grouper par zone */
+  function cisToZone(cid){
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(CARTE_ZONES[z].cis.indexOf(cid)!==-1) return z;
+    }
+    return -1;
+  }
+  var zSumB={},zSumA={},zCnt={};
+  for(var z=0;z<CARTE_ZONES.length;z++){zSumB[z]=0;zSumA[z]=0;zCnt[z]=0;}
+  for(var i=0;i<covBefore.length;i++){
+    var zi=cisToZone(covBefore[i].cisId);
+    if(zi>=0){zSumB[zi]+=covBefore[i].cov;zSumA[zi]+=covAfter[i].cov;zCnt[zi]++;}
+  }
+
+  var impacted=[];
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    if(zCnt[z]===0) continue;
+    var zB=Math.round(zSumB[z]/zCnt[z]*10)/10;
+    var zA=Math.round(zSumA[z]/zCnt[z]*10)/10;
+    if(zA!==zB) impacted.push({name:CARTE_ZONES[z].name,color:CARTE_ZONES[z].color,before:zB,after:zA,delta:Math.round((zA-zB)*10)/10});
+  }
+  impacted.sort(function(a,b){return b.delta-a.delta;});
+
+  var h='<div class="sim-result-box">';
+  h+='<div class="sim-result-global">';
+  h+='<span style="font-size:.82em;font-weight:600;">🌐 Couverture globale</span>';
+  h+='<div style="font-size:1.3em;font-weight:800;margin-top:4px;">'+avgB+'% <span style="font-size:1em;color:var(--text-light);">→</span> <span style="color:var(--green);">'+avgA+'%</span> <span style="font-size:.7em;color:var(--green);">(+'+dG+' pts)</span></div>';
+  h+='</div>';
+
+  if(impacted.length>0){
+    h+='<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">';
+    h+='<div style="font-size:.82em;font-weight:600;color:var(--text);margin-bottom:6px;">📍 Secteurs impactés :</div>';
+    for(var i=0;i<impacted.length;i++){
+      var iz=impacted[i];
+      h+='<div class="sim-zone-row">';
+      h+='<span style="color:'+iz.color+';font-weight:600;">'+iz.name+'</span>';
+      h+='<span>'+iz.before+'% → <strong style="color:var(--green);">'+iz.after+'%</strong> <span style="font-size:.8em;color:var(--green);">(+'+iz.delta+')</span></span>';
+      h+='</div>';
+    }
+    h+='</div>';
+  }
+  h+='</div>';
+  rd.innerHTML=h;
+}
+
+/* ═══ EXPORT PDF ═══ */
+function exportRecruitPDF(){
+  if(!_recruitWaves||_recruitWaves.length===0){alert('Aucune donnée à exporter.');return;}
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210,M=15,CW=W-2*M;
+  var y=M;
+
+  function addPage(){doc.addPage();y=M;}
+  function checkPage(need){if(y+need>280){addPage();return true;}return false;}
+
+  /* ── Couleurs ── */
+  var RED=[230,57,70],BLUE=[69,123,157],GREEN=[26,154,65],GRAY=[100,100,100],BLACK=[30,30,30];
+
+  /* ══════ EN-TÊTE ══════ */
+  doc.setFillColor(RED[0],RED[1],RED[2]);
+  doc.rect(0,0,W,38,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(20);doc.setFont('helvetica','bold');
+  doc.text('SDIS 66 — Plan de recrutement ISP',W/2,16,{align:'center'});
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('Aide à la décision — Dimensionnement ISP par caserne',W/2,24,{align:'center'});
+  var now=new Date();
+  doc.text('Généré le '+now.toLocaleDateString('fr-FR')+' à '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),W/2,31,{align:'center'});
+  y=46;
+
+  /* ── Paramètres du modèle ── */
+  doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+  doc.setFontSize(8);doc.setFont('helvetica','italic');
+  doc.text('Modèle : '+H_MOIS+'h/mois à couvrir — '+BASE_H+'h/ISP/mois — Rayon de renfort : 20 min',M,y);
+  y+=8;
+
+  /* ══════ SITUATION ACTUELLE ══════ */
+  var w0=_recruitWaves[0];
+  var cov0=computeCommuneCoverage(w0.snap);
+  var s0=0;for(var i=0;i<cov0.length;i++)s0+=cov0[i].cov;
+  var avg0=Math.round(s0/cov0.length*10)/10;
+  var tot0=0;for(var k in w0.snap)tot0+=w0.snap[k];
+  var a750=0,b500=0;for(var i=0;i<cov0.length;i++){if(cov0[i].cov>=75)a750++;if(cov0[i].cov<50)b500++;}
+
+  doc.setFillColor(240,240,245);
+  doc.roundedRect(M,y,CW,22,3,3,'F');
+  doc.setTextColor(RED[0],RED[1],RED[2]);
+  doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('Situation actuelle',M+5,y+8);
+  doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text(tot0+' ISP — Couverture moyenne : '+avg0+'%',M+5,y+15);
+  doc.text('Communes ≥75% : '+a750+' | Communes <50% : '+b500,M+5,y+20);
+  y+=28;
+
+  /* ══════ VAGUES 1-5 ══════ */
+  var prevAvg=avg0;
+  for(var w=1;w<_recruitWaves.length;w++){
+    var wave=_recruitWaves[w];
+    var covW=computeCommuneCoverage(wave.snap);
+    var sW=0;for(var i=0;i<covW.length;i++)sW+=covW[i].cov;
+    var avgW=Math.round(sW/covW.length*10)/10;
+    var deltaW=Math.round((avgW-prevAvg)*10)/10;
+    var totW=0;for(var k in wave.snap)totW+=wave.snap[k];
+    var a75w=0,b50w=0;for(var i=0;i<covW.length;i++){if(covW[i].cov>=75)a75w++;if(covW[i].cov<50)b50w++;}
+
+    /* Collecter recrutements */
+    var recs=[];
+    for(var cid in wave.recruited){
+      if(wave.recruited[cid]>0){
+        var nom='?';
+        for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){nom=CIS[j].nom;break;}}
+        var zone='?';
+        for(var z=0;z<CARTE_ZONES.length;z++){if(CARTE_ZONES[z].cis.indexOf(cid)!==-1){zone=CARTE_ZONES[z].name;break;}}
+        recs.push({caserne:nom,zone:zone,nb:wave.recruited[cid]});
+      }
+    }
+    recs.sort(function(a,b){return b.nb-a.nb;});
+
+    /* Espace nécessaire : titre(16) + table header(6) + rows(5 each) + impact(10) + marge(6) */
+    var blockH=16+6+recs.length*5+10+6;
+    checkPage(blockH);
+
+    /* Bande titre vague */
+    var wColors=[[230,57,70],[69,123,157],[42,157,143],[231,111,81],[108,92,231]];
+    var wc=wColors[(w-1)%wColors.length];
+    doc.setFillColor(wc[0],wc[1],wc[2]);
+    doc.roundedRect(M,y,CW,10,2,2,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(11);doc.setFont('helvetica','bold');
+    doc.text('Vague '+w+' — +12 ISP (total : '+(12*w)+' recrutés)',M+5,y+7);
+    y+=14;
+
+    /* Tableau recrutements */
+    doc.setFillColor(245,245,248);
+    doc.rect(M,y,CW,5,'F');
+    doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+    doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+    doc.text('Caserne',M+3,y+3.5);
+    doc.text('Zone',M+60,y+3.5);
+    doc.text('À recruter',M+CW-25,y+3.5);
+    y+=5;
+
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+    for(var r=0;r<recs.length;r++){
+      if(r%2===0){doc.setFillColor(252,252,254);doc.rect(M,y,CW,5,'F');}
+      doc.setFontSize(8);
+      doc.setFont('helvetica','bold');
+      doc.text(recs[r].caserne,M+3,y+3.5);
+      doc.setFont('helvetica','normal');
+      doc.text(recs[r].zone,M+60,y+3.5);
+      doc.setTextColor(RED[0],RED[1],RED[2]);
+      doc.setFont('helvetica','bold');
+      doc.text('+'+recs[r].nb,M+CW-20,y+3.5);
+      doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+      y+=5;
+    }
+    y+=2;
+
+    /* Impact */
+    doc.setFillColor(232,245,233);
+    doc.roundedRect(M,y,CW,8,2,2,'F');
+    doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.setTextColor(GREEN[0],GREEN[1],GREEN[2]);
+    doc.text('Impact : '+prevAvg+'% → '+avgW+'% (+'+deltaW+' pts) — '+totW+' ISP total — '+a75w+' communes ≥75% — '+b50w+' communes <50%',M+4,y+5.5);
+    y+=14;
+
+    prevAvg=avgW;
+  }
+
+  /* ══════ RÉCAP FINAL ══════ */
+  checkPage(35);
+  var lastW=_recruitWaves[_recruitWaves.length-1];
+  var covF=computeCommuneCoverage(lastW.snap);
+  var sF=0;for(var i=0;i<covF.length;i++)sF+=covF[i].cov;
+  var avgF=Math.round(sF/covF.length*10)/10;
+  var totF=0;for(var k in lastW.snap)totF+=lastW.snap[k];
+  var a75f=0,b50f=0;for(var i=0;i<covF.length;i++){if(covF[i].cov>=75)a75f++;if(covF[i].cov<50)b50f++;}
+
+  doc.setFillColor(RED[0],RED[1],RED[2]);
+  doc.roundedRect(M,y,CW,24,3,3,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(12);doc.setFont('helvetica','bold');
+  doc.text('Récapitulatif après 5 vagues (+60 ISP)',M+5,y+8);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Effectif total : '+totF+' ISP — Couverture moyenne : '+avg0+'% → '+avgF+'%',M+5,y+15);
+  doc.text('Communes ≥75% : '+a75f+' — Communes <50% : '+b50f,M+5,y+21);
+  y+=30;
+
+  /* ══════ COUVERTURE PAR ZONE FINALE ══════ */
+  checkPage(10+CARTE_ZONES.length*5+6);
+  doc.setTextColor(BLUE[0],BLUE[1],BLUE[2]);
+  doc.setFontSize(11);doc.setFont('helvetica','bold');
+  doc.text('Couverture par secteur (après 5 vagues)',M,y+5);
+  y+=10;
+
+  function cisToZone(cid){
+    for(var z=0;z<CARTE_ZONES.length;z++){if(CARTE_ZONES[z].cis.indexOf(cid)!==-1)return z;}
+    return -1;
+  }
+  var z0B={},z0A={},zC={};
+  for(var z=0;z<CARTE_ZONES.length;z++){z0B[z]=0;z0A[z]=0;zC[z]=0;}
+  for(var i=0;i<cov0.length;i++){
+    var zi=cisToZone(cov0[i].cisId);
+    if(zi>=0){z0B[zi]+=cov0[i].cov;z0A[zi]+=covF[i].cov;zC[zi]++;}
+  }
+
+  /* En-tête tableau */
+  doc.setFillColor(245,245,248);
+  doc.rect(M,y,CW,5,'F');
+  doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
+  doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+  doc.text('Secteur',M+3,y+3.5);
+  doc.text('Avant',M+90,y+3.5);
+  doc.text('Après',M+110,y+3.5);
+  doc.text('Gain',M+CW-18,y+3.5);
+  y+=5;
+
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    if(zC[z]===0)continue;
+    var zB=Math.round(z0B[z]/zC[z]*10)/10;
+    var zA=Math.round(z0A[z]/zC[z]*10)/10;
+    var dz=Math.round((zA-zB)*10)/10;
+    if(z%2===0){doc.setFillColor(252,252,254);doc.rect(M,y,CW,5,'F');}
+    doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+    doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.text(CARTE_ZONES[z].name,M+3,y+3.5);
+    doc.setFont('helvetica','normal');
+    doc.text(zB+'%',M+90,y+3.5);
+    doc.text(zA+'%',M+110,y+3.5);
+    doc.setTextColor(GREEN[0],GREEN[1],GREEN[2]);doc.setFont('helvetica','bold');
+    doc.text('+'+(dz>0?dz:0)+' pts',M+CW-18,y+3.5);
+    doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+    y+=5;
+  }
+  y+=6;
+
+  /* ══════ SIMULATION PERSO (si remplie) ══════ */
+  var selects=document.querySelectorAll('.sim-select');
+  var simRecs=[];
+  for(var i=0;i<selects.length;i++){
+    if(selects[i].value){
+      var cid=selects[i].value;
+      var nom='?';for(var j=0;j<CIS.length;j++){if(CIS[j].id===cid){nom=CIS[j].nom;break;}}
+      simRecs.push({idx:i+1,cid:cid,nom:nom});
+    }
+  }
+  if(simRecs.length>0){
+    checkPage(40+simRecs.length*5);
+    doc.setFillColor(69,123,157);
+    doc.roundedRect(M,y,CW,10,2,2,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(11);doc.setFont('helvetica','bold');
+    doc.text('Simulation personnalisée ('+simRecs.length+' ISP)',M+5,y+7);
+    y+=14;
+
+    var simSnap={};
+    for(var k in w0.snap) simSnap[k]=w0.snap[k];
+    for(var i=0;i<simRecs.length;i++) simSnap[simRecs[i].cid]=(simSnap[simRecs[i].cid]||0)+1;
+
+    /* Liste ISP simulés */
+    for(var i=0;i<simRecs.length;i++){
+      if(i%2===0){doc.setFillColor(245,248,252);doc.rect(M,y,CW,5,'F');}
+      doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+      doc.setFontSize(8);doc.setFont('helvetica','normal');
+      doc.text('Nouvel ISP '+simRecs[i].idx+' → '+simRecs[i].nom,M+3,y+3.5);
+      y+=5;
+    }
+    y+=4;
+
+    /* Impact simulation */
+    var covSB=computeCommuneCoverage(w0.snap);
+    var covSA=computeCommuneCoverage(simSnap);
+    var sSB=0,sSA=0;
+    for(var i=0;i<covSB.length;i++)sSB+=covSB[i].cov;
+    for(var i=0;i<covSA.length;i++)sSA+=covSA[i].cov;
+    var avgSB=Math.round(sSB/covSB.length*10)/10;
+    var avgSA=Math.round(sSA/covSA.length*10)/10;
+    var dS=Math.round((avgSA-avgSB)*10)/10;
+
+    doc.setFillColor(232,245,233);
+    doc.roundedRect(M,y,CW,8,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.setTextColor(GREEN[0],GREEN[1],GREEN[2]);
+    doc.text('Couverture globale : '+avgSB+'% → '+avgSA+'% (+'+dS+' pts)',M+4,y+5.5);
+    y+=12;
+
+    /* Secteurs impactés */
+    var zsB={},zsA={},zsC={};
+    for(var z=0;z<CARTE_ZONES.length;z++){zsB[z]=0;zsA[z]=0;zsC[z]=0;}
+    for(var i=0;i<covSB.length;i++){
+      var zi=cisToZone(covSB[i].cisId);
+      if(zi>=0){zsB[zi]+=covSB[i].cov;zsA[zi]+=covSA[i].cov;zsC[zi]++;}
+    }
+    var simImpact=[];
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(zsC[z]===0)continue;
+      var bz=Math.round(zsB[z]/zsC[z]*10)/10;
+      var az=Math.round(zsA[z]/zsC[z]*10)/10;
+      if(az!==bz) simImpact.push({name:CARTE_ZONES[z].name,before:bz,after:az,delta:Math.round((az-bz)*10)/10});
+    }
+    if(simImpact.length>0){
+      doc.setTextColor(BLUE[0],BLUE[1],BLUE[2]);
+      doc.setFontSize(9);doc.setFont('helvetica','bold');
+      doc.text('Secteurs impactés :',M,y+4);
+      y+=8;
+      for(var i=0;i<simImpact.length;i++){
+        if(i%2===0){doc.setFillColor(245,248,252);doc.rect(M,y,CW,5,'F');}
+        doc.setTextColor(BLACK[0],BLACK[1],BLACK[2]);
+        doc.setFontSize(8);doc.setFont('helvetica','bold');
+        doc.text(simImpact[i].name,M+3,y+3.5);
+        doc.setFont('helvetica','normal');
+        doc.text(simImpact[i].before+'% → '+simImpact[i].after+'% (+'+simImpact[i].delta+' pts)',M+70,y+3.5);
+        y+=5;
+      }
+    }
+  }
+
+  /* ── Pied de page ── */
+  var pc=doc.internal.getNumberOfPages();
+  for(var p=1;p<=pc;p++){
+    doc.setPage(p);
+    doc.setFontSize(7);doc.setFont('helvetica','italic');
+    doc.setTextColor(170,170,170);
+    doc.text('SDIS 66 — Plan de recrutement ISP — Page '+p+'/'+pc,W/2,292,{align:'center'});
+  }
+
+  doc.save('Plan_Recrutement_ISP_SDIS66_'+now.toISOString().slice(0,10)+'.pdf');
 }
 </script>
 </body>
