@@ -158,6 +158,17 @@
   .rpt-global-bar.ok{background:#e6f5f3;color:#2a9d8f;}
   .rpt-global-bar.warn{background:#fdf0ec;color:#e76f51;}
   .rpt-global-bar.crit{background:#fde8ea;color:#e63946;}
+  .rpt-covmap-btn{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:10px 20px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;border:none;border-radius:8px;font-size:.88em;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px rgba(29,78,216,.3);transition:all .2s;}
+  .rpt-covmap-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(29,78,216,.4);}
+  .rpt-map-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:center;justify-content:center;}
+  .rpt-map-inner{width:92%;height:88%;background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 50px rgba(0,0,0,.35);}
+  .rpt-map-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--text);color:#fff;font-weight:700;font-size:1.05em;}
+  .rpt-map-close{background:none;border:none;color:#fff;font-size:1.5em;cursor:pointer;padding:0 8px;transition:color .2s;}
+  .rpt-map-close:hover{color:var(--primary);}
+  #rptMapContainer{flex:1;}
+  .rpt-map-legend{display:flex;align-items:center;gap:12px;padding:10px 20px;background:#f8f9fa;border-top:1px solid #eee;font-size:.82em;font-weight:600;color:var(--text);}
+  .rpt-map-legend-bar{flex:1;height:16px;border-radius:6px;background:linear-gradient(90deg,hsl(120,70%,45%),hsl(90,65%,48%),hsl(60,65%,50%),hsl(30,65%,48%),hsl(0,70%,50%));}
+  .rpt-map-legend-labels{display:flex;justify-content:space-between;font-size:.75em;color:#888;margin-top:2px;}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -2537,6 +2548,7 @@ function exportRecruitPDF(){
 function renderRapport(){
   if(!DATA) return;
   populateCisIsp();
+  window._rptWaveStates=[];
 
   /* ── Helpers ── */
   var RADIUS_20=20, RADIUS_40=40;
@@ -2728,10 +2740,93 @@ function renderRapport(){
     if(mC20<75) waveHtml+=' — <strong>'+mC40+'%</strong> à 40 min';
     waveHtml+='</div>';
 
+    /* Sauvegarder l'état ISP de cette vague pour la carte */
+    var wSt={}; for(var k in st) wSt[k]=st[k];
+    window._rptWaveStates.push(wSt);
+
+    waveHtml+='<button class="rpt-covmap-btn" onclick="showRptCovMap('+w+')">🗺️ Voir carte couverture</button>';
+
     waveHtml+='</div></div>';
   }
 
   document.getElementById('rapportWaves').innerHTML=waveHtml;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CARTE COUVERTURE POPUP — Temps de trajet par commune
+   Vert (≤20min) → Rouge (≥60min)
+   ═══════════════════════════════════════════════════════ */
+function showRptCovMap(waveIdx){
+  var st=window._rptWaveStates[waveIdx];
+  if(!st) return;
+
+  /* Supprimer un modal existant */
+  var old=document.querySelector('.rpt-map-modal');
+  if(old) old.remove();
+
+  /* Créer le modal */
+  var modal=document.createElement('div');
+  modal.className='rpt-map-modal';
+  modal.innerHTML='<div class="rpt-map-inner">'+
+    '<div class="rpt-map-header"><span>🗺️ Carte couverture — après vague '+(waveIdx+1)+'</span>'+
+    '<button class="rpt-map-close" onclick="this.closest(\'.rpt-map-modal\').remove()">✕</button></div>'+
+    '<div id="rptMapContainer"></div>'+
+    '<div class="rpt-map-legend"><span>Temps de couverture :</span>'+
+    '<div style="flex:1;"><div class="rpt-map-legend-bar"></div>'+
+    '<div class="rpt-map-legend-labels"><span>≤ 20 min</span><span>30 min</span><span>40 min</span><span>50 min</span><span>≥ 60 min</span></div></div></div>'+
+    '</div>';
+  document.body.appendChild(modal);
+
+  /* Fermer sur clic backdrop */
+  modal.addEventListener('click',function(e){if(e.target===modal) modal.remove();});
+  /* Fermer sur Echap */
+  var escHandler=function(e){if(e.key==='Escape'){modal.remove();document.removeEventListener('keydown',escHandler);}};
+  document.addEventListener('keydown',escHandler);
+
+  /* Couleur temps de trajet */
+  function ttColor(min){
+    if(min<=20) return 'hsl(120,70%,45%)';
+    if(min>=60) return 'hsl(0,70%,50%)';
+    var hue=120-(min-20)/40*120;
+    return 'hsl('+Math.round(hue)+',70%,48%)';
+  }
+
+  /* Initialiser la carte Leaflet */
+  setTimeout(function(){
+    var map=L.map('rptMapContainer').setView([42.6,2.5],9);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
+      attribution:'© OpenStreetMap © CARTO',maxZoom:18
+    }).addTo(map);
+
+    /* Pour chaque commune : temps min vers un CIS qui a des ISP */
+    for(var k=0;k<COMMUNES.length;k++){
+      var minT=Infinity, nearNom='';
+      for(var j=0;j<CIS.length;j++){
+        if((st[CIS[j].id]||0)>0 && TRAVEL_COMM_MIN[k] && TRAVEL_COMM_MIN[k][j]<minT){
+          minT=TRAVEL_COMM_MIN[k][j]; nearNom=CIS[j].nom;
+        }
+      }
+      if(minT===Infinity) minT=99;
+      L.circleMarker([COMMUNES[k].lat,COMMUNES[k].lng],{
+        radius:7,fillColor:ttColor(minT),color:'#fff',weight:1,fillOpacity:.85
+      }).addTo(map).bindPopup(
+        '<strong>'+COMMUNES[k].n+'</strong><br>'+
+        'CIS le plus proche avec ISP : <strong>'+nearNom+'</strong><br>'+
+        'Temps de trajet : <strong>'+Math.round(minT)+' min</strong>'
+      );
+    }
+
+    /* Marqueurs CIS */
+    for(var j=0;j<CIS.length;j++){
+      var nb=st[CIS[j].id]||0;
+      var ico=nb>0
+        ? '<div style="background:#1d4ed8;color:#fff;font-weight:800;font-size:11px;padding:3px 7px;border-radius:5px;border:2px solid #fff;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3);">🚒 '+CIS[j].nom+' ('+nb+')</div>'
+        : '<div style="background:#94a3b8;color:#fff;font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px;border:1px solid #fff;white-space:nowrap;opacity:.7;">'+CIS[j].nom+' (0)</div>';
+      L.marker([CIS[j].lat,CIS[j].lng],{
+        icon:L.divIcon({className:'',html:ico,iconAnchor:[30,15]})
+      }).addTo(map);
+    }
+  },200);
 }
 </script>
 </body>
