@@ -1697,83 +1697,28 @@ function renderZones(){
   document.getElementById('zoneCards').innerHTML=h;
 
   /* ══════════════════════════════════════════════════════
-     ALGO ITÉRATIF DE RECRUTEMENT GLOBAL
-     Recruter 1 ISP à la fois au pire endroit, recalculer
-     tous les pools (car 1 recrue aide toutes les casernes
-     voisines dans le rayon), et recommencer.
+     RECRUTEMENT — Algo unifié basé sur la couverture COMMUNALE
+     Identique dans les 3 onglets (Carte, Recrutement, Rapport)
      ══════════════════════════════════════════════════════ */
-  function computeGreedyRecruitment(simIspBase, travelRadius){
-    var recruited={}; /* cisId → nb recruté */
-    /* Copie des ISP simulés */
-    var curIsp={};
-    for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=simIspBase(CIS[i].id);
+  /* Construire l'objet ISP simulé */
+  var ispObj={};
+  for(var i=0;i<CIS.length;i++) ispObj[CIS[i].id]=simIsp(CIS[i].id);
 
-    /* Pré-calculer la matrice de voisinage (une seule fois) */
-    var neighbors={}; /* cisId → [cisId voisins dans le rayon] */
-    for(var i=0;i<CIS.length;i++){
-      var nb=[];
-      if(travelRadius>0){
-        for(var j=0;j<CIS.length;j++){
-          if(j!==i && TRAVEL_CIS_MIN[i][j]<=travelRadius) nb.push(CIS[j].id);
-        }
-      }
-      neighbors[CIS[i].id]=nb;
-    }
+  /* Exécuter l'algo unifié avec le travel actuel */
+  var grResult=computeGlobalRecruitment(ispObj, travelMax, defCp);
+  var recruited=grResult.recruited;
+  var totNeedRecruit=grResult.total;
 
-    /* Fonction : pool d'une caserne avec l'état courant */
-    function pool(cid){
-      var tot=curIsp[cid]||0;
-      var nbs=neighbors[cid];
-      for(var n=0;n<nbs.length;n++) tot+=(curIsp[nbs[n]]||0);
-      return tot;
-    }
-
-    /* Fonction : couverture d'une caserne */
-    function cisCov(cid){
-      var gh=0;
-      for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cid) gh=gardeHMois(GARDE[g].zone);}
-      return covPct(pool(cid),gh);
-    }
-
-    /* Objectif par zone */
-    var zoneTarget={};
-    for(var z=0;z<CARTE_ZONES.length;z++){
-      var zn=CARTE_ZONES[z].name;
-      zoneTarget[zn]=(window._zoneTargets[zn]!==undefined)?window._zoneTargets[zn]:defCp;
-    }
-
-    /* Boucle itérative : max 400 recrutements */
-    for(var iter=0;iter<400;iter++){
-      /* Trouver le pire maillon faible parmi toutes les zones non-OK */
-      var worstId=null, worstCovVal=Infinity, worstZone=null;
-      for(var z=0;z<CARTE_ZONES.length;z++){
-        var zo=CARTE_ZONES[z];
-        var target=zoneTarget[zo.name];
-        for(var i=0;i<zo.cis.length;i++){
-          var cc=cisCov(zo.cis[i]);
-          if(cc<target && cc<worstCovVal){
-            worstCovVal=cc; worstId=zo.cis[i]; worstZone=zo.name;
-          }
-        }
-      }
-      if(worstId===null) break; /* toutes les zones OK */
-
-      /* Recruter 1 ISP à cette caserne */
-      curIsp[worstId]=(curIsp[worstId]||0)+1;
-      recruited[worstId]=(recruited[worstId]||0)+1;
-    }
-
-    return recruited;
-  }
-
-  /* Exécuter l'algo avec le travel actuel */
-  var recruited=computeGreedyRecruitment(simIsp, travelMax);
   /* Exécuter aussi avec travel=0 pour comparer */
-  var recruited0=computeGreedyRecruitment(simIsp, 0);
-
-  var totNeedRecruit=0; for(var cid in recruited) totNeedRecruit+=recruited[cid];
-  var totNeed0=0; for(var cid in recruited0) totNeed0+=recruited0[cid];
+  var grResult0=computeGlobalRecruitment(ispObj, 0, defCp);
+  var totNeed0=grResult0.total;
   var econTravel=totNeed0-totNeedRecruit;
+
+  /* Aussi à 40min pour info */
+  var grResult40=computeGlobalRecruitment(ispObj, 40, defCp);
+
+  /* Stocker pour les autres onglets */
+  window._globalRecruitResult=grResult;
 
   /* Construire le listing par zone à partir du résultat itératif */
   var recruitList=[];
@@ -1837,11 +1782,12 @@ function renderZones(){
     '<div class="tr"><span>ISP simul\u00e9s</span><strong>'+Math.round(allSimIsp)+'</strong></div>'+
     '<div class="tr"><span>Rayon d\'action</span><strong>'+travelMax+' min</strong></div>'+
     '<div class="tr"><span>Heures / ISP</span><strong>'+BASE_H+'h/mois</strong></div>'+
-    '<div class="tr" style="font-weight:700;font-size:1.1em;margin-top:4px;"><span>\ud83d\udcc8 Couverture moy.</span><strong style="color:'+(globalCov>=defCp?'var(--green)':'var(--primary)')+';">'+globalCov+'%</strong></div>'+
+    '<div class="tr" style="font-weight:700;font-size:1.1em;margin-top:4px;"><span>\ud83d\udcc8 Couv. communale moy.</span><strong style="color:'+(grResult.finalCov>=defCp?'var(--green)':'var(--primary)')+';">'+grResult.finalCov+'% \u2192 '+defCp+'%</strong></div>'+
     '<div class="tr"><span>Zones OK (\u2265 objectif)</span><strong style="color:'+(zonesOk===CARTE_ZONES.length?'var(--green)':'var(--primary)')+';">'+zonesOk+' / '+CARTE_ZONES.length+'</strong></div>'+
     '<div style="margin-top:8px;padding:6px 8px;background:var(--blue-light);border-radius:6px;font-size:.82em;">'+
-    '<div style="display:flex;justify-content:space-between;font-weight:700;"><span>\ud83d\ude80 ISP \u00e0 recruter (algo it\u00e9ratif)</span><strong style="color:var(--primary);">'+totNeedRecruit+'</strong></div>'+
-    '<div style="font-size:.8em;color:var(--text-light);margin-top:2px;">Chaque recrue renforce le pool de toutes les casernes \u00e0 port\u00e9e</div>'+
+    '<div style="display:flex;justify-content:space-between;font-weight:700;"><span>\ud83d\ude80 \u00c0 recruter ('+travelMax+' min)</span><strong style="color:var(--primary);">+'+totNeedRecruit+' ISP</strong></div>'+
+    (travelMax!==40?'<div style="display:flex;justify-content:space-between;font-weight:600;margin-top:2px;"><span>\ud83d\ude97 \u00c0 recruter (40 min)</span><strong style="color:var(--blue);">+'+grResult40.total+' ISP</strong></div>':'')+
+    '<div style="font-size:.8em;color:var(--text-light);margin-top:2px;">Couverture communale : 226 communes, obj. '+defCp+'%</div>'+
     (travelMax>0&&econTravel>0?'<div style="font-size:.85em;color:var(--green);margin-top:2px;">\u2705 Le rayon de '+travelMax+' min \u00e9conomise <strong>'+econTravel+' recrutement'+(econTravel>1?'s':'')+'</strong> vs 0 min</div>':'')+
     (travelMax===0?'<div style="font-size:.85em;color:var(--text-light);margin-top:2px;">\u2191 Augmentez le rayon d\'action pour mutualiser les pools</div>':'')+
     '</div>';
@@ -1923,10 +1869,10 @@ function nearestCis(lat,lng){
 }
 
 /* Calculer la couverture de chaque commune selon un état ISP donné */
-function computeCommuneCoverage(ispState){
+function computeCommuneCoverage(ispState, travelRadius){
   /* Isochrones OSRM : COMMUNE_NEAREST donne le CIS le plus proche,
      TRAVEL_CIS_MIN donne les temps reels entre CIS pour le pool */
-  var TRAVEL_RADIUS=20;
+  var TRAVEL_RADIUS=travelRadius||20;
   var result=[];
   for(var i=0;i<COMMUNES.length;i++){
     var c=COMMUNES[i];
@@ -1947,14 +1893,145 @@ function computeCommuneCoverage(ispState){
   return result;
 }
 
+/* ═══════════════════════════════════════════════════════
+   ALGO UNIFIÉ — Recrutement glouton basé sur la couverture
+   COMMUNALE (226 communes du département).
+   Utilisé par les 3 onglets (Carte, Recrutement, Rapport)
+   pour garantir UN SEUL chiffre cohérent.
+   ═══════════════════════════════════════════════════════ */
+function computeGlobalRecruitment(ispBase, travelR, targetPct){
+  /* Voisinage CIS par index (TRAVEL_CIS_MIN est index-based) */
+  var nbIdx=[];
+  for(var i=0;i<CIS.length;i++){
+    nbIdx[i]=[];
+    for(var j=0;j<CIS.length;j++){
+      if(j!==i && TRAVEL_CIS_MIN[i][j]<=travelR) nbIdx[i].push(j);
+    }
+  }
+
+  /* Garde par CIS index */
+  var cisGh=[];
+  for(var i=0;i<CIS.length;i++){
+    cisGh[i]=0;
+    for(var g=0;g<GARDE.length;g++){
+      if(GARDE[g].cis===CIS[i].id) cisGh[i]=gardeHMois(GARDE[g].zone);
+    }
+  }
+
+  /* État de travail : ISP par CIS INDEX */
+  var st=[];
+  for(var i=0;i<CIS.length;i++) st[i]=ispBase[CIS[i].id]||0;
+
+  /* Pour chaque CIS, quelles communes sont impactées par un changement.
+     Une commune est impactée si ce CIS est son CIS le plus proche
+     OU s'il est voisin de son CIS le plus proche (pool). */
+  var cisAffects=[];
+  for(var i=0;i<CIS.length;i++) cisAffects[i]=[];
+  for(var i=0;i<COMMUNES.length;i++){
+    var ni=COMMUNE_NEAREST[i].c;
+    cisAffects[ni].push(i);
+    var nbs=nbIdx[ni];
+    for(var j=0;j<nbs.length;j++) cisAffects[nbs[j]].push(i);
+  }
+
+  /* Couverture initiale par commune */
+  var commCov=[];
+  var totalCov=0;
+  for(var i=0;i<COMMUNES.length;i++){
+    var ni=COMMUNE_NEAREST[i].c;
+    var pool=st[ni];
+    var nbs=nbIdx[ni];
+    for(var j=0;j<nbs.length;j++) pool+=st[nbs[j]];
+    commCov[i]=covPct(pool,cisGh[ni]);
+    totalCov+=commCov[i];
+  }
+
+  var recruited=[];
+  for(var i=0;i<CIS.length;i++) recruited[i]=0;
+
+  /* Boucle glouton : +1 ISP au CIS qui maximise la couverture
+     moyenne communale, jusqu'à atteindre l'objectif */
+  for(var iter=0;iter<500;iter++){
+    if(totalCov/COMMUNES.length>=targetPct) break;
+
+    var bestCi=-1, bestGain=0;
+    for(var ci=0;ci<CIS.length;ci++){
+      st[ci]++;
+      var gain=0;
+      var aff=cisAffects[ci];
+      for(var a=0;a<aff.length;a++){
+        var idx=aff[a];
+        var ni=COMMUNE_NEAREST[idx].c;
+        var pool=st[ni];
+        var nbs=nbIdx[ni];
+        for(var j=0;j<nbs.length;j++) pool+=st[nbs[j]];
+        gain+=(covPct(pool,cisGh[ni])-commCov[idx]);
+      }
+      st[ci]--;
+      if(gain>bestGain){bestGain=gain;bestCi=ci;}
+    }
+    if(bestCi===-1) break;
+
+    /* Recruter */
+    st[bestCi]++;
+    recruited[bestCi]++;
+    var aff=cisAffects[bestCi];
+    for(var a=0;a<aff.length;a++){
+      var idx=aff[a];
+      var ni=COMMUNE_NEAREST[idx].c;
+      var pool=st[ni];
+      var nbs=nbIdx[ni];
+      for(var j=0;j<nbs.length;j++) pool+=st[nbs[j]];
+      var nv=covPct(pool,cisGh[ni]);
+      totalCov+=(nv-commCov[idx]);
+      commCov[idx]=nv;
+    }
+  }
+
+  /* Résultats par cisId et par zone */
+  var recById={};
+  var total=0;
+  for(var i=0;i<CIS.length;i++){
+    if(recruited[i]>0){recById[CIS[i].id]=recruited[i];total+=recruited[i];}
+  }
+  var byZone={};
+  for(var z=0;z<CARTE_ZONES.length;z++){
+    var zo=CARTE_ZONES[z];
+    var det=[],zt=0;
+    for(var c=0;c<zo.cis.length;c++){
+      var n=recById[zo.cis[c]]||0;
+      if(n>0){
+        var nom='?';
+        for(var k=0;k<CIS.length;k++){if(CIS[k].id===zo.cis[c]){nom=CIS[k].nom;break;}}
+        det.push({nom:nom,id:zo.cis[c],nb:n});
+      }
+      zt+=n;
+    }
+    det.sort(function(a,b){return b.nb-a.nb;});
+    byZone[zo.name]={total:zt,detail:det};
+  }
+
+  var finalState={};
+  for(var i=0;i<CIS.length;i++) finalState[CIS[i].id]=st[i];
+
+  return {
+    recruited:recById,
+    byZone:byZone,
+    total:total,
+    finalCov:Math.round(totalCov/COMMUNES.length*10)/10,
+    finalState:finalState
+  };
+}
+
 /* Algo greedy par vagues de 12 ISP */
 function computeRecruitWaves(){
   populateCisIsp();
+  BASE_H=parseInt(document.getElementById('baseHSlider').value)||36;
   /* État ISP de départ */
   var curIsp={};
   for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=CIS[i].actualIsp||0;
 
-  var TRAVEL_RADIUS=20;
+  var TRAVEL_RADIUS=parseInt(document.getElementById('travelSlider').value)||20;
   /* Pré-calculer la matrice de voisinage */
   var neighbors={};
   for(var i=0;i<CIS.length;i++){
@@ -2052,6 +2129,13 @@ function initRecruitTab(){
   /* Calculer vagues */
   _recruitWaves=computeRecruitWaves();
 
+  /* Calculer la cible globale (algo unifié, identique aux autres onglets) */
+  var rIspBase={};
+  for(var i=0;i<CIS.length;i++) rIspBase[CIS[i].id]=CIS[i].actualIsp||0;
+  var rTrav=parseInt(document.getElementById('travelSlider').value)||20;
+  var rTarg=parseInt(document.getElementById('coverSlider').value)||75;
+  window._globalRecruitResult=computeGlobalRecruitment(rIspBase, rTrav, rTarg);
+
   /* Boutons vagues */
   var btnHtml='';
   for(var w=0;w<_recruitWaves.length;w++){
@@ -2096,7 +2180,8 @@ function showWave(wIdx){
   _recruitMarkers=[];
 
   /* Calculer couverture des communes */
-  var covData=computeCommuneCoverage(wave.snap);
+  var rTravelR=parseInt(document.getElementById('travelSlider').value)||20;
+  var covData=computeCommuneCoverage(wave.snap, rTravelR);
 
   /* Stats globales */
   var totIsp=0; for(var k in wave.snap) totIsp+=wave.snap[k];
@@ -2105,10 +2190,16 @@ function showWave(wIdx){
   var above75=0,below50=0;
   for(var i=0;i<covData.length;i++){if(covData[i].cov>=75)above75++;if(covData[i].cov<50)below50++;}
 
+  /* Cible recrutement (algo unifié) */
+  var rTarget=parseInt(document.getElementById('coverSlider').value)||75;
+  var gRec=window._globalRecruitResult;
+  var gRecTotal=gRec?gRec.total:'?';
+
   document.getElementById('recruitGlobalKpi').innerHTML=
     '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+
     '<div style="flex:1;min-width:100px;background:var(--blue-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--blue);">'+totIsp+'</div><div style="font-size:.7em;color:var(--text-light);">ISP total</div></div>'+
-    '<div style="flex:1;min-width:100px;background:'+(avgCov>=75?'var(--green-light)':'var(--primary-light)')+';border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:'+(avgCov>=75?'var(--green)':'var(--primary)')+';">'+avgCov+'%</div><div style="font-size:.7em;color:var(--text-light);">Couv. moyenne</div></div>'+
+    '<div style="flex:1;min-width:100px;background:'+(avgCov>=75?'var(--green-light)':'var(--primary-light)')+';border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:'+(avgCov>=75?'var(--green)':'var(--primary)')+';">'+avgCov+'%</div><div style="font-size:.7em;color:var(--text-light);">Couv. moy. ('+rTravelR+'min)</div></div>'+
+    '<div style="flex:1;min-width:100px;background:var(--primary-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--primary);">+'+gRecTotal+'</div><div style="font-size:.7em;color:var(--text-light);">ISP cible ('+rTarget+'%, '+rTravelR+'min)</div></div>'+
     '<div style="flex:1;min-width:100px;background:var(--green-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--green);">'+above75+'</div><div style="font-size:.7em;color:var(--text-light);">Communes ≥75%</div></div>'+
     '<div style="flex:1;min-width:100px;background:var(--primary-light);border-radius:6px;padding:6px 10px;text-align:center;"><div style="font-size:1.3em;font-weight:800;color:var(--primary);">'+below50+'</div><div style="font-size:.7em;color:var(--text-light);">Communes <50%</div></div>'+
     '</div>';
@@ -2133,10 +2224,11 @@ function showWave(wIdx){
 
 function renderWaveSidebar(){
   if(!_recruitWaves) return;
+  var wTravelR=parseInt(document.getElementById('travelSlider').value)||20;
   var html='';
   for(var w=0;w<_recruitWaves.length;w++){
     var wave=_recruitWaves[w];
-    var covData=computeCommuneCoverage(wave.snap);
+    var covData=computeCommuneCoverage(wave.snap, wTravelR);
     var sumCov=0; for(var i=0;i<covData.length;i++) sumCov+=covData[i].cov;
     var avgCov=covData.length>0?Math.round(sumCov/covData.length*10)/10:0;
 
@@ -2200,7 +2292,7 @@ function renderWaveSidebar(){
       }
       html+='</table>';
       /* Impact */
-      var prevCov=computeCommuneCoverage(_recruitWaves[w-1].snap);
+      var prevCov=computeCommuneCoverage(_recruitWaves[w-1].snap, wTravelR);
       var prevSum=0; for(var i=0;i<prevCov.length;i++) prevSum+=prevCov[i].cov;
       var prevAvg=prevCov.length>0?Math.round(prevSum/prevCov.length*10)/10:0;
       var delta=Math.round((avgCov-prevAvg)*10)/10;
@@ -2265,8 +2357,9 @@ function updateSimulation(){
     return;
   }
 
-  var covBefore=computeCommuneCoverage(baseSnap);
-  var covAfter=computeCommuneCoverage(simSnap);
+  var simTR=parseInt(document.getElementById('travelSlider').value)||20;
+  var covBefore=computeCommuneCoverage(baseSnap, simTR);
+  var covAfter=computeCommuneCoverage(simSnap, simTR);
 
   /* Moyennes globales */
   var sB=0,sA=0;
@@ -2350,12 +2443,13 @@ function exportRecruitPDF(){
   /* ── Paramètres du modèle ── */
   doc.setTextColor(GRAY[0],GRAY[1],GRAY[2]);
   doc.setFontSize(8);doc.setFont('helvetica','italic');
-  doc.text('Modèle : '+H_MOIS+'h/mois à couvrir — '+BASE_H+'h/ISP/mois — Rayon de renfort : 20 min',M,y);
+  var pdfTR=parseInt(document.getElementById('travelSlider').value)||20;
+  doc.text('Modèle : '+H_MOIS+'h/mois à couvrir — '+BASE_H+'h/ISP/mois — Rayon de renfort : '+pdfTR+' min',M,y);
   y+=8;
 
   /* ══════ SITUATION ACTUELLE ══════ */
   var w0=_recruitWaves[0];
-  var cov0=computeCommuneCoverage(w0.snap);
+  var cov0=computeCommuneCoverage(w0.snap, pdfTR);
   var s0=0;for(var i=0;i<cov0.length;i++)s0+=cov0[i].cov;
   var avg0=Math.round(s0/cov0.length*10)/10;
   var tot0=0;for(var k in w0.snap)tot0+=w0.snap[k];
@@ -2376,7 +2470,7 @@ function exportRecruitPDF(){
   var prevAvg=avg0;
   for(var w=1;w<_recruitWaves.length;w++){
     var wave=_recruitWaves[w];
-    var covW=computeCommuneCoverage(wave.snap);
+    var covW=computeCommuneCoverage(wave.snap, pdfTR);
     var sW=0;for(var i=0;i<covW.length;i++)sW+=covW[i].cov;
     var avgW=Math.round(sW/covW.length*10)/10;
     var deltaW=Math.round((avgW-prevAvg)*10)/10;
@@ -2451,7 +2545,7 @@ function exportRecruitPDF(){
   /* ══════ RÉCAP FINAL ══════ */
   checkPage(35);
   var lastW=_recruitWaves[_recruitWaves.length-1];
-  var covF=computeCommuneCoverage(lastW.snap);
+  var covF=computeCommuneCoverage(lastW.snap, pdfTR);
   var sF=0;for(var i=0;i<covF.length;i++)sF+=covF[i].cov;
   var avgF=Math.round(sF/covF.length*10)/10;
   var totF=0;for(var k in lastW.snap)totF+=lastW.snap[k];
@@ -2549,8 +2643,8 @@ function exportRecruitPDF(){
     y+=4;
 
     /* Impact simulation */
-    var covSB=computeCommuneCoverage(w0.snap);
-    var covSA=computeCommuneCoverage(simSnap);
+    var covSB=computeCommuneCoverage(w0.snap, pdfTR);
+    var covSA=computeCommuneCoverage(simSnap, pdfTR);
     var sSB=0,sSA=0;
     for(var i=0;i<covSB.length;i++)sSB+=covSB[i].cov;
     for(var i=0;i<covSA.length;i++)sSA+=covSA[i].cov;
@@ -2620,6 +2714,7 @@ function renderRapport(){
   /* ── Objectif couverture depuis le slider Carte ── */
   var rptCp=parseInt(document.getElementById('coverSlider').value)||75;
   var rptTravel=parseInt(document.getElementById('travelSlider').value)||0;
+  BASE_H=parseInt(document.getElementById('baseHSlider').value)||36;
 
   /* ── Helpers ── */
   var RADIUS_20=20, RADIUS_40=40;
@@ -2658,52 +2753,14 @@ function renderRapport(){
   for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=CIS[i].actualIsp||0;
 
   /* ══════════════════════════════════════════════════════
-     ALGO GLOUTON pour calculer le besoin ISP département
-     Même algo que la carte : recrute 1 ISP au pire endroit,
-     recalcule tous les pools (cross-zone), recommence.
-     Le rayon de trajet impacte le résultat !
+     ALGO UNIFIÉ — Couverture COMMUNALE (226 communes).
+     Identique dans les 3 onglets. Le rayon de trajet
+     impacte le résultat (plus large = plus de mutualisation).
      ══════════════════════════════════════════════════════ */
-  function greedyNeed(ispBase, travelR, target){
-    var recruited={};
-    var cur={}; for(var k in ispBase) cur[k]=ispBase[k];
-    var nbr=neighbors(travelR);
-    function gPool(cid){var t=cur[cid]||0;var n=nbr[cid];for(var i=0;i<n.length;i++)t+=(cur[n[i]]||0);return t;}
-    function gCov(cid){var gh=0;for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cid)gh=gardeHMois(GARDE[g].zone);}return covPct(gPool(cid),gh);}
-    for(var iter=0;iter<400;iter++){
-      var worstId=null,worstVal=Infinity;
-      for(var z=0;z<CARTE_ZONES.length;z++){
-        var zo=CARTE_ZONES[z];
-        for(var i=0;i<zo.cis.length;i++){
-          var cc=gCov(zo.cis[i]);
-          if(cc<target&&cc<worstVal){worstVal=cc;worstId=zo.cis[i];}
-        }
-      }
-      if(worstId===null) break;
-      cur[worstId]=(cur[worstId]||0)+1;
-      recruited[worstId]=(recruited[worstId]||0)+1;
-    }
-    return recruited;
-  }
-
-  var greedyRec=greedyNeed(curIsp, rptTravel, rptCp);
-  /* Agrégation par zone */
-  var greedyByZone={}; /* zoneName → {total, detail:[{nom,id,nb}]} */
-  var gCib=0;
-  for(var z=0;z<CARTE_ZONES.length;z++){
-    var zo=CARTE_ZONES[z];
-    var det=[],zt=0;
-    for(var c=0;c<zo.cis.length;c++){
-      var nb=greedyRec[zo.cis[c]]||0;
-      if(nb>0){
-        var nom='?'; for(var k=0;k<CIS.length;k++){if(CIS[k].id===zo.cis[c]){nom=CIS[k].nom;break;}}
-        det.push({nom:nom,id:zo.cis[c],nb:nb});
-      }
-      zt+=nb;
-    }
-    det.sort(function(a,b){return b.nb-a.nb;});
-    greedyByZone[zo.name]={total:zt,detail:det};
-    gCib+=zt;
-  }
+  var grResult=computeGlobalRecruitment(curIsp, rptTravel, rptCp);
+  var grResult40=computeGlobalRecruitment(curIsp, 40, rptCp);
+  var greedyByZone=grResult.byZone;
+  var gCib=grResult.total;
 
   /* ── 5 pires communes à 20min et 40min ── */
   function worst5communes(st,nb){
@@ -2783,8 +2840,10 @@ function renderRapport(){
   h+='<td></td><td></td></tr>';
   h+='</tbody></table>';
   h+='<div style="font-size:.78em;color:var(--text-light);margin-top:6px;padding:6px 10px;background:var(--blue-light);border-radius:6px;">';
-  h+='\u2139\ufe0f Algorithme glouton avec mutualisation cross-zone (rayon '+rptTravel+' min, '+BASE_H+'h/ISP, objectif '+rptCp+'%). ';
-  h+='Chaque recrue renforce le pool de toutes les casernes voisines.</div>';
+  h+='\u2139\ufe0f Algo unifi\u00e9 (identique Carte / Recrutement / Rapport) bas\u00e9 sur la <strong>couverture communale</strong> (226 communes). ';
+  h+='Rayon '+rptTravel+' min \u2192 <strong>+'+gCib+' ISP</strong>';
+  if(rptTravel!==40) h+=' \u2014 Rayon 40 min \u2192 <strong>+'+grResult40.total+' ISP</strong>';
+  h+=' ('+BASE_H+'h/ISP, objectif '+rptCp+'%).</div>';
   document.getElementById('rapportEffectifTable').innerHTML=h;
 
   /* Injecter les tooltips communes dans les <th> */
@@ -2799,13 +2858,20 @@ function renderRapport(){
 
   /* ── KPI globaux ── */
   var nz=CARTE_ZONES.length;
-  var allC20=0,allC40=0;
-  for(var z=0;z<nz;z++){allC20+=zoneCov(CARTE_ZONES[z],curIsp,NB20);allC40+=zoneCov(CARTE_ZONES[z],curIsp,NB40);}
-  allC20=Math.round(allC20/nz*10)/10; allC40=Math.round(allC40/nz*10)/10;
+  /* Couverture communale actuelle */
+  var covNow=computeCommuneCoverage(curIsp, rptTravel);
+  var covSum=0; for(var i=0;i<covNow.length;i++) covSum+=covNow[i].cov;
+  var covAvg=Math.round(covSum/covNow.length*10)/10;
+  var covNow40=computeCommuneCoverage(curIsp, 40);
+  var covSum40=0; for(var i=0;i<covNow40.length;i++) covSum40+=covNow40[i].cov;
+  var covAvg40=Math.round(covSum40/covNow40.length*10)/10;
+
   document.getElementById('rapportKpi').innerHTML=
-    sc(gCur,'ISP actuels','blue')+sc(gCib>0?'+'+gCib:'0','ISP à recruter ('+rptCp+'%, '+rptTravel+'min)',gCib>0?'red':'green')+
-    sc(allC20+'%','Couv. moy. 20min',allC20>=rptCp?'green':'red')+
-    sc(allC40+'%','Couv. moy. 40min',allC40>=rptCp?'green':'red');
+    sc(gCur,'ISP actuels','blue')+
+    sc(covAvg+'%','Couv. communale ('+rptTravel+'min)',covAvg>=rptCp?'green':'red')+
+    sc(gCib>0?'+'+gCib:'0','À recruter ('+rptCp+'%, '+rptTravel+'min)',gCib>0?'red':'green')+
+    sc(grResult40.total>0?'+'+grResult40.total:'0','À recruter ('+rptCp+'%, 40min)',grResult40.total>0?'orange':'green')+
+    sc(covAvg40+'%','Couv. communale (40min)',covAvg40>=rptCp?'green':'red');
 
   /* ══════════════════════════════════════
      2. Vagues de recrutement priorisées
