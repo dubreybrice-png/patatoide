@@ -2651,41 +2651,63 @@ function renderRapport(){
   var curIsp={};
   for(var i=0;i<CIS.length;i++) curIsp[CIS[i].id]=CIS[i].actualIsp||0;
 
+  /* ── Rayon de trajet depuis le slider Carte ── */
+  var rptTravel=parseInt(document.getElementById('travelSlider').value)||0;
+
+  /* Voisinage au rayon de trajet choisi (pour le pool opérationnel) */
+  var NBT=neighbors(rptTravel);
+
+  /* Pool opérationnel par caserne (à rptTravel) */
+  function cisPoolT(cid){return pool(cid,curIsp,NBT);}
+  function cisCovT(cid){
+    var gh=0;
+    for(var g=0;g<GARDE.length;g++){if(GARDE[g].cis===cid) gh=gardeHMois(GARDE[g].zone);}
+    return covPct(cisPoolT(cid),gh);
+  }
+
   /* ── 1. Tableau effectifs actuels ── */
-  var h='<table class="rpt-table"><thead><tr><th>Caserne</th><th>Secteur</th><th>ISP actuels</th><th>ISP cible</th><th>Écart</th><th>Couv. 20min</th><th>Couv. 40min</th></tr></thead><tbody>';
+  /* Le besoin ISP est calculé PAR ZONE (pas par caserne) car les ISP se mutualisent */
+  var h='<table class="rpt-table"><thead><tr><th>Caserne</th><th>Secteur</th><th>ISP actuels</th><th>Pool ('+rptTravel+'min)</th><th>Couv. pool</th><th>Couv. 20min</th><th>Couv. 40min</th></tr></thead><tbody>';
   var gCur=0,gCib=0;
   for(var z=0;z<CARTE_ZONES.length;z++){
     var zo=CARTE_ZONES[z];
-    h+='<tr class="rpt-zone-header"><td colspan="7" style="border-left:4px solid '+zo.color+';">'+esc(zo.name)+' ('+zo.cis.length+' CIS)</td></tr>';
-    var zCur=0,zCib=0;
+    var zGh=gardeHMois(zo.name);
+    var zCib=needISP(rptCp,zGh);  /* besoin ZONE (pas par caserne !) */
+    h+='<tr class="rpt-zone-header"><td colspan="7" style="border-left:4px solid '+zo.color+';">'+esc(zo.name)+' ('+zo.cis.length+' CIS) — Besoin zone : <strong>'+zCib+' ISP</strong>'+(zGh>0?' (garde '+zGh+'h)':'')+'</td></tr>';
+    var zCur=0;
     for(var c=0;c<zo.cis.length;c++){
       var obj=null; for(var k=0;k<CIS.length;k++){if(CIS[k].id===zo.cis[c]){obj=CIS[k];break;}}
       if(!obj)continue;
-      var cur=curIsp[obj.id]||0, cib=needISP(rptCp,0);
-      var delta=cur-cib;
+      var cur=curIsp[obj.id]||0;
+      var pl=Math.round(cisPoolT(obj.id));
+      var covT=cisCovT(obj.id);
+      var covTcls=covT>=rptCp?'ok':(covT>=50?'warn':'crit');
       var c20=cisCovR(obj.id,curIsp,NB20), c40=cisCovR(obj.id,curIsp,NB40);
       var c20cls=c20>=75?'ok':(c20>=50?'warn':'crit');
       var c40cls=c40>=75?'ok':(c40>=50?'warn':'crit');
       h+='<tr><td><strong>'+esc(obj.nom)+'</strong></td>';
       h+='<td style="color:'+zo.color+';font-weight:600;">'+esc(zo.name)+'</td>';
-      h+='<td>'+cur+'</td><td>'+cib+'</td>';
-      h+='<td class="'+(delta>=0?'rpt-delta-pos':'rpt-delta-neg')+'">'+(delta>=0?'+':'')+delta+'</td>';
+      h+='<td>'+cur+'</td>';
+      h+='<td>'+pl+'</td>';
+      h+='<td><span class="rpt-cov '+covTcls+'">'+covT+'%</span></td>';
       h+='<td><span class="rpt-cov '+c20cls+'">'+c20+'%</span></td>';
       h+='<td><span class="rpt-cov '+c40cls+'">'+c40+'%</span></td></tr>';
-      zCur+=cur; zCib+=cib;
+      zCur+=cur;
     }
     var zd=zCur-zCib;
     var zc20=zoneCov(zo,curIsp,NB20), zc40=zoneCov(zo,curIsp,NB40);
-    h+='<tr class="rpt-subtotal"><td>Sous-total '+esc(zo.name)+'</td><td></td><td>'+zCur+'</td><td>'+zCib+'</td>';
-    h+='<td class="'+(zd>=0?'rpt-delta-pos':'rpt-delta-neg')+'">'+(zd>=0?'+':'')+zd+'</td>';
+    h+='<tr class="rpt-subtotal"><td>Sous-total '+esc(zo.name)+'</td><td></td><td>'+zCur+'</td><td colspan="2" style="text-align:center;"><strong>'+zCib+' nécessaires</strong></td>';
     h+='<td><span class="rpt-cov '+(zc20>=75?'ok':(zc20>=50?'warn':'crit'))+'">'+zc20+'%</span></td>';
     h+='<td><span class="rpt-cov '+(zc40>=75?'ok':(zc40>=50?'warn':'crit'))+'">'+zc40+'%</span></td></tr>';
     gCur+=zCur; gCib+=zCib;
   }
   var gd=gCur-gCib;
-  h+='<tr style="background:var(--text);color:#fff;font-weight:800;"><td>TOTAL</td><td></td><td>'+gCur+'</td><td>'+gCib+'</td>';
-  h+='<td>'+(gd>=0?'+':'')+gd+'</td><td></td><td></td></tr>';
+  h+='<tr style="background:var(--text);color:#fff;font-weight:800;"><td>TOTAL</td><td></td><td>'+gCur+'</td><td colspan="2" style="text-align:center;">'+gCib+' nécessaires</td><td></td><td></td></tr>';
   h+='</tbody></table>';
+  h+='<div style="font-size:.78em;color:var(--text-light);margin-top:6px;padding:6px 10px;background:var(--blue-light);border-radius:6px;">';
+  h+='\u2139\ufe0f Le besoin ISP est calcul\u00e9 <strong>par zone</strong> (pas par caserne) car les ISP se mutualisent dans le rayon de trajet. ';
+  h+='720h/mois \u00f7 '+BASE_H+'h/ISP \u00d7 '+rptCp+'% = <strong>'+needISP(rptCp,0)+' ISP par zone</strong>. ';
+  h+='Avec '+CARTE_ZONES.length+' zones : '+gCib+' ISP au total.</div>';
   document.getElementById('rapportEffectifTable').innerHTML=h;
 
   /* ── KPI globaux ── */
