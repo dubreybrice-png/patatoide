@@ -1885,9 +1885,9 @@ function renderZones(){
   document.getElementById('zoneTotals').innerHTML=synthHtml;
 }
 
-function updateCoverage(v){document.getElementById('coverTarget').textContent=v;renderZones();}
-function updateTravel(v){document.getElementById('travelTarget').textContent=v;renderZones();}
-function updateBaseH(v){document.getElementById('baseHTarget').textContent=v;renderZones();}
+function updateCoverage(v){document.getElementById('coverTarget').textContent=v;renderZones();window._rapportRendered=false;}
+function updateTravel(v){document.getElementById('travelTarget').textContent=v;renderZones();window._rapportRendered=false;}
+function updateBaseH(v){document.getElementById('baseHTarget').textContent=v;renderZones();window._rapportRendered=false;}
 
 /* ═══════════════════════════════════════════════════════
    ONGLET 3 — RECRUTEMENT PAR VAGUES
@@ -2610,6 +2610,9 @@ function renderRapport(){
   populateCisIsp();
   window._rptWaveStates=[];
 
+  /* ── Objectif couverture depuis le slider Carte ── */
+  var rptCp=parseInt(document.getElementById('coverSlider').value)||75;
+
   /* ── Helpers ── */
   var RADIUS_20=20, RADIUS_40=40;
 
@@ -2658,7 +2661,7 @@ function renderRapport(){
     for(var c=0;c<zo.cis.length;c++){
       var obj=null; for(var k=0;k<CIS.length;k++){if(CIS[k].id===zo.cis[c]){obj=CIS[k];break;}}
       if(!obj)continue;
-      var cur=curIsp[obj.id]||0, cib=needISP(75,0);
+      var cur=curIsp[obj.id]||0, cib=needISP(rptCp,0);
       var delta=cur-cib;
       var c20=cisCovR(obj.id,curIsp,NB20), c40=cisCovR(obj.id,curIsp,NB40);
       var c20cls=c20>=75?'ok':(c20>=50?'warn':'crit');
@@ -2690,10 +2693,10 @@ function renderRapport(){
   for(var z=0;z<nz;z++){allC20+=zoneCov(CARTE_ZONES[z],curIsp,NB20);allC40+=zoneCov(CARTE_ZONES[z],curIsp,NB40);}
   allC20=Math.round(allC20/nz*10)/10; allC40=Math.round(allC40/nz*10)/10;
   document.getElementById('rapportKpi').innerHTML=
-    sc(gCur,'ISP actuels','blue')+sc(gCib,'ISP cible (75%)','green')+
+    sc(gCur,'ISP actuels','blue')+sc(gCib,'ISP cible ('+rptCp+'%)','green')+
     sc((gd>=0?'+':'')+gd,'Écart global',gd>=0?'green':'red')+
-    sc(allC20+'%','Couv. moy. 20min',allC20>=75?'green':'red')+
-    sc(allC40+'%','Couv. moy. 40min',allC40>=75?'green':'red');
+    sc(allC20+'%','Couv. moy. 20min',allC20>=rptCp?'green':'red')+
+    sc(allC40+'%','Couv. moy. 40min',allC40>=rptCp?'green':'red');
 
   /* ══════════════════════════════════════
      2. Vagues de recrutement priorisées
