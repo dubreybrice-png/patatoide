@@ -169,6 +169,29 @@
   .rpt-map-legend{display:flex;align-items:center;gap:12px;padding:10px 20px;background:#f8f9fa;border-top:1px solid #eee;font-size:.82em;font-weight:600;color:var(--text);}
   .rpt-map-legend-bar{flex:1;height:16px;border-radius:6px;background:linear-gradient(90deg,hsl(120,70%,45%),hsl(90,65%,48%),hsl(60,65%,50%),hsl(30,65%,48%),hsl(0,70%,50%));}
   .rpt-map-legend-labels{display:flex;justify-content:space-between;font-size:.75em;color:#888;margin-top:2px;}
+
+  /* Simultanéité tab */
+  .sim-tab-wrap{overflow-x:auto;}
+  .sim-table{border-collapse:collapse;font-size:.78em;width:100%;min-width:700px;}
+  .sim-table th,.sim-table td{padding:6px 10px;text-align:center;border:1px solid var(--border);white-space:nowrap;}
+  .sim-table th{background:var(--bg);font-weight:700;position:sticky;top:0;z-index:2;}
+  .sim-table th.sim-centre{text-align:left;min-width:160px;position:sticky;left:0;z-index:3;background:var(--bg);}
+  .sim-table td.sim-centre{text-align:left;font-weight:700;position:sticky;left:0;z-index:1;background:#fff;}
+  .sim-table tr:hover td{background:#f8f9fc;}
+  .sim-table tr:hover td.sim-centre{background:#f0f2f5;}
+  .sim-table .sim-zone-row td{background:var(--text);color:#fff;font-weight:800;font-size:.9em;}
+  .sim-table .sim-total-row td{background:#1d4ed8;color:#fff;font-weight:800;}
+  .sim-cell-0{background:#fde8ea !important;color:#e63946;font-weight:700;}
+  .sim-cell-1{background:#fdf0ec !important;color:#e76f51;font-weight:600;}
+  .sim-cell-ok{background:#f0faf8 !important;color:#2a9d8f;}
+  .sim-pct{font-size:.72em;color:#999;display:block;}
+  .sim-filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;}
+  .sim-filter-bar label{font-size:.85em;font-weight:600;color:var(--text);}
+  .sim-filter-bar select{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:.85em;font-family:inherit;background:var(--card);color:var(--text);cursor:pointer;}
+  .sim-filter-bar select:focus{border-color:var(--primary);outline:none;}
+  .sim-toggle{display:flex;gap:4px;}
+  .sim-toggle button{padding:6px 14px;border:2px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-size:.82em;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
+  .sim-toggle button.active{background:var(--primary);color:#fff;border-color:var(--primary);}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -185,6 +208,7 @@
     <button class="tab-btn" data-tab="carte" onclick="switchTab('carte')">🗺️ Carte</button>
     <button class="tab-btn" data-tab="recruit" onclick="switchTab('recruit')">📈 Recrutement</button>
     <button class="tab-btn" data-tab="rapport" onclick="switchTab('rapport')">📋 Rapport</button>
+    <button class="tab-btn" data-tab="simult" onclick="switchTab('simult')">⏱️ Simultanéité</button>
   </div>
 </div>
 
@@ -374,6 +398,26 @@
       </div>
     </div>
   </div>
+</div>
+
+<div id="viewSimult" style="display:none;">
+<div class="container">
+  <div class="section-sep">⏱️ Simultanéité — Heures par nombre d'ISP présents</div>
+  <div class="stat-row" id="simultKpi"></div>
+  <div class="card">
+    <div class="card-title">📊 Distribution des heures par caserne et nombre d'ISP simultanés</div>
+    <div class="sim-filter-bar">
+      <label>Affichage :</label>
+      <div class="sim-toggle" id="simultModeToggle">
+        <button class="active" onclick="setSimultMode('heures')">Heures</button>
+        <button onclick="setSimultMode('pct')">%</button>
+      </div>
+      <label style="margin-left:16px;">Secteur :</label>
+      <select id="simultZoneFilter" onchange="renderSimultTable()"><option value="all">Tous les secteurs</option></select>
+    </div>
+    <div class="sim-tab-wrap" id="simultTableWrap"></div>
+  </div>
+</div>
 </div>
 
 <div id="viewRapport" style="display:none;">
@@ -802,11 +846,13 @@ function switchTab(tab){
   document.getElementById('viewCarte').style.display=tab==='carte'?'':'none';
   document.getElementById('viewRecruit').style.display=tab==='recruit'?'':'none';
   document.getElementById('viewRapport').style.display=tab==='rapport'?'':'none';
+  document.getElementById('viewSimult').style.display=tab==='simult'?'':'none';
   var btns=document.querySelectorAll('.tab-btn');
   for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',btns[i].getAttribute('data-tab')===tab);
   if(tab==='carte'){if(!window._mapObj)setTimeout(initCarte,120);else window._mapObj.invalidateSize();}
   if(tab==='recruit'){if(!window._recruitMapObj)setTimeout(initRecruitTab,120);else window._recruitMapObj.invalidateSize();}
   if(tab==='rapport'&&!window._rapportRendered){window._rapportRendered=true;setTimeout(renderRapport,50);}
+  if(tab==='simult'&&!window._simultRendered){window._simultRendered=true;setTimeout(renderSimultaneite,50);}
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2827,6 +2873,191 @@ function showRptCovMap(waveIdx){
       }).addTo(map);
     }
   },200);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIMULTANÉITÉ — Heures par nb d'ISP par caserne
+   Utilise DATA.slotsByCentre (créneaux 30min par centre)
+   ═══════════════════════════════════════════════════════ */
+window._simultMode='heures';
+window._simultData=null;
+
+function setSimultMode(mode){
+  window._simultMode=mode;
+  var btns=document.querySelectorAll('#simultModeToggle button');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',btns[i].textContent===(mode==='heures'?'Heures':'%'));
+  renderSimultTable();
+}
+
+function renderSimultaneite(){
+  if(!DATA||!DATA.slotsByCentre) return;
+  var sbc=DATA.slotsByCentre;
+  var totalSlots=sbc.totalSlots, slotMs=sbc.slotMs, minTs=sbc.minTs, maxTs=sbc.maxTs;
+  if(!totalSlots||totalSlots<=0) return;
+
+  /* Map centre name → CIS id via CENTRE_TO_CIS + fuzzy */
+  function centreToZone(centreName){
+    var cn=centreName.toLowerCase().replace(/[-_]/g,' ').trim();
+    var cisId=CENTRE_TO_CIS[cn];
+    if(!cisId){
+      for(var k in CENTRE_TO_CIS){
+        if(cn.indexOf(k)!==-1||k.indexOf(cn)!==-1){cisId=CENTRE_TO_CIS[k];break;}
+      }
+    }
+    if(!cisId) return null;
+    for(var z=0;z<CARTE_ZONES.length;z++){
+      if(CARTE_ZONES[z].cis.indexOf(cisId)!==-1) return CARTE_ZONES[z];
+    }
+    return null;
+  }
+
+  /* Build per-centre distribution */
+  var centreData=[];
+  var globalMax=0;
+  for(var ci=0;ci<sbc.centres.length;ci++){
+    var c=sbc.centres[ci];
+    var dist={};
+    var slotsWithData=0, maxN=0;
+    for(var ts in c.slots){
+      var n=c.slots[ts];
+      dist[n]=(dist[n]||0)+1;
+      slotsWithData++;
+      if(n>maxN) maxN=n;
+    }
+    /* Créneaux avec 0 ISP */
+    var slotsZero=totalSlots-slotsWithData;
+    if(slotsZero<0) slotsZero=0;
+    dist[0]=slotsZero;
+    if(maxN>globalMax) globalMax=maxN;
+
+    var zone=centreToZone(c.name);
+    centreData.push({
+      name:c.name,
+      zone:zone,
+      zoneName:zone?zone.name:'Autres',
+      zoneColor:zone?zone.color:'#999',
+      dist:dist,
+      maxN:maxN,
+      totalSlots:totalSlots
+    });
+  }
+
+  /* Sort by zone then by name */
+  var zoneOrder={};
+  for(var z=0;z<CARTE_ZONES.length;z++) zoneOrder[CARTE_ZONES[z].name]=z;
+  centreData.sort(function(a,b){
+    var za=zoneOrder[a.zoneName]!==undefined?zoneOrder[a.zoneName]:999;
+    var zb=zoneOrder[b.zoneName]!==undefined?zoneOrder[b.zoneName]:999;
+    if(za!==zb) return za-zb;
+    return a.name.localeCompare(b.name);
+  });
+
+  window._simultData={centreData:centreData,globalMax:globalMax,totalSlots:totalSlots};
+
+  /* Populate zone filter */
+  var sel=document.getElementById('simultZoneFilter');
+  sel.innerHTML='<option value="all">Tous les secteurs</option>';
+  var seenZones={};
+  for(var i=0;i<centreData.length;i++){
+    var zn=centreData[i].zoneName;
+    if(!seenZones[zn]){seenZones[zn]=true;sel.innerHTML+='<option value="'+esc(zn)+'">'+esc(zn)+'</option>';}
+  }
+
+  /* KPI */
+  var totalH=Math.round(totalSlots*Config_SLOT/60);
+  var dept0=0;
+  /* Dept-level 0 ISP = slots where ALL centres have 0 */
+  /* Simpler: sum centre 0-ISP hours / nb centres for average */
+  var sumZeroH=0;
+  for(var i=0;i<centreData.length;i++) sumZeroH+=Math.round((centreData[i].dist[0]||0)*Config_SLOT/60*10)/10;
+  var avgZeroH=centreData.length>0?Math.round(sumZeroH/centreData.length*10)/10:0;
+  var maxZeroH=0,maxZeroCentre='';
+  for(var i=0;i<centreData.length;i++){
+    var zh=Math.round((centreData[i].dist[0]||0)*Config_SLOT/60*10)/10;
+    if(zh>maxZeroH){maxZeroH=zh;maxZeroCentre=centreData[i].name;}
+  }
+
+  document.getElementById('simultKpi').innerHTML=
+    sc(centreData.length,'Casernes analysées','blue')+
+    sc(totalH+'h','Période totale','green')+
+    sc(avgZeroH+'h','Moy. heures à 0 ISP/caserne','red')+
+    sc(maxZeroH+'h','Max 0 ISP ('+maxZeroCentre+')','red')+
+    sc(globalMax+' ISP','Simultanéité max observée','blue');
+
+  renderSimultTable();
+}
+
+var Config_SLOT=30; /* minutes per slot */
+
+function renderSimultTable(){
+  var sd=window._simultData;
+  if(!sd) return;
+  var mode=window._simultMode;
+  var zoneFilter=document.getElementById('simultZoneFilter').value;
+  var data=sd.centreData;
+  var gMax=sd.globalMax;
+  var totalSlots=sd.totalSlots;
+
+  /* Filter by zone */
+  var filtered=zoneFilter==='all'?data:data.filter(function(c){return c.zoneName===zoneFilter;});
+  if(!filtered.length){document.getElementById('simultTableWrap').innerHTML='<div style="color:var(--text-light);padding:20px;text-align:center;">Aucune caserne dans ce secteur.</div>';return;}
+
+  /* Find actual max ISP in filtered set */
+  var maxCol=0;
+  for(var i=0;i<filtered.length;i++){if(filtered[i].maxN>maxCol)maxCol=filtered[i].maxN;}
+  maxCol=Math.max(maxCol,5); /* at least show columns 0-5 */
+
+  /* Build table */
+  var h='<table class="sim-table"><thead><tr><th class="sim-centre">Caserne</th><th>Secteur</th>';
+  for(var n=0;n<=maxCol;n++) h+='<th>'+n+' ISP</th>';
+  h+='</tr></thead><tbody>';
+
+  var prevZone='';
+  /* Global totals */
+  var colTotals=[];
+  for(var n=0;n<=maxCol;n++) colTotals.push(0);
+
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i];
+
+    /* Zone separator */
+    if(zoneFilter==='all'&&c.zoneName!==prevZone){
+      prevZone=c.zoneName;
+      h+='<tr class="sim-zone-row"><td colspan="'+(maxCol+3)+'" style="border-left:4px solid '+c.zoneColor+';">'+esc(c.zoneName)+'</td></tr>';
+    }
+
+    h+='<tr><td class="sim-centre">'+esc(c.name)+'</td>';
+    h+='<td style="color:'+c.zoneColor+';font-weight:600;font-size:.82em;">'+esc(c.zoneName)+'</td>';
+
+    for(var n=0;n<=maxCol;n++){
+      var slots=c.dist[n]||0;
+      colTotals[n]+=slots;
+      var heures=Math.round(slots*Config_SLOT/60*10)/10;
+      var pct=totalSlots>0?Math.round(slots/totalSlots*1000)/10:0;
+      var cls=n===0?'sim-cell-0':(n===1?'sim-cell-1':(n>=3?'sim-cell-ok':''));
+      var val=mode==='heures'?heures+'h':pct+'%';
+      var sub=mode==='heures'?'<span class="sim-pct">'+pct+'%</span>':'';
+      h+='<td class="'+cls+'">'+val+sub+'</td>';
+    }
+    h+='</tr>';
+  }
+
+  /* Total row */
+  if(filtered.length>1){
+    var nbC=filtered.length;
+    h+='<tr class="sim-total-row"><td class="sim-centre" style="background:#1d4ed8;color:#fff;">MOYENNE ('+nbC+' casernes)</td><td></td>';
+    for(var n=0;n<=maxCol;n++){
+      var avgSlots=Math.round(colTotals[n]/nbC);
+      var avgH=Math.round(avgSlots*Config_SLOT/60*10)/10;
+      var avgPct=totalSlots>0?Math.round(avgSlots/totalSlots*1000)/10:0;
+      var val=mode==='heures'?avgH+'h':avgPct+'%';
+      h+='<td>'+val+'</td>';
+    }
+    h+='</tr>';
+  }
+
+  h+='</tbody></table>';
+  document.getElementById('simultTableWrap').innerHTML=h;
 }
 </script>
 </body>
