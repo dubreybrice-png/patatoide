@@ -197,6 +197,15 @@
   .sim-table th.sortable .sort-arrow{font-size:.7em;margin-left:3px;opacity:.4;}
   .sim-table th.sortable.sorted .sort-arrow{opacity:1;color:var(--primary);}
   .sim-cell-ge2{background:#e6f5f3 !important;color:#1d4ed8;font-weight:700;}
+  /* Tooltip ISP on centre hover */
+  .sim-centre-wrap{position:relative;cursor:pointer;}
+  .sim-centre-wrap .sim-tooltip{display:none;position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:8px;background:#1e293b;color:#f1f5f9;border-radius:10px;padding:10px 14px;min-width:240px;max-width:340px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:.82em;white-space:nowrap;pointer-events:none;}
+  .sim-centre-wrap:hover .sim-tooltip{display:block;}
+  .sim-tooltip-title{font-weight:800;font-size:1.05em;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:5px;}
+  .sim-tooltip-row{display:flex;justify-content:space-between;gap:12px;padding:2px 0;}
+  .sim-tooltip-row span:first-child{color:#cbd5e1;}
+  .sim-tooltip-row span:last-child{font-weight:700;color:#38bdf8;}
+  .sim-tooltip-total{margin-top:6px;border-top:1px solid rgba(255,255,255,.15);padding-top:5px;font-weight:800;color:#34d399;text-align:right;}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -2957,7 +2966,20 @@ function renderSimultaneite(){
     return a.name.localeCompare(b.name);
   });
 
-  window._simultData={centreData:centreData,globalMax:globalMax,totalSlots:totalSlots};
+  /* Build ISP list per centre from tempsStats */
+  var ispByCentre={};
+  if(DATA.tempsStats&&DATA.tempsStats.byISP){
+    for(var j=0;j<DATA.tempsStats.byISP.length;j++){
+      var isp=DATA.tempsStats.byISP[j];
+      var cn=isp.centre||'Inconnu';
+      if(!ispByCentre[cn]) ispByCentre[cn]=[];
+      ispByCentre[cn].push({nom:isp.nom,prenom:isp.prenom,heures:isp.heuresTotal});
+    }
+  }
+  /* Sort each centre's ISP list by hours desc */
+  for(var cn in ispByCentre) ispByCentre[cn].sort(function(a,b){return b.heures-a.heures;});
+
+  window._simultData={centreData:centreData,globalMax:globalMax,totalSlots:totalSlots,ispByCentre:ispByCentre};
 
   /* Populate zone filter */
   var sel=document.getElementById('simultZoneFilter');
@@ -3071,7 +3093,19 @@ function renderSimultTable(){
       h+='<tr class="sim-zone-row"><td colspan="'+nbTotalCols+'" style="border-left:4px solid '+c.zoneColor+';">'+esc(c.zoneName)+'</td></tr>';
     }
 
-    h+='<tr><td class="sim-centre">'+esc(c.name)+'</td>';
+    /* Build tooltip HTML for this centre */
+    var ttHtml='';
+    var ispList=sd.ispByCentre&&sd.ispByCentre[c.name]?sd.ispByCentre[c.name]:[];
+    if(ispList.length){
+      ttHtml='<div class="sim-tooltip"><div class="sim-tooltip-title">'+esc(c.name)+' — '+ispList.length+' ISP</div>';
+      var ttTotalH=0;
+      for(var j=0;j<ispList.length;j++){
+        ttTotalH+=ispList[j].heures;
+        ttHtml+='<div class="sim-tooltip-row"><span>'+esc(ispList[j].prenom+' '+ispList[j].nom)+'</span><span>'+ispList[j].heures+'h</span></div>';
+      }
+      ttHtml+='<div class="sim-tooltip-total">Total : '+Math.round(ttTotalH*10)/10+'h</div></div>';
+    }
+    h+='<tr><td class="sim-centre"><div class="sim-centre-wrap">'+esc(c.name)+ttHtml+'</div></td>';
     h+='<td style="color:'+c.zoneColor+';font-weight:600;font-size:.82em;">'+esc(c.zoneName)+'</td>';
 
     for(var n=0;n<=maxCol;n++){
