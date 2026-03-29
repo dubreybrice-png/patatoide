@@ -222,6 +222,29 @@
   .dist-tooltip .dtt-row span:first-child{color:#cbd5e1;}
   .dist-tooltip .dtt-row span:last-child{font-weight:700;color:#38bdf8;}
   .dist-tooltip .dtt-more{color:#94a3b8;font-size:.85em;margin-top:4px;font-style:italic;}
+
+  /* Présentation tab */
+  .pres-subtab-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .pres-subtab{padding:10px 20px;border:2px solid var(--border);border-radius:10px;cursor:pointer;font-weight:700;font-size:.88em;background:var(--card);color:var(--text);transition:all .2s;font-family:inherit;}
+  .pres-subtab:hover{border-color:var(--primary);color:var(--primary);}
+  .pres-subtab.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .pres-view{display:none;}
+  .pres-view.active{display:block;}
+  .pres-block{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 24px;margin-bottom:20px;}
+  .pres-block-title{font-size:1.05em;font-weight:700;margin-bottom:14px;color:var(--primary);display:flex;align-items:center;gap:8px;}
+  .pres-conclusion{background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-left:4px solid var(--primary);border-radius:8px;padding:16px 20px;margin-top:16px;font-size:.9em;line-height:1.6;}
+  .pres-conclusion strong{color:var(--primary);}
+  .pres-map{height:450px;border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
+  .pres-zone-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:16px;}
+  .pres-zone-card{background:var(--bg);border-radius:8px;padding:14px;text-align:center;border:2px solid transparent;transition:all .2s;}
+  .pres-zone-card .pzv{font-size:1.6em;font-weight:800;line-height:1.1;}
+  .pres-zone-card .pzl{font-size:.78em;color:var(--text-light);margin-top:3px;}
+  .pres-zone-card.red{border-color:var(--primary);} .pres-zone-card.red .pzv{color:var(--primary);}
+  .pres-zone-card.blue{border-color:var(--blue);} .pres-zone-card.blue .pzv{color:var(--blue);}
+  .pres-zone-card.green{border-color:var(--green);} .pres-zone-card.green .pzv{color:var(--green);}
+  .pres-zone-card.orange{border-color:var(--orange);} .pres-zone-card.orange .pzv{color:var(--orange);}
+  .pres-zone-card.purple{border-color:var(--purple);} .pres-zone-card.purple .pzv{color:var(--purple);}
+  .isp-marker-label{background:none!important;border:none!important;box-shadow:none!important;color:#fff;font-weight:800;font-size:11px;text-shadow:0 0 3px #000,0 0 3px #000;}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -239,6 +262,7 @@
     <button class="tab-btn" data-tab="recruit" onclick="switchTab('recruit')">📈 Recrutement</button>
     <button class="tab-btn" data-tab="rapport" onclick="switchTab('rapport')">📋 Rapport</button>
     <button class="tab-btn" data-tab="simult" onclick="switchTab('simult')">⏱️ Simultanéité</button>
+    <button class="tab-btn" data-tab="presentation" onclick="switchTab('presentation')">🎯 Présentation</button>
   </div>
 </div>
 
@@ -462,6 +486,20 @@
 </div>
 </div>
 
+<div id="viewPresentation" style="display:none;">
+<div class="container">
+  <div class="section-sep">🎯 Présentation — Données directionnelles ISP</div>
+  <div class="pres-subtab-bar">
+    <button class="pres-subtab active" data-sub="garde" onclick="switchPresSubTab('garde')">📊 Garde actuelle et évolutions</button>
+    <button class="pres-subtab" data-sub="nuit" onclick="switchPresSubTab('nuit')">🌙 Activité de nuit</button>
+    <button class="pres-subtab" data-sub="situation" onclick="switchPresSubTab('situation')">🗺️ Situation actuelle des ISP</button>
+  </div>
+  <div id="presGarde" class="pres-view active"></div>
+  <div id="presNuit" class="pres-view"></div>
+  <div id="presSituation" class="pres-view"></div>
+</div>
+</div>
+
 <script>
 var DATA=null, charts={}, sortStates={};
 
@@ -545,11 +583,46 @@ function renderCoverDept(){
   }
   mkChart('coverDeptChart','bar',labels,vals,'% du temps',colors);
 
+  /* Build ISP-per-N tooltips from slotsByCentre (all centres = department) */
+  var sbc=DATA.slotsByCentre, ispNames=sbc?(sbc.ispNames||[]):[], slotDur=30;
+  var deptSlotIsps={}, deptSlotCounts={};
+  if(sbc&&sbc.centres){
+    for(var ci=0;ci<sbc.centres.length;ci++){
+      var c=sbc.centres[ci];
+      for(var ts in c.slots) deptSlotCounts[ts]=(deptSlotCounts[ts]||0)+c.slots[ts];
+      if(c.slotIsps) for(var ts in c.slotIsps){
+        if(!deptSlotIsps[ts]) deptSlotIsps[ts]=[];
+        for(var j=0;j<c.slotIsps[ts].length;j++) deptSlotIsps[ts].push(c.slotIsps[ts][j]);
+      }
+    }
+  }
+  var ispByN={};
+  for(var ts in deptSlotCounts){
+    var n=deptSlotCounts[ts];
+    if(n>0&&deptSlotIsps[ts]){
+      if(!ispByN[n]) ispByN[n]={};
+      for(var j=0;j<deptSlotIsps[ts].length;j++){var idx=deptSlotIsps[ts][j];ispByN[n][idx]=(ispByN[n][idx]||0)+1;}
+    }
+  }
+  function deptTip(label,ispMap){
+    if(!ispMap)return '';
+    var entries=[];for(var idx in ispMap)entries.push({name:ispNames[parseInt(idx)]||'?',slots:ispMap[idx]});
+    if(!entries.length)return '';
+    entries.sort(function(a,b){return b.slots-a.slots;});
+    var top=entries.slice(0,10);
+    var t='<div class="dist-tooltip"><div class="dtt-title">Top '+Math.min(entries.length,10)+' ISP — créneaux à '+label+' ISP</div>';
+    for(var i=0;i<top.length;i++){var hrs=Math.round(top[i].slots*slotDur/60*10)/10;t+='<div class="dtt-row"><span>'+esc(top[i].name)+'</span><span>'+hrs+'h</span></div>';}
+    if(entries.length>10)t+='<div class="dtt-more">… et '+(entries.length-10)+' autres</div>';
+    return t+'</div>';
+  }
+
   var h='<thead><tr><th>Nb ISP dispo</th><th>Créneaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
   for(var i=0;i<dist.length;i++){
     var d=dist[i];
+    var tooltip=(d.ispCount>0)?deptTip(String(d.ispCount),ispByN[d.ispCount]):'';
+    var tipCls=tooltip?' dist-tip-cell':'';
     h+='<tr'+(d.ispCount===0?' style="background:var(--primary-light);font-weight:700;"':'')+'>';
-    h+='<td>'+d.ispCount+' ISP</td><td>'+d.slots+'</td><td>'+d.heures+'h</td><td>'+d.pct+'%</td></tr>';
+    h+='<td class="'+tipCls+'">'+d.ispCount+' ISP'+tooltip+'</td><td>'+d.slots+'</td><td>'+d.heures+'h</td><td>'+d.pct+'%</td></tr>';
   }
   h+='</tbody>';
   document.getElementById('coverDeptTable').innerHTML=h;
@@ -920,12 +993,14 @@ function switchTab(tab){
   document.getElementById('viewRecruit').style.display=tab==='recruit'?'':'none';
   document.getElementById('viewRapport').style.display=tab==='rapport'?'':'none';
   document.getElementById('viewSimult').style.display=tab==='simult'?'':'none';
+  document.getElementById('viewPresentation').style.display=tab==='presentation'?'':'none';
   var btns=document.querySelectorAll('.tab-btn');
   for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',btns[i].getAttribute('data-tab')===tab);
   if(tab==='carte'){if(!window._mapObj)setTimeout(initCarte,120);else window._mapObj.invalidateSize();}
   if(tab==='recruit'){if(!window._recruitMapObj)setTimeout(initRecruitTab,120);else window._recruitMapObj.invalidateSize();}
   if(tab==='rapport'&&!window._rapportRendered){window._rapportRendered=true;setTimeout(renderRapport,50);}
   if(tab==='simult'&&!window._simultRendered){window._simultRendered=true;setTimeout(renderSimultaneite,50);}
+  if(tab==='presentation'&&!window._presRendered){window._presRendered=true;setTimeout(initPresentation,50);}
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -3388,6 +3463,359 @@ function renderSimultTable(){
 
   h+='</tbody></table>';
   document.getElementById('simultTableWrap').innerHTML=h;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ONGLET PRÉSENTATION
+   ═══════════════════════════════════════════════════════ */
+function switchPresSubTab(sub){
+  var btns=document.querySelectorAll('.pres-subtab');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',btns[i].getAttribute('data-sub')===sub);
+  var views=document.querySelectorAll('.pres-view');
+  for(var i=0;i<views.length;i++) views[i].classList.toggle('active',views[i].id==='pres'+sub.charAt(0).toUpperCase()+sub.slice(1));
+}
+
+function initPresentation(){
+  renderPresGarde();
+  renderPresNuit();
+  renderPresSituation();
+}
+
+/* ── Helpers zone 20 min ── */
+function communesInZone(cisIdx,maxMin){
+  // Retourne les indices des communes atteignables en ≤ maxMin depuis un CIS
+  var res=[];
+  for(var k=0;k<COMMUNES.length;k++){
+    if(TRAVEL_COMM_MIN[k][cisIdx]<=maxMin) res.push(k);
+  }
+  return res;
+}
+function communeNamesInZone(cisIdx,maxMin){
+  var idxs=communesInZone(cisIdx,maxMin);
+  var names={};
+  for(var i=0;i<idxs.length;i++) names[COMMUNES[idxs[i]].n.toLowerCase()]=true;
+  return names;
+}
+function filterInter(parsed,opts){
+  // opts: {zone:{}, hourMin, hourMax, months:[], nightMode}
+  var count=0;
+  for(var i=0;i<parsed.length;i++){
+    var commune=parsed[i][0].toLowerCase(), hour=parsed[i][1], month=parsed[i][2];
+    if(opts.zone && !opts.zone[commune]) continue;
+    if(opts.months && opts.months.indexOf(month)===-1) continue;
+    if(opts.nightMode){
+      if(hour>=8 && hour<20) continue; // nuit = hors 8h-20h
+    } else {
+      if(opts.hourMin!==undefined && opts.hourMax!==undefined){
+        if(hour<opts.hourMin || hour>=opts.hourMax) continue;
+      }
+    }
+    count++;
+  }
+  return count;
+}
+function pzc(val,label,color){return '<div class="pres-zone-card '+color+'"><div class="pzv">'+val+'</div><div class="pzl">'+label+'</div></div>';}
+
+/* ── Garde actuelle et évolutions ── */
+function renderPresGarde(){
+  var ip=DATA.interParsed||[];
+  var ig=DATA.interStats;
+  var nbMois=ig.nbMois||1;
+  var totalInter=ig.total;
+  var interAn=Math.round(totalInter/nbMois*12);
+
+  // Communes dans zone 20 min PSud
+  var PSUD=CIS_IDX['psud']; // 27
+  var zPsud=communeNamesInZone(PSUD,20);
+  var nbCommZ=Object.keys(zPsud).length;
+
+  // Toutes communes (zone dept)
+  var allComm={};
+  for(var i=0;i<COMMUNES.length;i++) allComm[COMMUNES[i].n.toLowerCase()]=true;
+
+  // Jour hors été = 8h-20h, mois hors 7,8,9
+  var moisHorsEte=[1,2,3,4,5,6,10,11,12];
+  var moisEte=[7,8,9];
+
+  var interJourHE_dept=filterInter(ip,{zone:allComm,hourMin:8,hourMax:20,months:moisHorsEte});
+  var interJourHE_z20=filterInter(ip,{zone:zPsud,hourMin:8,hourMax:20,months:moisHorsEte});
+
+  // Garde PSud: jour 8h-20h toute l'année + nuit 20h-8h Jul/Aoû/Sep
+  var gardeJ=12*365; // heures/an jour
+  var gardeN=(24-20+8)*92; // heures nuit été (~92 jours Jul/Aoû/Sep)
+  var gardeTotalH=Math.round((gardeJ+gardeN));
+
+  // Stats jour toute l'année
+  var interJour_dept=filterInter(ip,{zone:allComm,hourMin:8,hourMax:20});
+  var interJour_z20=filterInter(ip,{zone:zPsud,hourMin:8,hourMax:20});
+
+  var h='';
+  // Block 1: Vue d'ensemble inter
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">🔥 Activité interventions ISP</div>';
+  h+='<div class="pres-zone-grid">';
+  h+=pzc(totalInter.toLocaleString('fr-FR'),'Interventions ISP ('+nbMois+' mois)','red');
+  h+=pzc(interAn.toLocaleString('fr-FR'),'Estimation annuelle','orange');
+  h+=pzc(Math.round(interAn/365),'Interventions / jour (moy.)','blue');
+  h+=pzc(nbCommZ,'Communes à ≤20 min de PSud','green');
+  h+='</div>';
+  h+='</div>';
+
+  // Block 2: Garde actuelle
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">🛡️ Garde actuelle — Perpignan Sud</div>';
+  h+='<div class="pres-conclusion" style="margin-top:0;margin-bottom:14px;">';
+  h+='<strong>Jour 8h–20h</strong> toute l\'année + <strong>Nuit 20h–8h</strong> juillet / août / septembre';
+  h+='</div>';
+  h+='<div class="pres-zone-grid">';
+  h+=pzc(interJour_dept.toLocaleString('fr-FR'),'Inter jour 8h-20h (département)','red');
+  h+=pzc(interJour_z20.toLocaleString('fr-FR'),'Inter jour 8h-20h (zone 20\' PSud)','blue');
+  var pctZ20=totalInter>0?Math.round(interJour_z20/totalInter*1000)/10:0;
+  h+=pzc(pctZ20+'%','Part zone 20\' PSud / total','green');
+  h+='</div>';
+  h+='</div>';
+
+  // Block 3: Hors été (mois hors Jul/Aoû/Sep) - jour
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">📅 Jour 8h–20h hors période estivale (hors Jul/Aoû/Sep)</div>';
+  h+='<div class="pres-zone-grid">';
+  h+=pzc(interJourHE_dept.toLocaleString('fr-FR'),'Inter jour hors été (département)','red');
+  h+=pzc(interJourHE_z20.toLocaleString('fr-FR'),'Inter jour hors été (zone 20\' PSud)','blue');
+  var pctJHE=interJourHE_dept>0?Math.round(interJourHE_z20/interJourHE_dept*1000)/10:0;
+  h+=pzc(pctJHE+'%','Part zone PSud / dept hors été','green');
+  h+='</div>';
+  h+='<div class="pres-conclusion">';
+  h+='<strong>Constat :</strong> En journée hors été, <strong>'+interJourHE_z20.toLocaleString('fr-FR')+'</strong> interventions sont couvertes par la zone 20 minutes de Perpignan Sud, ';
+  h+='soit <strong>'+pctJHE+'%</strong> des interventions de jour hors été du département.';
+  h+='</div>';
+  h+='</div>';
+
+  // Block 4: Carte PSud + hôpital
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">🗺️ Zone 20 minutes — Perpignan Sud</div>';
+  h+='<div id="presMapGarde" class="pres-map"></div>';
+  h+='</div>';
+
+  // Block 5: Focus estival
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">☀️ Focus estival — Jour 8h–20h en juillet / août / septembre</div>';
+
+  var interEte_dept=filterInter(ip,{zone:allComm,hourMin:8,hourMax:20,months:moisEte});
+  var interEte_z20Psud=filterInter(ip,{zone:zPsud,hourMin:8,hourMax:20,months:moisEte});
+
+  var ARGELES=CIS_IDX['argeles'];
+  var RIVESALTES=CIS_IDX['rivesaltes'];
+  var CANET=CIS_IDX['canet'];
+  var zArg=communeNamesInZone(ARGELES,20);
+  var zRiv=communeNamesInZone(RIVESALTES,20);
+  var zCan=communeNamesInZone(CANET,20);
+
+  var interEte_zArg=filterInter(ip,{zone:zArg,hourMin:8,hourMax:20,months:moisEte});
+  var interEte_zRiv=filterInter(ip,{zone:zRiv,hourMin:8,hourMax:20,months:moisEte});
+  var interEte_zCan=filterInter(ip,{zone:zCan,hourMin:8,hourMax:20,months:moisEte});
+
+  h+='<div class="pres-zone-grid">';
+  h+=pzc(interEte_dept.toLocaleString('fr-FR'),'Département (été jour)','red');
+  h+=pzc(interEte_z20Psud.toLocaleString('fr-FR'),'Zone 20\' PSud (été jour)','blue');
+  h+=pzc(interEte_zArg.toLocaleString('fr-FR'),'Zone 20\' Argelès (été jour)','orange');
+  h+=pzc(interEte_zRiv.toLocaleString('fr-FR'),'Zone 20\' Rivesaltes (été jour)','green');
+  h+=pzc(interEte_zCan.toLocaleString('fr-FR'),'Zone 20\' Canet (été jour)','purple');
+  h+='</div>';
+
+  h+='<div class="pres-conclusion">';
+  h+='<strong>Constat estival :</strong> Pendant la période estivale (Jul/Aoû/Sep) en journée, le département totalise <strong>'+interEte_dept.toLocaleString('fr-FR')+'</strong> interventions ISP. ';
+  h+='Les zones à 20 minutes de <strong>Perpignan Sud</strong> ('+interEte_z20Psud+'), <strong>Argelès</strong> ('+interEte_zArg+'), <strong>Rivesaltes</strong> ('+interEte_zRiv+') et <strong>Canet</strong> ('+interEte_zCan+') ';
+  h+='permettent d\'évaluer les besoins de renforcement saisonnier.';
+  h+='</div>';
+  h+='</div>';
+
+  document.getElementById('presGarde').innerHTML=h;
+
+  // Carte PSud
+  setTimeout(function(){
+    var mapEl=document.getElementById('presMapGarde');
+    if(!mapEl) return;
+    var map=L.map(mapEl).setView([CIS[PSUD].lat,CIS[PSUD].lng],11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'OSM'}).addTo(map);
+
+    // Zone 20 min = cercles communes
+    var zIdx=communesInZone(PSUD,20);
+    for(var i=0;i<zIdx.length;i++){
+      var c=COMMUNES[zIdx[i]];
+      L.circleMarker([c.lat,c.lng],{radius:6,color:'#457b9d',fillColor:'#457b9d',fillOpacity:0.25,weight:1}).addTo(map).bindPopup(c.n+' ('+Math.round(TRAVEL_COMM_MIN[zIdx[i]][PSUD])+'min)');
+    }
+
+    // Marqueur PSud
+    L.marker([CIS[PSUD].lat,CIS[PSUD].lng],{icon:L.divIcon({className:'',html:'<div style="background:#e63946;color:#fff;padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3)">🚒 Perpignan Sud</div>',iconSize:[0,0],iconAnchor:[-5,10]})}).addTo(map);
+
+    // Marqueur hôpital (CHU Perpignan)
+    var hopLat=42.6184,hopLng=2.8816;
+    L.marker([hopLat,hopLng],{icon:L.divIcon({className:'',html:'<div style="background:#457b9d;color:#fff;padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3)">🏥 CHU Perpignan (SAMU/SMUR)</div>',iconSize:[0,0],iconAnchor:[-5,10]})}).addTo(map);
+
+    window._presMapGarde=map;
+  },200);
+}
+
+/* ── Activité de nuit ── */
+function renderPresNuit(){
+  var ip=DATA.interParsed||[];
+  var ig=DATA.interStats;
+  var nbMois=ig.nbMois||1;
+
+  var allComm={};
+  for(var i=0;i<COMMUNES.length;i++) allComm[COMMUNES[i].n.toLowerCase()]=true;
+
+  var PSUD=CIS_IDX['psud'];
+  var zPsud=communeNamesInZone(PSUD,20);
+
+  var moisEte=[7,8,9];
+  var moisHorsEte=[1,2,3,4,5,6,10,11,12];
+
+  // Nuit = 20h-8h (nightMode)
+  var nuitTotal=filterInter(ip,{zone:allComm,nightMode:true});
+  var nuitEte=filterInter(ip,{zone:allComm,nightMode:true,months:moisEte});
+  var nuitHE=filterInter(ip,{zone:allComm,nightMode:true,months:moisHorsEte});
+
+  var nuitZ20_total=filterInter(ip,{zone:zPsud,nightMode:true});
+  var nuitZ20_ete=filterInter(ip,{zone:zPsud,nightMode:true,months:moisEte});
+  var nuitZ20_he=filterInter(ip,{zone:zPsud,nightMode:true,months:moisHorsEte});
+
+  var nuitAn=Math.round(nuitTotal/nbMois*12);
+  var nuitEteAn=Math.round(nuitEte/nbMois*12);
+
+  var h='';
+  // Block 1: Vue d'ensemble nuit
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">🌙 Activité de nuit — 20h à 8h</div>';
+  h+='<div class="pres-zone-grid">';
+  h+=pzc(nuitTotal.toLocaleString('fr-FR'),'Inter nuit ('+nbMois+' mois)','red');
+  h+=pzc(nuitAn.toLocaleString('fr-FR'),'Estimation annuelle nuit','orange');
+  h+=pzc(Math.round(nuitAn/365),'Inter nuit / jour (moy.)','blue');
+  var pctNuit=ig.total>0?Math.round(nuitTotal/ig.total*1000)/10:0;
+  h+=pzc(pctNuit+'%','Part nuit / total inter','green');
+  h+='</div>';
+  h+='</div>';
+
+  // Block 2: Été vs hors été
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">📊 Comparaison été / hors été — Nuit</div>';
+  h+='<div class="pres-zone-grid">';
+  h+=pzc(nuitEte.toLocaleString('fr-FR'),'Nuit été (Jul/Aoû/Sep)','red');
+  h+=pzc(nuitHE.toLocaleString('fr-FR'),'Nuit hors été','blue');
+  var moyEte=Math.round(nuitEte/3*10)/10;
+  var moyHE=Math.round(nuitHE/9*10)/10;
+  h+=pzc(moyEte.toLocaleString('fr-FR'),'Moy./mois été','orange');
+  h+=pzc(moyHE.toLocaleString('fr-FR'),'Moy./mois hors été','green');
+  h+='</div>';
+  var ratio=moyHE>0?Math.round(moyEte/moyHE*10)/10:'-';
+  h+='<div class="pres-conclusion">';
+  h+='<strong>Constat :</strong> L\'activité nocturne estivale représente en moyenne <strong>'+moyEte.toLocaleString('fr-FR')+'</strong> interventions/mois ';
+  h+='contre <strong>'+moyHE.toLocaleString('fr-FR')+'</strong> hors été, soit un facteur <strong>×'+ratio+'</strong>. ';
+  h+='La garde de nuit en été (Jul/Aoû/Sep) à Perpignan Sud couvre cette surcharge.';
+  h+='</div>';
+  h+='</div>';
+
+  // Block 3: Zone 20 min PSud nuit
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">🎯 Zone 20 minutes PSud — Nuit</div>';
+  h+='<div class="pres-zone-grid">';
+  h+=pzc(nuitZ20_total.toLocaleString('fr-FR'),'Zone 20\' PSud nuit (total)','red');
+  h+=pzc(nuitZ20_ete.toLocaleString('fr-FR'),'Zone 20\' PSud nuit été','orange');
+  h+=pzc(nuitZ20_he.toLocaleString('fr-FR'),'Zone 20\' PSud nuit hors été','blue');
+  var pctZ20N=nuitTotal>0?Math.round(nuitZ20_total/nuitTotal*1000)/10:0;
+  h+=pzc(pctZ20N+'%','Part zone PSud / total nuit','green');
+  h+='</div>';
+  h+='<div class="pres-conclusion">';
+  h+='<strong>Couverture nocturne :</strong> La zone à 20 minutes de Perpignan Sud concentre <strong>'+pctZ20N+'%</strong> des interventions de nuit du département, ';
+  h+='justifiant le positionnement de la garde nocturne estivale.';
+  h+='</div>';
+  h+='</div>';
+
+  document.getElementById('presNuit').innerHTML=h;
+}
+
+/* ── Situation actuelle des ISP dans les CIS ── */
+function renderPresSituation(){
+  var ispData=DATA.ispPerCisFull||[];
+  var ef=DATA.effectifStats;
+
+  // Construire map centre → nbIsp
+  var ispMap={};
+  for(var i=0;i<ispData.length;i++) ispMap[ispData[i].centre.toLowerCase()]=ispData[i].nbIsp;
+
+  // Compter CIS avec 0, total ISP
+  var nbZero=0, totalIsp=0, nbCisAvecIsp=0;
+  var cisIsp=[];
+  for(var c=0;c<CIS.length;c++){
+    // Trouver le nb ISP pour ce CIS
+    var nb=0;
+    // Chercher dans CENTRE_TO_CIS inversé
+    for(var k in CENTRE_TO_CIS){
+      if(CENTRE_TO_CIS[k]===CIS[c].id){
+        nb=ispMap[k]||0;
+        if(nb>0) break;
+      }
+    }
+    cisIsp.push({idx:c,nom:CIS[c].nom,nb:nb,lat:CIS[c].lat,lng:CIS[c].lng,grp:CIS[c].grp});
+    totalIsp+=nb;
+    if(nb===0) nbZero++;
+    else nbCisAvecIsp++;
+  }
+
+  var h='';
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">📋 Répartition des ISP dans les CIS</div>';
+  h+='<div class="pres-zone-grid">';
+  h+=pzc(ef?ef.total:totalIsp,'ISP au listing','red');
+  h+=pzc(CIS.length,'CIS dans le département','blue');
+  h+=pzc(nbCisAvecIsp,'CIS avec ISP','green');
+  h+=pzc(nbZero,'CIS sans ISP','orange');
+  h+='</div>';
+  h+='</div>';
+
+  // Carte
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">🗺️ Carte des ISP par CIS <span style="font-weight:400;font-size:.82em;color:var(--text-light)">(double affectation = compté dans les 2 CIS)</span></div>';
+  h+='<div id="presMapSituation" class="pres-map" style="height:550px;"></div>';
+  h+='</div>';
+
+  // Tableau
+  h+='<div class="pres-block">';
+  h+='<div class="pres-block-title">📊 Détail par CIS</div>';
+  h+='<div class="table-wrap"><table><thead><tr><th>CIS</th><th>Groupe</th><th>ISP</th></tr></thead><tbody>';
+  cisIsp.sort(function(a,b){return b.nb-a.nb;});
+  for(var i=0;i<cisIsp.length;i++){
+    var sty=cisIsp[i].nb===0?'style="color:var(--primary);font-weight:700;"':'';
+    h+='<tr><td>'+cisIsp[i].nom+'</td><td>'+cisIsp[i].grp+'</td><td '+sty+'>'+cisIsp[i].nb+'</td></tr>';
+  }
+  h+='</tbody></table></div>';
+  h+='</div>';
+
+  document.getElementById('presSituation').innerHTML=h;
+
+  // Carte Leaflet
+  setTimeout(function(){
+    var mapEl=document.getElementById('presMapSituation');
+    if(!mapEl) return;
+    var map=L.map(mapEl).setView([42.58,2.55],9);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'OSM'}).addTo(map);
+
+    var maxIsp=1;
+    for(var i=0;i<cisIsp.length;i++) if(cisIsp[i].nb>maxIsp) maxIsp=cisIsp[i].nb;
+
+    for(var i=0;i<cisIsp.length;i++){
+      var c=cisIsp[i];
+      var color=c.nb===0?'#e63946':'#2a9d8f';
+      var radius=c.nb===0?6:8+Math.round(c.nb/maxIsp*14);
+      var opacity=c.nb===0?0.9:0.7;
+      L.circleMarker([c.lat,c.lng],{radius:radius,color:color,fillColor:color,fillOpacity:opacity,weight:2})
+        .addTo(map)
+        .bindPopup('<strong>'+c.nom+'</strong><br>'+c.nb+' ISP'+(c.nb===0?' ⚠️ Aucun ISP':''))
+        .bindTooltip(c.nb.toString(),{permanent:true,direction:'center',className:'isp-marker-label'});
+    }
+
+    window._presMapSituation=map;
+  },200);
 }
 </script>
 </body>

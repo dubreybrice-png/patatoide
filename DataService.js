@@ -145,7 +145,9 @@ function getPageData() {
     oneCoverageByHour: buildOneCoverageByHour_(deduped),
     slotsByCentre:    buildSlotsByCentre_(deduped),
     centres:          buildCentresList_(listing),
-    rawCentreNames:   buildRawCentreNames_(listing)
+    rawCentreNames:   buildRawCentreNames_(listing),
+    interParsed:      buildInterParsed_(inter),
+    ispPerCisFull:    buildIspPerCisFull_(listing)
   };
 }
 
@@ -682,4 +684,35 @@ function buildSlotsByCentre_(deduped) {
   centres.sort(function(a, b) { return a.name.localeCompare(b.name); });
 
   return { centres: centres, totalSlots: totalSlots, slotMs: slotMs, minTs: minTs, maxTs: maxTs, ispNames: ispNamesList };
+}
+
+/* ═══════════════════════════════════════════════════════
+   DONNÉES INTERVENTIONS PARSÉES (pour onglet Présentation)
+   ═══════════════════════════════════════════════════════ */
+function buildInterParsed_(rows) {
+  var result = [];
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var dp = parseDateParts_(r.debut);
+    if (!dp) continue;
+    result.push([(r.commune || '').toString().trim(), dp.hour, dp.month]);
+  }
+  return result;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ISP PAR CIS (comptage entier, double affectation = 1+1)
+   ═══════════════════════════════════════════════════════ */
+function buildIspPerCisFull_(listing) {
+  var set = {};
+  for (var i = 0; i < listing.length; i++) {
+    var cp = (listing[i].centrePrincipal || '').trim();
+    var cs = (listing[i].centreSecondaire || '').trim();
+    if (cp) set[cp] = (set[cp] || 0) + 1;
+    if (cs) set[cs] = (set[cs] || 0) + 1;
+  }
+  var r = [];
+  for (var k in set) r.push({centre: k, nbIsp: set[k]});
+  r.sort(function(a, b) { return b.nbIsp - a.nbIsp; });
+  return r;
 }
