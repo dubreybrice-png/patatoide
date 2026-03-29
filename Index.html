@@ -213,6 +213,15 @@
   .sim-tooltip-row span:first-child{color:#cbd5e1;}
   .sim-tooltip-row span:last-child{font-weight:700;color:#38bdf8;}
   .sim-tooltip-total{margin-top:6px;border-top:1px solid rgba(255,255,255,.15);padding-top:5px;font-weight:800;color:#34d399;text-align:right;}
+  /* Distribution table ISP tooltip */
+  .dist-tip-cell{position:relative;cursor:help;}
+  .dist-tip-cell .dist-tooltip{display:none;position:absolute;z-index:50;left:100%;top:50%;transform:translateY(-50%);margin-left:10px;background:#1e293b;color:#f1f5f9;border-radius:10px;padding:12px 16px;min-width:260px;max-width:380px;box-shadow:0 8px 28px rgba(0,0,0,.3);font-size:.85em;white-space:nowrap;pointer-events:none;}
+  .dist-tip-cell:hover .dist-tooltip{display:block;}
+  .dist-tooltip .dtt-title{font-weight:800;font-size:1em;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:5px;color:#93c5fd;}
+  .dist-tooltip .dtt-row{display:flex;justify-content:space-between;gap:14px;padding:2px 0;}
+  .dist-tooltip .dtt-row span:first-child{color:#cbd5e1;}
+  .dist-tooltip .dtt-row span:last-child{font-weight:700;color:#38bdf8;}
+  .dist-tooltip .dtt-more{color:#94a3b8;font-size:.85em;margin-top:4px;font-style:italic;}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -658,28 +667,65 @@ function computeCustomCis(){
 
   /* Calculer le nb d'ISP par slot en combinant les centres sélectionnés */
   var slotCounts={};
+  var slotIspIdxs={};
   var selectedNames=[];
+  var ispNames=sbc.ispNames||[];
   for(var i=0;i<selectedIdx.length;i++){
     var c=sbc.centres[selectedIdx[i]];
     selectedNames.push(c.name);
     for(var ts in c.slots){
       slotCounts[ts]=(slotCounts[ts]||0)+c.slots[ts];
     }
+    /* ISP index par slot */
+    if(c.slotIsps){
+      for(var ts in c.slotIsps){
+        if(!slotIspIdxs[ts]) slotIspIdxs[ts]=[];
+        for(var j=0;j<c.slotIsps[ts].length;j++) slotIspIdxs[ts].push(c.slotIsps[ts][j]);
+      }
+    }
   }
 
   /* Distribution */
   var dist={}, slotsWithIsp=0, maxIsp=0;
+  var ispByN={}; /* N -> {ispIdx: nbSlots} */
   for(var ts in slotCounts){
     var n=slotCounts[ts];
     dist[n]=(dist[n]||0)+1;
     slotsWithIsp++;
     if(n>maxIsp) maxIsp=n;
+    /* Agréger les ISP par N */
+    if(n>0&&slotIspIdxs[ts]){
+      if(!ispByN[n]) ispByN[n]={};
+      for(var j=0;j<slotIspIdxs[ts].length;j++){
+        var idx=slotIspIdxs[ts][j];
+        ispByN[n][idx]=(ispByN[n][idx]||0)+1;
+      }
+    }
   }
   var slotsZero=sbc.totalSlots-slotsWithIsp;
   if(slotsZero<0)slotsZero=0;
   dist[0]=slotsZero;
 
   var slotDur=30; /* Config.SLOT_DURATION_MIN */
+
+  /* Helper : tooltip top 10 ISP pour un N donné */
+  function buildDistTooltip(label, ispMap){
+    if(!ispMap) return '';
+    var entries=[];
+    for(var idx in ispMap) entries.push({name:ispNames[parseInt(idx)]||'?',slots:ispMap[idx]});
+    if(entries.length===0) return '';
+    entries.sort(function(a,b){return b.slots-a.slots;});
+    var top=entries.slice(0,10);
+    var t='<div class="dist-tooltip"><div class="dtt-title">Top '+(Math.min(entries.length,10))+' ISP — créneaux à '+label+' ISP</div>';
+    for(var i=0;i<top.length;i++){
+      var hrs=Math.round(top[i].slots*slotDur/60*10)/10;
+      t+='<div class="dtt-row"><span>'+esc(top[i].name)+'</span><span>'+hrs+'h</span></div>';
+    }
+    if(entries.length>10) t+='<div class="dtt-more">… et '+(entries.length-10)+' autres</div>';
+    t+='</div>';
+    return t;
+  }
+
   var h='<div style="font-size:.85em;margin-bottom:8px;"><strong>CIS sélectionnés :</strong> '+esc(selectedNames.join(', '))+'</div>';
   h+='<div class="table-wrap"><table><thead><tr><th>Nb ISP dispo</th><th>Créneaux</th><th>Heures</th><th>% du temps</th></tr></thead><tbody>';
   var showMax=Math.min(maxIsp,10); /* montrer jusqu'à 10 lignes max */
@@ -687,16 +733,22 @@ function computeCustomCis(){
     var count=dist[n]||0;
     var heures=Math.round(count*slotDur/60*10)/10;
     var pct=sbc.totalSlots>0?Math.round(count/sbc.totalSlots*1000)/10:0;
-    var highlight=n<=1&&count>0;
+    var tooltip=(n>0)?buildDistTooltip(String(n),ispByN[n]):'';
+    var tipCls=tooltip?' dist-tip-cell':'';
     h+='<tr'+(n===0?' style="background:var(--primary-light);font-weight:700;"':(n===1?' style="background:#fdf0ec;"':''))+'>';
-    h+='<td>'+n+' ISP</td><td>'+count+'</td><td>'+heures+'h</td><td>'+pct+'%</td></tr>';
+    h+='<td class="'+tipCls+'">'+n+' ISP'+tooltip+'</td><td>'+count+'</td><td>'+heures+'h</td><td>'+pct+'%</td></tr>';
   }
   if(maxIsp>showMax){
-    var restCount=0;
-    for(var n=showMax+1;n<=maxIsp;n++) restCount+=(dist[n]||0);
+    var restCount=0, restIspMap={};
+    for(var n=showMax+1;n<=maxIsp;n++){
+      restCount+=(dist[n]||0);
+      if(ispByN[n]){for(var idx in ispByN[n]) restIspMap[idx]=(restIspMap[idx]||0)+ispByN[n][idx];}
+    }
     var restH=Math.round(restCount*slotDur/60*10)/10;
     var restPct=sbc.totalSlots>0?Math.round(restCount/sbc.totalSlots*1000)/10:0;
-    h+='<tr><td>'+(showMax+1)+'+ ISP</td><td>'+restCount+'</td><td>'+restH+'h</td><td>'+restPct+'%</td></tr>';
+    var restTip=buildDistTooltip((showMax+1)+'+',restIspMap);
+    var restTipCls=restTip?' dist-tip-cell':'';
+    h+='<tr><td class="'+restTipCls+'">'+(showMax+1)+'+ ISP'+restTip+'</td><td>'+restCount+'</td><td>'+restH+'h</td><td>'+restPct+'%</td></tr>';
   }
   h+='</tbody></table></div>';
 

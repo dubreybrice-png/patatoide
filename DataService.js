@@ -642,14 +642,29 @@ function buildOneCoverageByHour_(deduped) {
    ═══════════════════════════════════════════════════════ */
 function buildSlotsByCentre_(deduped) {
   var byCentre = {};
+  var byCentreIsps = {};
+  var ispNamesList = [];
+  var ispNamesMap = {};
   var minTs = Infinity, maxTs = -Infinity;
 
   for (var i = 0; i < deduped.length; i++) {
     var r = deduped[i];
     if (r.type === 'garde') continue;
     var c = r.centre || 'Inconnu';
-    if (!byCentre[c]) byCentre[c] = {};
+    if (!byCentre[c]) { byCentre[c] = {}; byCentreIsps[c] = {}; }
     byCentre[c][r.slotTs] = (byCentre[c][r.slotTs] || 0) + 1;
+
+    /* Index ISP pour tooltips côté client */
+    var fullName = (r.prenom || '') + ' ' + (r.nom || '');
+    var idx = ispNamesMap[fullName];
+    if (idx === undefined) {
+      idx = ispNamesList.length;
+      ispNamesList.push(fullName);
+      ispNamesMap[fullName] = idx;
+    }
+    if (!byCentreIsps[c][r.slotTs]) byCentreIsps[c][r.slotTs] = [];
+    byCentreIsps[c][r.slotTs].push(idx);
+
     if (r.slotTs < minTs) minTs = r.slotTs;
     if (r.slotTs > maxTs) maxTs = r.slotTs;
   }
@@ -662,9 +677,9 @@ function buildSlotsByCentre_(deduped) {
 
   var centres = [];
   for (var name in byCentre) {
-    centres.push({ name: name, slots: byCentre[name] });
+    centres.push({ name: name, slots: byCentre[name], slotIsps: byCentreIsps[name] });
   }
   centres.sort(function(a, b) { return a.name.localeCompare(b.name); });
 
-  return { centres: centres, totalSlots: totalSlots, slotMs: slotMs, minTs: minTs, maxTs: maxTs };
+  return { centres: centres, totalSlots: totalSlots, slotMs: slotMs, minTs: minTs, maxTs: maxTs, ispNames: ispNamesList };
 }
