@@ -1,9 +1,9 @@
 /**
- * Patatoïde — Code.js (point d'entrée)
+ * Patato├»de ÔÇö Code.js (point d'entr├®e)
  */
 function onOpen() {
   SpreadsheetApp.getUi()
-    .createMenu('🏥 Patatoïde')
+    .createMenu('­ƒÅÑ Patato├»de')
     .addItem('Ouvrir la webapp', 'ouvrirWebapp')
     .addToUi();
 }
@@ -21,7 +21,7 @@ function ouvrirWebapp() {
   SpreadsheetApp.getUi().showModalDialog(html, Config.APP_TITLE);
 }
 
-/* ─── Helpers ─── */
+/* ÔöÇÔöÇÔöÇ Helpers ÔöÇÔöÇÔöÇ */
 function getSpreadsheet_() {
   return SpreadsheetApp.openById(Config.SPREADSHEET_ID);
 }

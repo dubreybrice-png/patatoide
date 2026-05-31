@@ -1,11 +1,11 @@
 /**
- * Patatoïde — DataService.js
- * Lecture + agrégation de toutes les données
+ * Patato├»de ÔÇö DataService.js
+ * Lecture + agr├®gation de toutes les donn├®es
  */
 
-/* ═══════════════════════════════════════════════════════
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
    HELPERS
-   ═══════════════════════════════════════════════════════ */
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function getSpreadsheet_() { return SpreadsheetApp.openById(Config.SPREADSHEET_ID); }
 function getSheet_(name) {
   var sh = getSpreadsheet_().getSheetByName(name);
@@ -63,9 +63,9 @@ function matchKeywords_(text, keywords) {
   return false;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
    LECTURE BRUTE
-   ═══════════════════════════════════════════════════════ */
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function readInter_() {
   var sh=getSheet_(Config.SHEETS.INTER), data=sh.getDataRange().getValues(), c=Config.COL_INTER, rows=[];
   for (var i=1;i<data.length;i++) {
@@ -98,7 +98,7 @@ function readListing_() {
   var start=1;
   for (var i=0;i<Math.min(3,data.length);i++) {
     var f=(data[i][0]||'').toString().trim().toLowerCase();
-    if(f==='nom prénom'||f==='nom prenom'){start=i+1;break;}
+    if(f==='nom pr├®nom'||f==='nom prenom'){start=i+1;break;}
   }
   for (var i=start;i<data.length;i++) {
     var r=data[i], np=(r[c.NOM_PRENOM-1]||'').toString().trim();
@@ -122,9 +122,9 @@ function readDelais_() {
   return rows;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
    API PRINCIPALE
-   ═══════════════════════════════════════════════════════ */
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function getPageData() {
   var inter   = readInter_();
   var temps   = readTemps_();
@@ -145,9 +145,7 @@ function getPageData() {
     oneCoverageByHour: buildOneCoverageByHour_(deduped),
     slotsByCentre:    buildSlotsByCentre_(deduped),
     centres:          buildCentresList_(listing),
-    rawCentreNames:   buildRawCentreNames_(listing),
-    interParsed:      buildInterParsed_(inter),
-    ispPerCisFull:    buildIspPerCisFull_(listing)
+    rawCentreNames:   buildRawCentreNames_(listing)
   };
 }
 
@@ -162,10 +160,10 @@ function buildRawCentreNames_(listing) {
   return names;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
    DEDUPLICATION TEMPS
-   Même matricule + même dateHeure → garde > astreinte > dispo
-   ═══════════════════════════════════════════════════════ */
+   M├¬me matricule + m├¬me dateHeure ÔåÆ garde > astreinte > dispo
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function deduplicateTemps_(rows) {
   var priority = { 'garde':3, 'astreinte':2, 'disponible':1 };
   var grouped = {};
@@ -189,9 +187,9 @@ function deduplicateTemps_(rows) {
   return result;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
    STATS INTERVENTIONS
-   ═══════════════════════════════════════════════════════ */
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildInterStats_(rows) {
   var total = rows.length;
   var byCommune = {}, byHour = {}, byGroup = {}, distinctMonths = {};
@@ -207,7 +205,7 @@ function buildInterStats_(rows) {
       distinctMonths[dp.date.getFullYear() + '-' + dp.month] = true;
     }
 
-    // Groupe géographique
+    // Groupe g├®ographique
     var gName = findCommuneGroup_(com);
     byGroup[gName] = (byGroup[gName]||0) + 1;
   }
@@ -236,9 +234,9 @@ function findCommuneGroup_(commune) {
   return 'Autres';
 }
 
-/* ═══════════════════════════════════════════════════════
-   STATS TEMPS TRAVAIL (après dédup, sans garde)
-   ═══════════════════════════════════════════════════════ */
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+   STATS TEMPS TRAVAIL (apr├¿s d├®dup, sans garde)
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildTempsStats_(deduped) {
   var byType = { astreinte:0, disponible:0 };
   var byISP = {};
@@ -295,7 +293,7 @@ function buildTempsStats_(deduped) {
   var hourArr = [];
   for (var h=0;h<24;h++) hourArr.push({key:h, val:byHour[h]||0});
 
-  var moisNoms = ['','Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  var moisNoms = ['','Jan','F├®v','Mar','Avr','Mai','Jun','Jul','Ao├╗','Sep','Oct','Nov','D├®c'];
   var monthArr = [];
   for (var m=1;m<=12;m++) monthArr.push({key:moisNoms[m], val:byMonth[m]||0});
 
@@ -310,13 +308,13 @@ function buildTempsStats_(deduped) {
   };
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
    EFFECTIF
-   ═══════════════════════════════════════════════════════ */
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildEffectifStats_(listing) {
   var byCentre = {};
   for (var i=0;i<listing.length;i++) {
-    var c = listing[i].centrePrincipal || 'Non affecté';
+    var c = listing[i].centrePrincipal || 'Non affect├®';
     byCentre[c] = (byCentre[c]||0) + 1;
   }
   var arr = [];
@@ -331,7 +329,7 @@ function buildCentresList_(listing) {
     var cp = (listing[i].centrePrincipal || '').trim();
     var cs = (listing[i].centreSecondaire || '').trim();
     if (cp && cs) {
-      // ISP réparti 50/50 entre ses 2 centres
+      // ISP r├®parti 50/50 entre ses 2 centres
       set[cp] = (set[cp]||0) + 0.5;
       set[cs] = (set[cs]||0) + 0.5;
     } else if (cp) {
@@ -344,9 +342,9 @@ function buildCentresList_(listing) {
   return r;
 }
 
-/* ═══════════════════════════════════════════════════════
-   DELAIS ISP — moyennes simples col P et Q
-   ═══════════════════════════════════════════════════════ */
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+   DELAIS ISP ÔÇö moyennes simples col P et Q
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildDelaiAvg_(delais) {
   var routeArr = [], sllArr = [];
   for (var i=0;i<delais.length;i++) {
@@ -366,27 +364,27 @@ function buildDelaiAvg_(delais) {
   };
 }
 
-/* ═══════════════════════════════════════════════════════
-   DISPONIBILITÉ / COUVERTURE
-   Combien d'ISP dispo (astreinte ou dispo) à chaque instant ?
-   ═══════════════════════════════════════════════════════ */
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+   DISPONIBILIT├ë / COUVERTURE
+   Combien d'ISP dispo (astreinte ou dispo) ├á chaque instant ?
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildAvailability_(deduped, centreFilter) {
   // centreFilter = null (tout le dept) ou array de keywords
-  var slotCounts = {}; // slotTs → nb ISP
+  var slotCounts = {}; // slotTs ÔåÆ nb ISP
   var allSlotTs = {};
 
   for (var i=0; i<deduped.length; i++) {
     var r = deduped[i];
     if (r.type === 'garde') continue;
 
-    // Filtre par centre si demandé
+    // Filtre par centre si demand├®
     if (centreFilter && !matchKeywords_(r.centre, centreFilter)) continue;
 
     allSlotTs[r.slotTs] = true;
     slotCounts[r.slotTs] = (slotCounts[r.slotTs]||0) + 1;
   }
 
-  // Trouver la plage temporelle complète
+  // Trouver la plage temporelle compl├¿te
   var minTs = Infinity, maxTs = -Infinity;
   for (var i=0; i<deduped.length; i++) {
     var ts = deduped[i].slotTs;
@@ -394,14 +392,14 @@ function buildAvailability_(deduped, centreFilter) {
     if (ts > maxTs) maxTs = ts;
   }
 
-  // Compter tous les créneaux de 30 min dans la plage
+  // Compter tous les cr├®neaux de 30 min dans la plage
   var slotMs = Config.SLOT_DURATION_MIN * 60 * 1000;
   var totalSlots = 0;
   if (minTs < Infinity && maxTs > -Infinity) {
     totalSlots = Math.floor((maxTs - minTs) / slotMs) + 1;
   }
 
-  // Distribution : combien de créneaux ont 0, 1, 2... ISP
+  // Distribution : combien de cr├®neaux ont 0, 1, 2... ISP
   var dist = {};
   var slotsWithIsp = 0;
   var maxIsp = 0;
@@ -412,12 +410,12 @@ function buildAvailability_(deduped, centreFilter) {
     if (n > maxIsp) maxIsp = n;
   }
 
-  // Créneaux avec 0 ISP
+  // Cr├®neaux avec 0 ISP
   var slotsZero = totalSlots - slotsWithIsp;
   if (slotsZero < 0) slotsZero = 0;
   dist[0] = slotsZero;
 
-  // Convertir en tableau ordonné avec %
+  // Convertir en tableau ordonn├® avec %
   var distArr = [];
   for (var n = 0; n <= maxIsp; n++) {
     var count = dist[n] || 0;
@@ -438,16 +436,16 @@ function buildAvailability_(deduped, centreFilter) {
   };
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
    COUVERTURE PAR ANNEAUX CONCENTRIQUES
-   ═══════════════════════════════════════════════════════ */
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildRingAvailability_(deduped) {
   var rings = Config.PERPIGNAN_RINGS;
   var results = [];
   var cumulKeywords = [];
 
   for (var r = 0; r < rings.length; r++) {
-    // Cumuler les keywords (chaque anneau inclut les précédents)
+    // Cumuler les keywords (chaque anneau inclut les pr├®c├®dents)
     for (var k = 0; k < rings[r].keywords.length; k++) {
       cumulKeywords.push(rings[r].keywords[k]);
     }
@@ -464,7 +462,7 @@ function buildRingAvailability_(deduped) {
 
     results.push({
       ringName: rings[r].name,
-      ringLabel: r === 0 ? rings[r].name : rings.slice(0, r+1).map(function(x){return x.name;}).join(' → '),
+      ringLabel: r === 0 ? rings[r].name : rings.slice(0, r+1).map(function(x){return x.name;}).join(' ÔåÆ '),
       ringCentres: Object.keys(ringCentres).sort(),
       heuresZeroIsp: avail.heuresZeroIsp,
       pctZeroIsp: avail.pctZeroIsp,
@@ -475,9 +473,9 @@ function buildRingAvailability_(deduped) {
   return results;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
    DISTRIBUTION PAR GROUPE DE CASERNES
-   ═══════════════════════════════════════════════════════ */
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildAvailByGroup_(deduped) {
   var groups = Config.CENTRE_GROUPS;
   if (!groups || !groups.length) return [];
@@ -545,10 +543,10 @@ function buildAvailByGroup_(deduped) {
   return results;
 }
 
-/* ═══════════════════════════════════════════════════════
-   HEURES SANS COUVERTURE — PAR TRANCHE HORAIRE
-   À quelle heure de la journée se produisent les 0 ISP ?
-   ═══════════════════════════════════════════════════════ */
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+   HEURES SANS COUVERTURE ÔÇö PAR TRANCHE HORAIRE
+   ├Ç quelle heure de la journ├®e se produisent les 0 ISP ?
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildZeroCoverageByHour_(deduped) {
   // 1. Build set of slots with at least one ISP (excluding garde)
   var coveredSlots = {};
@@ -595,9 +593,9 @@ function buildZeroCoverageByHour_(deduped) {
   return { byHour: byHour, totalZeroSlots: totalZeroSlots };
 }
 
-/* ═══════════════════════════════════════════════════════
-   HEURES AVEC 1 SEUL ISP — PAR TRANCHE HORAIRE
-   ═══════════════════════════════════════════════════════ */
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+   HEURES AVEC 1 SEUL ISP ÔÇö PAR TRANCHE HORAIRE
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildOneCoverageByHour_(deduped) {
   var slotCounts = {};
   for (var i = 0; i < deduped.length; i++) {
@@ -638,35 +636,20 @@ function buildOneCoverageByHour_(deduped) {
   return { byHour: byHour, totalOneSlots: totalOneSlots };
 }
 
-/* ═══════════════════════════════════════════════════════
-   SLOTS PAR CENTRE — pour le simulateur custom côté client
+/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+   SLOTS PAR CENTRE ÔÇö pour le simulateur custom c├┤t├® client
    Retourne {centres:[{name, slots:{slotTs:count,...}}], totalSlots, minTs, maxTs}
-   ═══════════════════════════════════════════════════════ */
+   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
 function buildSlotsByCentre_(deduped) {
   var byCentre = {};
-  var byCentreIsps = {};
-  var ispNamesList = [];
-  var ispNamesMap = {};
   var minTs = Infinity, maxTs = -Infinity;
 
   for (var i = 0; i < deduped.length; i++) {
     var r = deduped[i];
     if (r.type === 'garde') continue;
     var c = r.centre || 'Inconnu';
-    if (!byCentre[c]) { byCentre[c] = {}; byCentreIsps[c] = {}; }
+    if (!byCentre[c]) byCentre[c] = {};
     byCentre[c][r.slotTs] = (byCentre[c][r.slotTs] || 0) + 1;
-
-    /* Index ISP pour tooltips côté client */
-    var fullName = (r.prenom || '') + ' ' + (r.nom || '');
-    var idx = ispNamesMap[fullName];
-    if (idx === undefined) {
-      idx = ispNamesList.length;
-      ispNamesList.push(fullName);
-      ispNamesMap[fullName] = idx;
-    }
-    if (!byCentreIsps[c][r.slotTs]) byCentreIsps[c][r.slotTs] = [];
-    byCentreIsps[c][r.slotTs].push(idx);
-
     if (r.slotTs < minTs) minTs = r.slotTs;
     if (r.slotTs > maxTs) maxTs = r.slotTs;
   }
@@ -679,40 +662,9 @@ function buildSlotsByCentre_(deduped) {
 
   var centres = [];
   for (var name in byCentre) {
-    centres.push({ name: name, slots: byCentre[name], slotIsps: byCentreIsps[name] });
+    centres.push({ name: name, slots: byCentre[name] });
   }
   centres.sort(function(a, b) { return a.name.localeCompare(b.name); });
 
-  return { centres: centres, totalSlots: totalSlots, slotMs: slotMs, minTs: minTs, maxTs: maxTs, ispNames: ispNamesList };
-}
-
-/* ═══════════════════════════════════════════════════════
-   DONNÉES INTERVENTIONS PARSÉES (pour onglet Présentation)
-   ═══════════════════════════════════════════════════════ */
-function buildInterParsed_(rows) {
-  var result = [];
-  for (var i = 0; i < rows.length; i++) {
-    var r = rows[i];
-    var dp = parseDateParts_(r.debut);
-    if (!dp) continue;
-    result.push([(r.commune || '').toString().trim(), dp.hour, dp.month]);
-  }
-  return result;
-}
-
-/* ═══════════════════════════════════════════════════════
-   ISP PAR CIS (comptage entier, double affectation = 1+1)
-   ═══════════════════════════════════════════════════════ */
-function buildIspPerCisFull_(listing) {
-  var set = {};
-  for (var i = 0; i < listing.length; i++) {
-    var cp = (listing[i].centrePrincipal || '').trim();
-    var cs = (listing[i].centreSecondaire || '').trim();
-    if (cp) set[cp] = (set[cp] || 0) + 1;
-    if (cs) set[cs] = (set[cs] || 0) + 1;
-  }
-  var r = [];
-  for (var k in set) r.push({centre: k, nbIsp: set[k]});
-  r.sort(function(a, b) { return b.nbIsp - a.nbIsp; });
-  return r;
+  return { centres: centres, totalSlots: totalSlots, slotMs: slotMs, minTs: minTs, maxTs: maxTs };
 }
